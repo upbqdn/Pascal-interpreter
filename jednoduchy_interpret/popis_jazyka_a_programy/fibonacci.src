@@ -1,0 +1,49 @@
+<deklarace promennych>
+n;
+a1;
+a2;
+aux;
+
+<program vypise prvnich n cisel Fibonacciho posloupnosti>
+{
+  read n;
+  setzero aux;
+  
+  <nastavime prvni prvek na hodnotu nula a vypiseme>
+  setzero a1;
+  write a1;
+  
+  <nastavime druhy prvek na hodnotu jedna>
+  setzero a2;
+  ++a2;
+  
+  --n;
+  while n
+  {
+    write a2;
+    
+    <presun a2 do aux>
+    while a2
+    {
+      --a2;
+      ++aux;
+    }
+    
+    <presun a1 do a2>
+    while a1
+    {
+      --a1;
+      ++a2;
+    }
+    
+    <pridani hodnoty aux k a1 i a2>
+    while aux
+    {
+      --aux;
+      ++a1;
+      ++a2;
+    } 
+    
+    --n;
+  }    
+}

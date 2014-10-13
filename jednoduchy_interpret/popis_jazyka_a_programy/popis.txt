@@ -1,0 +1,43 @@
+Popis skeletonoveho jazyka:
+===========================
+
+Skeletonovy jazyk pracuje pouze s promennymi typu int.
+Jejich deklarace se uvadi pred hlavnim telem programu ve tvaru:
+nazev_prom_1; nazev_prom_2; nazev_prom_3; ... nazev_prom_n;
+nazev promenne je definovan jako posloupnost cislic a pismen zacinajici
+pismenem.
+Za deklaracemi promennych nasleduje telo programu obsahujici
+posloupnost prikazu, ktere je ohraniceno slozenymi zavorkami, tedy:
+
+{ posloupnost prikazu }
+
+Jednotlive prikazy mohou byt nasledujici:
+
+read promenna;
+= nacte ze standardniho vstupu celociselnou hodnotu a ulozi ji do dane
+promenne
+
+write promenna;
+= vypise hodnotu dane promenne na standardni vystup
+
+setzero promenna;
+= nastavi danou promennou na hodnotu 0
+
+++ promenna;
+= inkrementuje hodnotu dane promenne o 1
+
+-- promenna;
+= dekrementuje hodnotu dane promenne o 1
+
+while promenna { posloupnost prikazu }
+= dokud hodnota dane promenne neni rovna nule, provadi se dana posloupnost prikazu,
+ktere jsou definovany vyse vcetne prikazu while.
+
+V tomto jazyce lze psat take komentare, ktere jsou ve tvaru:
+<komentar>
+
+Kompilace interpretu se provadi na merlinovi prikazem:
+make
+
+Spousteni interpretu se provadi prikazem:
+./project nazev_zdrojoveho_souboru
