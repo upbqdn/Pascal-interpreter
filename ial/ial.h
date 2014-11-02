@@ -8,6 +8,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 //#include <stdarg.h>
 
 /*
@@ -37,6 +38,6 @@ extern list list_array[HASH_ARRAY_SIZE]; //globalna tabulka klucov
  *Deklaracia funkcii
  */
  void hash_init();
- void hash_insert();
+ void hash_insert(char *);
  void hash_remove();
- int hash(int);
+ int hash(char *);
