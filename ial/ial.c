@@ -12,16 +12,30 @@ list list_array[HASH_ARRAY_SIZE];
  */
 void hash_init()
 {
- 	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++)
+ 	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
  	{
  		list_array[i].Act = NULL;
  		list_array[i].First = NULL;
  	}
 }
-
-void hash_insert(char *a)
+/*
+ *Funkcia na vkladanie do hashovacej tabulky
+ *Parametre: data a stav
+ */
+void hash_insert(char *my_string)
 {
- 	//list_element help_var = malloc(sizeof(struct elementS));
+ 	list_element help_var = malloc(sizeof(struct elementS));
+ 	if(help_var == NULL) //alokacia prebehla chybne
+ 	{
+ 		//doplnit error
+ 	}
+ 	else //alokacia prebehla spravne
+ 	{
+ 		int i = hash(my_string);
+ 		help_var->data = 5; //treeeeeeeeeeeeeeeeeeeeeeba opravit toto je test
+ 		help_var->ptr = list_array[i].First;
+ 		list_array[i].First = help_var;
+ 	}
 }
 
 /*
@@ -36,11 +50,11 @@ int hash(char *my_string)
 	for(int i = ORIGIN; i < strlen(my_string); i++) //cyklus na vsekty chary v stringu
  	{
  		help_var = my_string[i];
- 		printf("%d\n", help_var);
+ 		printf("%d\n", help_var); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
  		hash_key = hash_key + help_var;
  	}
  	hash_key = hash_key % HASH_ARRAY_SIZE;
- 	printf("%d\n", hash_key);
+ 	printf("%d\n", hash_key); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
  	return hash_key;
 }
 

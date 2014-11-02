@@ -15,7 +15,7 @@
  *Define na eliminovanie magickych konstant
  */
 #define HASH_ARRAY_SIZE (10) //velkost hashovacej tabulky
-#define ORIGIN (0) //zaciatok hashovacej tabulky
+#define ORIGIN (0) //zaciatok hashovacej tabulky/ alebo proste 0
 
 /*
  *Deklaracia struktur a premennych
