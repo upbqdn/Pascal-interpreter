@@ -14,7 +14,7 @@ list list_array[HASH_ARRAY_SIZE];
 /*
  *Funkcia na ziskanie zo stringu hashovaci kluc
  *Prevedie jednotlive chary stringu na intiger spocita a nasledne vydeli so zvyskom rozsahom hashovacej tabulky
- *Parameter: string/pointer na zaciatok stringu
+ *Parameter: string/pointer na zaciatok stringu, ktory mame previes na hash kluc
  */
 int hash(char *my_string)
 {
@@ -23,11 +23,9 @@ int hash(char *my_string)
 	for(int i = ORIGIN; i < strlen(my_string); i++) //cyklus na vsekty chary v stringu
  	{
  		help_var = my_string[i];
- 		printf("%d\n", help_var); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
  		hash_key = hash_key + help_var;
  	}
  	hash_key = hash_key % HASH_ARRAY_SIZE;
- 	printf("%d\n", hash_key); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
  	return hash_key;
 }
 
@@ -44,39 +42,45 @@ void hash_init()
 }
 /*
  *Funkcia na vkladanie do hashovacej tabulky
- *Parametre: data a stav
+ *Parametre: data - ktore vkladame a state - ktory vkladame
  */
-void hash_insert(char *my_string, int state)
+void hash_insert(char *data, int state)
 {
  	list_element help_var = malloc(sizeof(struct elementS));
- 	if(help_var == NULL) //alokacia prebehla chybne
+ 	help_var->token_data = malloc(strlen(data) * sizeof(char));
+ 	if(help_var == NULL || help_var->token_data == NULL) //alokacia prebehla chybne
  	{
  		//doplnit error
  	}
  	else //alokacia prebehla spravne
  	{
- 		int i = hash(my_string);
- 		help_var->data = state; //treeeeeeeeeeeeeeeeeeeeeeba opravit toto je test
+ 		int i = hash(data);
+ 		strcpy(help_var->token_data, data); //ulozime token data
+ 		help_var->token_state = state; //ulozime token stav
  		help_var->ptr = list_array[i].First;
  		list_array[i].First = help_var;
  	}
 }
 
-int hash_search(char *my_string, int find)
+/*
+ *Funkcia na zistenie ci sa hladany prvok nachadza v hashovacej tabulke, hlada podla kluca
+ *Parameter: data - hladane data
+ */
+int hash_search(char *data)
 {
-	int i = hash(my_string);
+	int i = hash(data);
 	list_array[i].Act = list_array[i].First;
 	while(list_array[i].Act != NULL)
 	{
-		if(list_array[i].Act->data == find)
+		if(strcmp(list_array[i].Act->token_data, data) == 0)
 		{
 			printf("Obsahuje");
-			return CONTAIN;
+			return CONTAINS;
 		}
 		list_array[i].Act = list_array[i].Act->ptr;
 	}
 	printf("NE-Obsahuje");
-	return NOCONTAIN;
+	return NOCONTAINS;
 }
 
 /*
@@ -94,15 +98,16 @@ void hash_destroy()
  			}
  			list_element help_var = list_array[i].First;
  			list_array[i].First = list_array[i].First->ptr;
+ 			free(help_var->token_data);
  			free(help_var);
  		}
  	}
 }
 
-int main()
+/*int main()
 {
- 	hash_insert("aaa", 6);
- 	hash_search("aaa", 5);
+ 	hash_insert("aaab", 6);
+ 	hash_search("aaaa");
  	hash_destroy();
  	return 0;
-}
+}*/
