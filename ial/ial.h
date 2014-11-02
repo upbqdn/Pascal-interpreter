@@ -16,6 +16,8 @@
  */
 #define HASH_ARRAY_SIZE (10) //velkost hashovacej tabulky
 #define ORIGIN (0) //zaciatok hashovacej tabulky/ alebo proste 0
+#define CONTAIN (0)
+#define NOCONTAIN (1)
 
 /*
  *Deklaracia struktur a premennych
@@ -32,12 +34,13 @@ typedef struct listS //struktura, ktora je zoznam
 	list_element First; //ukazatel na prvy prvok zoznamu
 } list;
 
-extern list list_array[HASH_ARRAY_SIZE]; //globalna tabulka klucov
+extern list list_array[HASH_ARRAY_SIZE]; //globalna tabulka hash klucov
 
 /*
  *Deklaracia funkcii
  */
  void hash_init();
- void hash_insert(char *);
+ void hash_insert(char *, int);
  void hash_destroy();
  int hash(char *);
+ int hash_search(char *, int);

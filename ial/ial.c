@@ -1,6 +1,6 @@
 /*
  *Autor: Filip Gulan xgulan00@stud.fit.vutbr.cz
- *Kniznica obsahujuca funkcie na pracu s hashovaciou tabulkou a quick sortom.
+ *Kniznica obsahujuca funkcie na pracu s hashovaciou tabulkou, quick sortom a knut morissom.
  */
 
 #include "ial.h"
@@ -46,7 +46,7 @@ void hash_init()
  *Funkcia na vkladanie do hashovacej tabulky
  *Parametre: data a stav
  */
-void hash_insert(char *my_string)
+void hash_insert(char *my_string, int state)
 {
  	list_element help_var = malloc(sizeof(struct elementS));
  	if(help_var == NULL) //alokacia prebehla chybne
@@ -56,10 +56,27 @@ void hash_insert(char *my_string)
  	else //alokacia prebehla spravne
  	{
  		int i = hash(my_string);
- 		help_var->data = 5; //treeeeeeeeeeeeeeeeeeeeeeba opravit toto je test
+ 		help_var->data = state; //treeeeeeeeeeeeeeeeeeeeeeba opravit toto je test
  		help_var->ptr = list_array[i].First;
  		list_array[i].First = help_var;
  	}
+}
+
+int hash_search(char *my_string, int find)
+{
+	int i = hash(my_string);
+	list_array[i].Act = list_array[i].First;
+	while(list_array[i].Act != NULL)
+	{
+		if(list_array[i].Act->data == find)
+		{
+			printf("Obsahuje");
+			return CONTAIN;
+		}
+		list_array[i].Act = list_array[i].Act->ptr;
+	}
+	printf("NE-Obsahuje");
+	return NOCONTAIN;
 }
 
 /*
@@ -84,6 +101,8 @@ void hash_destroy()
 
 int main()
 {
+ 	hash_insert("aaa", 6);
+ 	hash_search("aaa", 5);
  	hash_destroy();
  	return 0;
 }
