@@ -7,6 +7,30 @@
 
 list list_array[HASH_ARRAY_SIZE];
 
+/**********************************
+ *Implementacia hashovacej tabulky*
+ *********************************/
+
+/*
+ *Funkcia na ziskanie zo stringu hashovaci kluc
+ *Prevedie jednotlive chary stringu na intiger spocita a nasledne vydeli so zvyskom rozsahom hashovacej tabulky
+ *Parameter: string/pointer na zaciatok stringu
+ */
+int hash(char *my_string)
+{
+	int hash_key = ORIGIN; //v tomto bude ulozen vysledok hashovacej funkcie
+	int help_var = ORIGIN; //pomocna premenna na prevod z char na int
+	for(int i = ORIGIN; i < strlen(my_string); i++) //cyklus na vsekty chary v stringu
+ 	{
+ 		help_var = my_string[i];
+ 		printf("%d\n", help_var); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
+ 		hash_key = hash_key + help_var;
+ 	}
+ 	hash_key = hash_key % HASH_ARRAY_SIZE;
+ 	printf("%d\n", hash_key); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
+ 	return hash_key;
+}
+
 /*
  *Funkcia na inicializaciu pola zoznamov
  */
@@ -39,27 +63,27 @@ void hash_insert(char *my_string)
 }
 
 /*
- *Funkcia na ziskanie zo stringu hashovaci kluc
- *Prevedie jednotlive chary stringu na intiger spocita a nasledne vydeli so zvyskom rozsahom hashovacej tabulky
- *Parameter: string/pointer na zaciatok stringu
+ *Funkcia na zrusenie vsetkych zoznamov v hashovacej tabulke
  */
-int hash(char *my_string)
+void hash_destroy()
 {
-	int hash_key = ORIGIN; //v tomto bude ulozen vysledok hashovacej funkcie
-	int help_var = ORIGIN; //pomocna premenna na prevod z char na int
-	for(int i = ORIGIN; i < strlen(my_string); i++) //cyklus na vsekty chary v stringu
+	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
  	{
- 		help_var = my_string[i];
- 		printf("%d\n", help_var); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
- 		hash_key = hash_key + help_var;
+ 		while(list_array[i].First != NULL) //prejde vsetky elementy zoznamu
+ 		{
+ 			if(list_array[i].First == list_array[i].Act) //zrusi aj aktivny prvok
+ 			{
+ 				list_array[i].Act = NULL;
+ 			}
+ 			list_element help_var = list_array[i].First;
+ 			list_array[i].First = list_array[i].First->ptr;
+ 			free(help_var);
+ 		}
  	}
- 	hash_key = hash_key % HASH_ARRAY_SIZE;
- 	printf("%d\n", hash_key); //ttttttttttttttteeeeeeeeeeeeeeeeeeessssssssssssssssssttttttttttttttttt
- 	return hash_key;
 }
 
 int main()
 {
- 	hash_insert("aaccc\0");
+ 	hash_destroy();
  	return 0;
 }
