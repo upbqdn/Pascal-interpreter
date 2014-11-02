@@ -74,12 +74,10 @@ int hash_search(char *data)
 	{
 		if(strcmp(list_array[i].Act->token_data, data) == 0)
 		{
-			printf("Obsahuje");
 			return CONTAINS;
 		}
 		list_array[i].Act = list_array[i].Act->ptr;
 	}
-	printf("NE-Obsahuje");
 	return NOCONTAINS;
 }
 
