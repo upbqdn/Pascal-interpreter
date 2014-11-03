@@ -105,7 +105,7 @@ void hash_destroy()
 }
 
 /***************************
- *Implementacia Quick sortu*
+ *Implementacia Quick sortu**
  **************************/
 
 void sort(int *A, int left, int right)
