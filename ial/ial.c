@@ -107,68 +107,55 @@ void hash_destroy()
 /***************************
  *Implementacia Quick sortu**
  **************************/
-
-void sort(int *A, int left, int right)
+/*
+ *Funkcia quick sort z IAL, nedelena na funkcie
+ *Parametre: Array - pole znakov na zoradenie, left - 0, right - rozsah pola
+ */
+void sort(int *Array, int left, int right)
 {
+	int temp; //pomocna premenna na prehodenie hodnot
 	int i = left;
 	int j = right;
-	partition(A, &left, &right, &i, &j);
-	if(left < j)
-	{
-		sort(A, left, j);
-	}
-	if(i < right)
-	{
-		sort(A, i, right);
-	}
-}
-
-void partition(int *A, int *left, int *right, int *i, int *j)
-{
-	i = left;
-	j = right;
-	int median = A[*i + *j] / 2;
+	int median = Array[(i + j) / 2]; //pseudo median
 	do{
-		while(A[*i] < median)
+		while(Array[i] < median)
 		{
 			i++;
 		}
-		while(A[*j] > median)
+		while(Array[j] > median)
 		{
 			j--;
 		}
 		if(i <= j)
 		{
-			swap(A, i, j);
+			temp = Array[i];
+			Array[i] = Array[j];
+			Array[j] = temp; 
 			i++;
 			j--;
 		}
-	} while(i > j);
-}
-
-void swap(int *A, int i, int j)
-{
-	int temp = A[i];
-	A[i] = A[j];
-	A[j] = temp; 
-}
-
-void test(int *A)
-{
-	A[2] = 10 * A[2];
-	if(A[2] == 30)
+	} while(i <= j);
+	if(left < j)
 	{
-		test(A);
+		sort(Array, left, j);
+	}
+	if(i < right)
+	{
+		sort(Array, i, right);
 	}
 }
 
-int main()
+/*********************************
+ *Implementacia Knutt Moris Pratt*
+ ********************************/
+
+/*int main()
 {
-	int A[] = {0,5,3,2,1};
- 	sort(A, A[0], A[4]);
+	int A[] = {0,5,3,2,9};
+ 	sort(A, 0, 4);
  	for(int i = 0; i < 5; i++)
  	{
  		printf("%d\n", A[i]);
  	}
  	return 0;
-}
+}*/
