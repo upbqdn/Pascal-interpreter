@@ -15,6 +15,7 @@ list list_array[HASH_ARRAY_SIZE];
  *Funkcia na ziskanie zo stringu hashovaci kluc
  *Prevedie jednotlive chary stringu na intiger spocita a nasledne vydeli so zvyskom rozsahom hashovacej tabulky
  *Parameter: string/pointer na zaciatok stringu, ktory mame previes na hash kluc
+ *Vracia: hashovaci kluc
  */
 int hash(char *my_string)
 {
@@ -65,18 +66,19 @@ void hash_insert(char *data, int state)
 /*
  *Funkcia na zistenie ci sa hladany prvok nachadza v hashovacej tabulke, hlada podla kluca
  *Parameter: data - hladane data
+ *Vracia: 0/CONTAINS v pripade ze sa prvok nachadza, 1/NOCONTAINS v ripade ze nie
  */
 int hash_search(char *data)
 {
 	int i = hash(data);
 	list_array[i].Act = list_array[i].First;
-	while(list_array[i].Act != NULL)
+	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
 	{
-		if(strcmp(list_array[i].Act->token_data, data) == 0)
+		if(strcmp(list_array[i].Act->token_data, data) == 0) //porovna retazce
 		{
 			return CONTAINS;
 		}
-		list_array[i].Act = list_array[i].Act->ptr;
+		list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
 	}
 	return NOCONTAINS;
 }
@@ -102,10 +104,71 @@ void hash_destroy()
  	}
 }
 
-/*int main()
+/***************************
+ *Implementacia Quick sortu*
+ **************************/
+
+void sort(int *A, int left, int right)
 {
- 	hash_insert("aaab", 6);
- 	hash_search("aaaa");
- 	hash_destroy();
+	int i = left;
+	int j = right;
+	partition(A, &left, &right, &i, &j);
+	if(left < j)
+	{
+		sort(A, left, j);
+	}
+	if(i < right)
+	{
+		sort(A, i, right);
+	}
+}
+
+void partition(int *A, int *left, int *right, int *i, int *j)
+{
+	i = left;
+	j = right;
+	int median = A[*i + *j] / 2;
+	do{
+		while(A[*i] < median)
+		{
+			i++;
+		}
+		while(A[*j] > median)
+		{
+			j--;
+		}
+		if(i <= j)
+		{
+			swap(A, i, j);
+			i++;
+			j--;
+		}
+	} while(i > j);
+}
+
+void swap(int *A, int i, int j)
+{
+	int temp = A[i];
+	A[i] = A[j];
+	A[j] = temp; 
+}
+
+void test(int *A)
+{
+	A[2] = 10 * A[2];
+	if(A[2] == 30)
+	{
+		test(A);
+	}
+}
+
+int main()
+{
+	int A[] = {0,5,3,2,1};
+ 	sort(A, A[0], A[4]);
+ 	for(int i = 0; i < 5; i++)
+ 	{
+ 		printf("%d\n", A[i]);
+ 	}
  	return 0;
-}*/
+}

@@ -45,3 +45,7 @@ extern list list_array[HASH_ARRAY_SIZE]; //globalna tabulka hash klucov
  void hash_insert(char *, int);
  int hash_search(char *);
  void hash_destroy();
+ void sort();
+ void partition();
+ void swap();
+ void test();
