@@ -109,11 +109,10 @@ void hash_destroy()
  **************************/
 /*
  *Funkcia quick sort z IAL, nedelena na funkcie
- *Parametre: Array - pole znakov na zoradenie, left - 0, right - rozsah pola
- */
-void sort(int *Array, int left, int right)
+ *Parametre: Array - pole znakov na zoradenie*/
+void sort(char *Array, int left, int right)
 {
-	int temp; //pomocna premenna na prehodenie hodnot
+	char temp; //pomocna premenna na prehodenie hodnot
 	int i = left;
 	int j = right;
 	int median = Array[(i + j) / 2]; //pseudo median
@@ -148,14 +147,69 @@ void sort(int *Array, int left, int right)
 /*********************************
  *Implementacia Knutt Moris Pratt*
  ********************************/
-
-/*int main()
+/*
+ *Funkcia na hladanie podretazca v retazci implementovana Knutt Moris Pratt algoritmom z IAL
+ *Parametre: 1 - retaze, ktory prehladavame, 2 -retazec, ktory hladame
+ *Vracia: -1/NOSUBSTRING v pripade ze sa podretazec v retazci nenachadza, alebo index na ktorom mieste sa nachadza
+ */
+int find(char *T, char *P)
 {
-	int A[] = {0,5,3,2,9};
- 	sort(A, 0, 4);
- 	for(int i = 0; i < 5; i++)
- 	{
- 		printf("%d\n", A[i]);
- 	}
+	int *Fail = malloc(strlen(P) * sizeof(int)); //alokovanie miesta pre pomocny vektor
+	int TL = strlen(T); //dlka retazca T
+	int PL = strlen(P); //dlzka retazca P
+	vector(P, Fail);
+	int TInd = ORIGIN; //Knutt Morris Pratt
+	int PInd = ORIGIN;
+	while((TInd < TL) && (PInd < PL))
+	{
+		if((PInd == -1) || (T[TInd] == P[PInd]))
+		{
+			TInd++;
+			PInd++;
+		}
+		else
+		{
+			PInd = Fail[PInd];
+		}
+	}
+	if(PInd >= PL) //vrati poziciu kde sa podretazec nasiel
+	{
+		free(Fail);
+		return TInd - PL + 1;
+	}
+	else //nenasiel sa retazec
+	{
+		free(Fail);
+		return NOSUBSTRING;
+	}
+}
+
+/*
+ *Funkcia na generovanie pomocneho vektoru
+ *Parametre: 1 - retazec, 2 - pomocny vektor alokovany vo funckii fail 
+ */
+void vector(char *P, int *Fail)
+{
+	int k;
+	int r;
+	int PL = strlen(P);
+	Fail[ORIGIN] = -1; //zaciatok inicializacie
+	for(k = 1; k < PL; k++)
+	{
+		r = Fail[k - 1];
+		while((r > 0) && (P[r] != P[k - 1]))
+		{
+			r = Fail[r];
+		}
+		Fail[k] = r++;
+	}
+}
+
+/*
+int main()
+{
+	char *A = "Acbc";
+	char *B = "xc";
+	find(A, B);
  	return 0;
 }*/

@@ -18,6 +18,7 @@
 #define ORIGIN (0) //zaciatok hashovacej tabulky/ alebo proste 0
 #define CONTAINS (0) //obsahuje prvok/retazec...
 #define NOCONTAINS (1) //neobsahuje prvok/retazec
+#define NOSUBSTRING (-1) //neobsahuje podretazec
 
 /*
  *Deklaracia struktur a premennych
@@ -45,7 +46,6 @@ extern list list_array[HASH_ARRAY_SIZE]; //globalna tabulka hash klucov
  void hash_insert(char *, int);
  int hash_search(char *);
  void hash_destroy();
- void sort();
- void partition();
- void swap();
- void test();
+ void sort(char *, int, int);
+ int find(char *, char *);
+ void vector(char *, int *);
