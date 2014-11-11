@@ -1,5 +1,17 @@
 /* IFJ: scanner */
 
+/*
+textovy retazec NOT OK
+komentar! OK
+chyba OK
+asci OK?
+double OK
+
+hlavickovy subor
+
+*/
+
+
 /* hlavickove soubory */
 #include <ctype.h>
 #include <stdio.h>
@@ -29,44 +41,49 @@ typedef enum ERROR
 /* jednotlive stavy automatu */
 typedef enum
 {
-    S_START,					//pocatecni stav
-    S_END,					//koncovy stav
-    S_CHYBA,					//chybovy stav
+    S_START,					//pocatecni stav 0
+    S_END,					//koncovy stav 1
+    S_CHYBA,					//chybovy stav 2
+    S_KOMENTAR,					//komentar 3
     S_INTEGER,					//cislo typu integer
     S_KLICOVE_SLOVO,				// klicove slovo
     S_DOUBLE,					//cislo typu double
-    S_DOUBLE_CELA_A_DESETINNA_CAST,		//cislo typu double
+  //  S_DOUBLE_CELA_A_DESETINNA_CAST,		//cislo typu double
     S_DOUBLE_CELA_CAST_A_EXPONENT,		//cislo typu double
     S_DOUBLE_CELA_A_DESETINNA_CAST_A_EXPONENT,//cislo typu double
-    S_DOUBLE_POMOC,				//pomocny double
+    S_DOUBLE_POMOC,				//pomocny double 10
     S_IDENTIFIKATOR,				//identifikator
     S_PLUS,					// +
     S_MINUS,					// -
     S_KRAT,					// *
-    S_DELENO,					// /
+    S_DELENO,					// / 14
     S_UKAZATEL,					// ^
     S_MENSI,					// <
     S_MENSI_NEBO_ROVNO,				// <=
     S_VETSI,					// >
-    S_VETSI_NEBO_ROVNO,				// >=
+    S_VETSI_NEBO_ROVNO,				// >= 19
     S_ROVNO,					// =
     S_NEROVNO,					// <>
     S_STREDNIK,					// ;
     S_DVOJTECKA,				// :
-    S_PRIRAZENI,				// :=
+    S_PRIRAZENI,				// := 24
     S_TECKA,					// .
     S_DVE_TECKY,				// ..
     S_CARKA,					// ,
     S_LEVA_ZAVORKA,				// (
-    S_PRAVA_ZAVORKA,				// )
+    S_PRAVA_ZAVORKA,				// ) 29
     S_LEVA_HRANATA_ZAVORKA,			// [
     S_PRAVA_HRANATA_ZAVORKA,			// ]
     S_LEVA_SLOZENA_ZAVORKA,			// {
     S_PRAVA_SLOZENA_ZAVORKA,			// }
-    S_RETEZEC,					// string
+    S_RETEZEC,					// string 34
     S_MRIZKA,					// #
     S_ESCAPE_SEKVENCE,				// #0-255
-    S_END_OF_FILE,				// EOF
+    S_END_OF_FILE,				// EOF 38
+    S_DOUBLE_POMOCDES1,			
+    S_DOUBLE_POMOCDES2,
+    S_DOUBLE_POMOCDES3,
+    S_DOUBLE_POMOCDES4,
     
 } tStav;
 
@@ -80,7 +97,7 @@ typedef struct
 } tToken;
 
 /* globalni promenne */
-extern tToken token;
+tToken token;
 tERROR error;
 int sloupec = 0;
 int radek = 0;
@@ -119,7 +136,7 @@ static void vrat_se_o_znak(int znak)
 static tStav porovnej_rezervovana_slova(char *slovo)
 {
   for (int i = 0; i < POCET_KLICOVYCH_SLOV; i++)
-    if ((strcmp(slovo, klicova_slova[i]))) return S_KLICOVE_SLOVO;
+    if (!(strcmp(slovo, klicova_slova[i]))) return S_KLICOVE_SLOVO;
     return S_IDENTIFIKATOR;
 }
 
@@ -143,6 +160,7 @@ tToken get_token(void)
   int i = 0;
   int c;
   bool konec = false;
+  error = vsechno_ok;
   
   inicializuj_token();
   
@@ -168,14 +186,16 @@ tToken get_token(void)
       else if	(c == ':')			stav = S_DVOJTECKA;
       else if	(c == ';')			stav = S_STREDNIK;
       else if	(c == '^')			stav = S_UKAZATEL;
+      else if	(c == ',')			stav = S_CARKA;
       else if	(c == '<')			stav = S_MENSI;
-      else if	(c == '{')			stav = S_LEVA_SLOZENA_ZAVORKA;
-      else if	(c == '}')			stav = S_PRAVA_SLOZENA_ZAVORKA;
+      else if	(c == '{')			{stav = S_LEVA_SLOZENA_ZAVORKA; break;}
+      else if	(c == '}')			{stav = S_PRAVA_SLOZENA_ZAVORKA; break;}
       else if	(c == '(')			stav = S_LEVA_ZAVORKA;
       else if	(c == ')')			stav = S_PRAVA_ZAVORKA;
       else if	(c == '[')			stav = S_LEVA_HRANATA_ZAVORKA;
       else if 	(c == ']')			stav = S_PRAVA_HRANATA_ZAVORKA;
       else if	(c == '>')			stav = S_VETSI;
+      else if	(c == '#')			{stav = S_MRIZKA; break;}
       else if	(c == '\'')		{	stav = S_RETEZEC;
 						break;
       }
@@ -214,7 +234,7 @@ tToken get_token(void)
       }
       else if (c == '.')
       {
-	stav = S_DOUBLE_CELA_A_DESETINNA_CAST;
+	stav = S_DOUBLE_POMOCDES1;
 	vloz_znak_do_tokenu(c, &i);
       }
       else if ((c == 'e') || (c == 'E'))
@@ -228,23 +248,22 @@ tToken get_token(void)
 	stav = S_END;
 	vrat_se_o_znak((char) c);
       }
-      
       break;
 	
     }
     
-    case S_DOUBLE_CELA_A_DESETINNA_CAST:
+    case S_DOUBLE_POMOCDES1:
     {
       if (isdigit(c))
       {
-	stav = S_DOUBLE;
+	stav = S_DOUBLE_POMOCDES2;
 	vloz_znak_do_tokenu(c, &i);
       }
-      else if ((c == 'e') || (c == 'E'))
+      /*else if ((c == 'e') || (c == 'E'))
       {
 	stav = S_DOUBLE_CELA_A_DESETINNA_CAST_A_EXPONENT;
 	vloz_znak_do_tokenu(c, &i);
-      }
+      }*/
       else
       {
 	napln_token(stav);
@@ -253,6 +272,64 @@ tToken get_token(void)
       }
       break;
     }
+    
+    case S_DOUBLE_POMOCDES2:
+    {
+      if (isdigit(c))
+      {
+	stav = S_DOUBLE_POMOCDES2;
+	vloz_znak_do_tokenu(c, &i);
+      }
+      else if ((c == 'e') || (c == 'E'))
+      {
+	stav = S_DOUBLE_POMOCDES3;
+	vloz_znak_do_tokenu(c, &i);
+      }
+      else
+      {
+	napln_token(stav);
+	stav = S_DOUBLE;
+	vrat_se_o_znak((char) c);
+      }
+      break;
+    }
+    
+    case S_DOUBLE_POMOCDES3:
+    {
+      if (isdigit(c))
+      {
+	stav = S_DOUBLE_POMOCDES3;
+	vloz_znak_do_tokenu(c, &i);
+      }
+      else if ((c == '+') || (c == '-'))
+      {
+	stav = S_DOUBLE_POMOCDES4;
+	vloz_znak_do_tokenu(c, &i);
+      }
+      else
+      {
+	napln_token(stav);
+	stav = S_DOUBLE;
+	vrat_se_o_znak((char) c);
+      }
+      break;
+    }
+    
+    case S_DOUBLE_POMOCDES4:
+    {
+      if (isdigit(c))
+      {
+	stav = S_DOUBLE;
+	vloz_znak_do_tokenu(c, &i);
+      }
+      else
+      {
+	napln_token(stav);
+	stav = S_CHYBA;
+	vrat_se_o_znak((char) c);
+      }
+    }
+      
       
     case S_DOUBLE_CELA_CAST_A_EXPONENT: 
     {
@@ -400,9 +477,8 @@ tToken get_token(void)
     {
       if (c == EOF)
       {
-	napln_token(stav);
-	stav = S_CHYBA;
-	vrat_se_o_znak((char) c);
+	stav = S_END_OF_FILE;
+	//vrat_se_o_znak((char) c);
       }
       else if (c != '}')
       {
@@ -410,8 +486,7 @@ tToken get_token(void)
       }
       else
       {
-	stav = S_START;
-	vrat_se_o_znak((char) c);
+	stav = S_KOMENTAR;
       }
       break;
     }
@@ -429,15 +504,19 @@ tToken get_token(void)
 	stav = S_RETEZEC;
 	vloz_znak_do_tokenu(c, &i);
       }
+     // else if (c == '#')
+     // {
+	//stav = S_MRIZKA;
+      //}
       else if (c == EOF)
       {
-	stav = S_CHYBA;
+	stav = S_END_OF_FILE;
       }
       else
       {
 	napln_token(stav);
 	stav = S_END;
-	vrat_se_o_znak((char) c);
+	//vrat_se_o_znak((char) c);
       }
       break;
     }
@@ -493,6 +572,7 @@ tToken get_token(void)
     case S_NEROVNO:
     case S_UKAZATEL:
     case S_END_OF_FILE:
+    case S_KOMENTAR:
     {
       napln_token(stav);
       stav = S_END;
@@ -502,7 +582,10 @@ tToken get_token(void)
     
     case S_CHYBA:
     {
+      vloz_znak_do_tokenu(c, &i);
+      napln_token(stav);
       error = chyba_v_programu_v_ramci_lexikalni_analyzy;
+      //vrat_se_o_znak((char) c);
       konec = true;
       break;
     }
