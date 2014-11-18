@@ -51,7 +51,6 @@ void myPop(stack *S)
  */
 int myTop(stack *S)
 {
-	printf("%d\n", S->First->data);
 	return S->First->data;
 }
 
