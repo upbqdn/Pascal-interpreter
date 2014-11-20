@@ -1,31 +1,35 @@
-#include <stdio.h>
-#include "ial.h"
+/* hlavickove soubory */
+
+/* hlavickove subory */
+#include "header.h"
 #include "stack.h"
-//#include "scaner.h"
+#include "scanner.h"
+#include "parserito.h"
 
-FILE *f;
+extern FILE *soubor;
 
-stack S; //zasobnik
-
-int main(int argc, char **argv)
+int main()
 {
-	if(argc == 0)
-	{
-		fprintf(stderr, "Prilis malo arguentov!\n");
-	}
-	else if(argc == 1)
-	{
-		if((f = fopen(argv[1], "r")) == NULL)
-		{
-			fprintf(stderr, "Subor sa nepodarilo otvorit!\n");
-		}
-	}
-	else
-	{
-		fprintf(stderr, "Prilis vela argumentov!\n");
-	}
+	soubor = fopen("subor.ifj", "r");
+
+	/*tToken tokenik;
+
+	  for (int i = 0; i < 20; ++i)
+ 		 {
+    			tokenik  = get_token();
+    			printf("%s   >>> ", tokenik.data );
+     			printf("%d\n", tokenik.stav );
+     			printf("errrrrrrrrrrr > %d\n",error );	    		
+  		}
+	
+	*/
+
+  		// test for parserito.c
+
+  		bool parsEXT;
+  		parsEXT = parse();
+
+  		printf("%d\n",parsEXT );
+
 	return 0;
-	myPush(&S, 5);
-	int a = myTop(&S);
-	printf("%d\n", a);
 }
