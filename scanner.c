@@ -8,107 +8,15 @@ asci OK?
 double OK
 
 hlavickovy subor
-
 */
 
 
-/* hlavickove soubory */
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
+/* hlavickovy subor */
+#include "header.h"
+#include "scanner.h"
 
-/* konstanty */
-#define POCET_KLICOVYCH_SLOV 20
 
-/* chyby a chybove kody */
-typedef enum ERROR
-{
-  vsechno_ok,							// 0
-  chyba_v_programu_v_ramci_lexikalni_analyzy,			// 1
-  chyba_v_programu_v_ramci_syntakticke_analyzy,		// 2
-  semanticka_chyba_v_programu,					// 3
-  semanticka_chyba_typove_kompatibility,			// 4
-  ostatni_semanticke_chyby,					// 5
-  behova_chyba_pri_nacitani_ciselne_hodnoty_ze_vstupu,	// 6
-  behova_chyba_pri_praci_s_neinicializovanou_promennou,	// 7
-  behova_chyba_deleni_nulou,					// 8
-  ostatni_behove_chyby,					// 9
-  interni_chyba_interpretu,					// 99
-} tERROR;
-
-/* jednotlive stavy automatu */
-typedef enum
-{
-    S_START,					//pocatecni stav 0
-    S_END,					//koncovy stav 1
-    S_CHYBA,					//chybovy stav 2
-    S_KOMENTAR,					//komentar 3
-    S_INTEGER,					//cislo typu integer
-    S_KLICOVE_SLOVO,				// klicove slovo
-    S_DOUBLE,					//cislo typu double
-  //  S_DOUBLE_CELA_A_DESETINNA_CAST,		//cislo typu double
-    S_DOUBLE_CELA_CAST_A_EXPONENT,		//cislo typu double
-    S_DOUBLE_CELA_A_DESETINNA_CAST_A_EXPONENT,//cislo typu double
-    S_DOUBLE_POMOC,				//pomocny double 10
-    S_IDENTIFIKATOR,				//identifikator
-    S_PLUS,					// +
-    S_MINUS,					// -
-    S_KRAT,					// *
-    S_DELENO,					// / 14
-    S_UKAZATEL,					// ^
-    S_MENSI,					// <
-    S_MENSI_NEBO_ROVNO,				// <=
-    S_VETSI,					// >
-    S_VETSI_NEBO_ROVNO,				// >= 19
-    S_ROVNO,					// =
-    S_NEROVNO,					// <>
-    S_STREDNIK,					// ;
-    S_DVOJTECKA,				// :
-    S_PRIRAZENI,				// := 24
-    S_TECKA,					// .
-    S_DVE_TECKY,				// ..
-    S_CARKA,					// ,
-    S_LEVA_ZAVORKA,				// (
-    S_PRAVA_ZAVORKA,				// ) 29
-    S_LEVA_HRANATA_ZAVORKA,			// [
-    S_PRAVA_HRANATA_ZAVORKA,			// ]
-    S_LEVA_SLOZENA_ZAVORKA,			// {
-    S_PRAVA_SLOZENA_ZAVORKA,			// }
-    S_RETEZEC,					// string 34
-    S_MRIZKA,					// #
-    S_ESCAPE_SEKVENCE,				// #0-255
-    S_END_OF_FILE,				// EOF 38
-    S_DOUBLE_POMOCDES1,			
-    S_DOUBLE_POMOCDES2,
-    S_DOUBLE_POMOCDES3,
-    S_DOUBLE_POMOCDES4,
-    
-} tStav;
-
-/* struktura pro token */
-typedef struct
-{
-  tStav stav;
-  char *data;
-  int radek;
-  int sloupec;
-} tToken;
-
-/* globalni promenne */
-tToken token;
-tERROR error;
-int sloupec = 0;
-int radek = 0;
-
-/* prototypy funkci */
-tToken get_token(void);
-static void inicializuj_token(void);
-static void vloz_znak_do_tokenu(int znak, int *i);
-static void napln_token(tStav stav);
-static void vrat_se_o_znak(int znak);
-static tStav porovnej_rezervovana_slova(char *slovo);
+/*FUNKCIE*/
 
 /* klicova slova */
 const char *klicova_slova[POCET_KLICOVYCH_SLOV] =
@@ -135,8 +43,8 @@ static void vrat_se_o_znak(int znak)
 
 static tStav porovnej_rezervovana_slova(char *slovo)
 {
-  for (int i = 0; i < POCET_KLICOVYCH_SLOV; i++)
-    if (!(strcmp(slovo, klicova_slova[i]))) return S_KLICOVE_SLOVO;
+  for (int i = S_KLIC_BEGIN; i < POCET_KLICOVYCH_SLOV; i++)
+    if (!(strcmp(slovo, klicova_slova[i]))) return i;
     return S_IDENTIFIKATOR;
 }
 
@@ -553,7 +461,28 @@ tToken get_token(void)
       break;
     }
     
-    case S_KLICOVE_SLOVO:
+
+    case S_KLIC_BEGIN:      // klucove slova
+    case S_KLIC_BOOLEAN:
+    case S_KLIC_DO:
+    case S_KLIC_ELSE:
+    case S_KLIC_END:
+    case S_KLIC_FALSE:
+    case S_KLIC_FIND:
+    case S_KLIC_FORWARD:
+    case S_KLIC_FUNCTION:
+    case S_KLIC_IF:
+    case S_KLIC_INTEGER:
+    case S_KLIC_READLN:
+    case S_KLIC_REAL:
+    case S_KLIC_SORT:
+    case S_KLIC_STRING:
+    case S_KLIC_THEN:
+    case S_KLIC_TRUE:
+    case S_KLIC_VAR:
+    case S_KLIC_WHILE:
+    case S_KLIC_WRITE:      // klucove slova potialto
+
     case S_CARKA:
     case S_STREDNIK:
     case S_PRIRAZENI:
