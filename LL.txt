@@ -1,0 +1,33 @@
+// main body
+  INIT -> VLIST FLIST begin STLIST end.
+
+// a section for declarations of variables
+  VLIST -> eps
+  VLIST -> var VDEC ; NVLIST
+
+  VDEC -> id : TYPE
+
+  NVLIST -> eps
+  NVLIST -> VDEC ; NVLIST
+
+  // types
+    TYPE -> integer
+    TYPE -> real
+    TYPE -> string
+    TYPE -> boolean
+
+// a section for declarations of functions
+  FLIST -> eps
+  FLIST -> function id ( PLIST ) : TYPE ; FUNC
+
+  FUNC -> forward ; FLIST 
+  FUNC -> VLIST begin STLIST end ; FLIST
+
+  PLIST -> eps
+  PLIST -> id : TYPE NPLIST
+
+  NPLIST -> eps
+  NPLIST -> ; id : TYPE NPLIST
+
+// a section for statements
+  STLIST -> eps
