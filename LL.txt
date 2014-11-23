@@ -1,13 +1,14 @@
 // main body
   INIT -> VLIST FLIST begin STLIST end.
 
-// a section for declarations of variables
-  VLIST -> eps
-  VLIST -> var VDEC ; NVLIST
 
-  VDEC -> id : TYPE
+// section for declarations of variables
+  VLIST -> eps                               
+  VLIST -> var VDEC ; NVLIST                
 
-  NVLIST -> eps
+  VDEC -> id : TYPE                          
+
+  NVLIST -> eps                             
   NVLIST -> VDEC ; NVLIST
 
   // types
@@ -16,18 +17,76 @@
     TYPE -> string
     TYPE -> boolean
 
-// a section for declarations of functions
-  FLIST -> eps
+
+// section for declarations of functions
+  FLIST -> eps                                     
   FLIST -> function id ( PLIST ) : TYPE ; FUNC
 
-  FUNC -> forward ; FLIST 
-  FUNC -> VLIST begin STLIST end ; FLIST
+  FUNC -> forward ; FLIST                           // a prototype of a function
+  FUNC -> VLIST begin STLIST end ; FLIST            // a dec. of a function 
 
-  PLIST -> eps
+  PLIST -> eps                                      
   PLIST -> id : TYPE NPLIST
 
   NPLIST -> eps
   NPLIST -> ; id : TYPE NPLIST
 
-// a section for statements
+
+// section for statement lists and statements
   STLIST -> eps
+  STLIST -> STAT NSTLIST
+
+  NSTLIST -> eps                             
+  NSTLIST -> ; STAT NSTLIST
+
+  STAT -> id := RHS
+  STAT -> if E then BSTAT else BSTAT
+  STAT -> while E do BSTAT
+  STAT -> readln ( id )
+  STAT -> write ( SPLIST )
+  
+  RHS -> E                              // the precedence parser will be used
+  RHS -> fid ( SPLIST )
+
+  BSTAT -> begin STLIST end
+
+  SPLIST -> eps
+  SPLIST -> id NSPLIST
+
+  NSPLIST -> eps
+  NSPLIST -> , id NSPLIST
+
+
+// Rules for the precedence parser
+  E -> E * E
+  E -> E / E
+  E -> E + E
+  E -> E - E
+  E -> E < E
+  E -> E > E
+  E -> E <= E
+  E -> E >= E
+  E -> E = E
+  E -> E <> E
+  E -> ( E )
+  E -> id
+
+
+// Abbreviations used in this document
+
+  INIT      initial rule
+  VLIST     list of variables declarations
+  FLIST     list of decs. of functions
+  STLIST    statement list
+  NSTLIST   next STLIST
+  VDEC      declaration of a variable
+  NVLIST    next VLIST
+  PLIST     list of parameters used while dec. of a function
+  NPLIST    next PLIST
+  FUNC      definition of a function or prototype of a function
+  STAT      statement
+  BSTAT     block statement
+  RHS       right hand side (used for asignment)
+  E         expression
+  SPLIST    list of params used while a function call
+  NSPLIST   next SPLIST
