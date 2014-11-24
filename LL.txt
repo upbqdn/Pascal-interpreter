@@ -50,7 +50,7 @@
 
   BSTAT -> begin STLIST end
 
-  SPLIST -> eps
+  SPLIST -> eps                      // pridane pravidla
   SPLIST -> id NSPLIST
   SPLIST -> integer NSPLIST
   SPLIST -> real NSPLIST
@@ -59,7 +59,7 @@
   SPLIST -> False NSPLIST
 
 
-  NSPLIST -> eps
+  NSPLIST -> eps                      // pridane pravidla
   NSPLIST -> , id NSPLIST
   NSPLIST -> , integer NSPLIST
   NSPLIST -> , real NSPLIST
