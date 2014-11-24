@@ -1,5 +1,6 @@
 /*
 ** @author Filip Ježovica xjezov01
+** @author Eduard Rybár
 **
 */
 /* hlavickove soubory */
@@ -13,6 +14,157 @@ void extractRule()
 {
 	switch(myTop(&S))
 	{
+		case LL_INIT:
+			{
+			    myPop(&S);
+			    myPushMul(&S, 6, LL_VLIST, LL_FLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, S_TECKA);
+			    // INIT -> VLIST FLIST begin STLIST end.
+			}
+			break;
+
+			case LL_VLIST:
+			if (actToken.stav == S_KLIC_VAR)
+			{
+			    myPop(&S);
+			    myPushMul(&S, 4, S_KLIC_VAR, LL_VDEC, S_STREDNIK, LL_NVLIST);
+			    // VLIST -> var VDEC ; NVLIST
+			}
+			else // eps prechod
+			{
+			    myPop(&S);
+			    // VLIST -> eps
+			}
+			break;
+
+
+			case LL_VDEC:
+			if (actToken.stav == S_IDENTIFIKATOR)
+			{
+			    myPop(&S);
+			    myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
+			    // VDEC -> id : TYPE
+			}
+			break;
+
+
+			case LL_NVLIST:
+			if (actToken.stav == S_IDENTIFIKATOR)
+			{
+			    myPop(&S);
+			    myPushMul(&S, 3, LL_VDEC, S_STREDNIK, LL_NVLIST);
+			    //  NVLIST -> VDEC ; NVLIST
+			}
+			else // eps prechod
+			{
+			    myPop(&S);
+			    //  NVLIST -> eps
+			}
+			break;
+
+
+
+			case LL_TYPE:
+
+			switch(actToken.stav) //pri deklaracii
+
+			case S_KLIC_INTEGER:
+			{
+			myPop(&S);
+			myPush(&S, S_KLIC_INTEGER);
+			}
+			break;
+
+			case S_KLIC_REAL:
+			{
+			    myPop(&S);
+			    myPush(&S, S_KLIC_REAL);
+			}
+			break;
+
+			case S_KLIC_STRING:
+			{
+			    myPop(&S);
+			    myPush(&S, S_KLIC_STRING);
+			}
+			break;
+
+			case S_KLIC_BOOLEAN:
+			{
+			    myPop(&S);
+			    myPush(&S, S_KLIC_BOOLEAN);
+			}
+			break;
+
+			default:
+			{
+			    // chyba !!
+			}
+			break;
+
+
+			case LL_FLIST:
+			if (actToken.stav == S_KLIC_FUNCTION)
+			{
+			    myPop(&S);
+			    myPushMul(&S, 9, S_KLIC_FUNCTION, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_PLIST, S_PRAVA_ZAVORKA, S_DVOJTECKA, LL_TYPE, S_STREDNIK, LL_FUNC);
+			    //  FLIST -> function id ( PLIST ) : TYPE ; FUNC
+			}
+			else // eps prechod
+			{
+			    myPop(&S);
+			    //  FLIST -> eps
+			}
+			break;
+
+			case LL_FUNC:
+			if (actToken.stav == S_KLIC_FORWARD)
+			{
+			    myPop(&S);
+			    myPushMul(&S, 3, S_KLIC_FORWARD, S_STREDNIK, LL_FLIST);
+			    // FUNC -> forward ; FLIST
+			}
+			else if((actToken.stav == S_KLIC_VAR ) || (actToken.stav == S_KLIC_BEGIN) )
+			{
+			    myPop(&S);
+			    myPushMul(&S, 6, LL_VLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, S_STREDNIK, LL_FLIST );
+			    // FUNC -> VLIST begin STLIST end ; FLIST
+			}
+			else
+			{
+			    /* nejaka chybyčka */
+			}
+			break;
+
+
+			case LL_PLIST:
+			if (actToken.stav == S_IDENTIFIKATOR)
+			{
+			    myPop(&S);
+			    myPushMul(&S, 4, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
+			    // PLIST -> id : TYPE NPLIST
+			}
+			else // eps prechod
+			{
+			    myPop(&S);
+			    // PLIST -> eps
+			}
+			break;
+
+
+			case LL_NPLIST:
+			if (actToken.stav == S_STREDNIK)
+			{
+			    myPop(&S);
+			    myPushMul(&S, 5, S_STREDNIK, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
+			    // NPLIST -> ; id : TYPE NPLIST
+			}
+			else // eps prechod
+			{
+			    myPop(&S);
+			    // NPLIST -> eps
+			}
+			break;
+
 		
 		//------------------STLIST------------------------// 
 		case  LL_STLIST:
