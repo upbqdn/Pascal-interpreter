@@ -41,13 +41,15 @@ void myPush(stack *S ,int data)
 void myPushMul(stack *S ,int num, ...)
 {
 	va_list valist;
+	int array[num];
     va_start(valist, num);
     for (int i = 0; i < num; i++)
     {
-    stack_element pomocna = malloc(sizeof(struct stack_elementS));
-	pomocna->data = va_arg(valist, int);;
-	pomocna->ptr_next = S->First;
-	S->First = pomocna;
+    	array[i] = va_arg(valist, int);
+    }
+    for (int j = num; j >= 0; j--)
+    {
+    	myPush(S, array[j]);
     }
     va_end(valist);
 }
@@ -91,12 +93,16 @@ void destroyStack(stack *S)
 /*int main()
 {
 	stack_init(&S);
-	myPushMul(&S, 3, 5 ,4, 3);
-	myTop(&S);
+	myPushMul(&S ,5, 1,2,3,4,5);
+	printf("%d\n", myTop(&S));
 	myPop(&S);
-	myTop(&S);
+	printf("%d\n", myTop(&S));
 	myPop(&S);
-	myTop(&S);
+	printf("%d\n", myTop(&S));
+	myPop(&S);
+	printf("%d\n", myTop(&S));
+	myPop(&S);
+	printf("%d\n", myTop(&S));
 	myPop(&S);
 	destroyStack(&S);
  	return 0;
