@@ -29,7 +29,7 @@ int main()
   		bool parsEXT;
   		parsEXT = parse();
 
-  		printf("%d\n",parsEXT );
+  		printf("%d hovno \n",parsEXT );
 
 	return 0;
 }

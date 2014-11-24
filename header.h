@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdarg.h>
 
 /* chyby a chybove kody */
 typedef enum ERROR
@@ -95,9 +96,22 @@ typedef enum
     S_DOUBLE_POMOCDES3,
     S_DOUBLE_POMOCDES4,
 
-    LL_INIT, // DOPLNAM PRE SYNTAKTICKU ANALIZU NETERMINALY
+    LL_INIT,
+    LL_VLIST,
+    LL_VDEC,
+    LL_NVLIST,
+    LL_TYPE,
+    LL_FLIST,
+    LL_FUNC,
+    LL_PLIST,
+    LL_NPLIST,
     LL_STLIST,
+    LL_NSTLIST,
     LL_STAT,
-    LL_EXP,
+    LL_RHS,
+    LL_BSTAT,
+    LL_SPLIST,
+    LL_NSPLIST,
+    LL_E,
 
 } tStav;

@@ -63,43 +63,45 @@ void extractRule()
 
 
 
-			case LL_TYPE:
+			/*case LL_TYPE:
+				{
+				switch(actToken.stav) //pri deklaracii
 
-			switch(actToken.stav) //pri deklaracii
+					case S_KLIC_INTEGER:
+					{
+					myPop(&S);
+					myPush(&S, S_KLIC_INTEGER);
+					}
+					break;
 
-			case S_KLIC_INTEGER:
-			{
-			myPop(&S);
-			myPush(&S, S_KLIC_INTEGER);
-			}
-			break;
+					case S_KLIC_REAL:
+					{
+					    myPop(&S);
+					    myPush(&S, S_KLIC_REAL);
+					}
+					break;
 
-			case S_KLIC_REAL:
-			{
-			    myPop(&S);
-			    myPush(&S, S_KLIC_REAL);
-			}
-			break;
+					case S_KLIC_STRING:
+					{
+					    myPop(&S);
+					    myPush(&S, S_KLIC_STRING);
+					}
+					break;
 
-			case S_KLIC_STRING:
-			{
-			    myPop(&S);
-			    myPush(&S, S_KLIC_STRING);
-			}
-			break;
+					case S_KLIC_BOOLEAN:
+					{
+					    myPop(&S);
+					    myPush(&S, S_KLIC_BOOLEAN);
+					}
+					break;
 
-			case S_KLIC_BOOLEAN:
-			{
-			    myPop(&S);
-			    myPush(&S, S_KLIC_BOOLEAN);
-			}
-			break;
-
-			default:
-			{
-			    // chyba !!
-			}
-			break;
+					default:
+					{
+					    // chyba !!
+					}
+					break;
+				}
+				break;   */
 
 
 			case LL_FLIST:
@@ -229,21 +231,22 @@ void extractRule()
 				     case S_KLIC_READLN:
 
 				     		myPop(&S);
-				     		myPushMul(&S 4, S_KLIC_READLN, S_LEVA_ZAVORKA, S_IDENTIFIKATOR, S_PRAVA_ZAVORKA);
+				     		myPushMul(&S, 4, S_KLIC_READLN, S_LEVA_ZAVORKA, S_IDENTIFIKATOR, S_PRAVA_ZAVORKA);
 				     		break;
 
 				     case S_KLIC_WRITE:
 
 				     		myPop(&S);
-				     		myPushMul(&S 4, S_KLIC_WRITE, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA);
+				     		myPushMul(&S, 4, S_KLIC_WRITE, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA);
 				     		break;
 			    
-			     default:   // co tu ? chyba alebo nie ?
+			         default:   // co tu ? chyba alebo nie ?
 
 
 				    break;
 
 			  }		
+			  break;
 
 
 		//--------------------------RHS----------------------//
@@ -292,18 +295,18 @@ void extractRule()
 			  	myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_REAL)
+		     	  else if (actToken.stav == S_KLIC_REAL)
 		     	  {
 
 			  	myPop(&S);
-			  	myPushMul(&S, 2, S_REAL, LL_NSPLIST);
+			  	myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_STRING)
+		     	  else if (actToken.stav == S_KLIC_STRING)
 		     	  {
 
 			  	myPop(&S);
-			  	myPushMul(&S, 2, S_STRING, LL_NSPLIST);
+			  	myPushMul(&S, 2, S_KLIC_STRING, LL_NSPLIST);
 
 		     	  }	
 		     	  else if (actToken.stav == S_KLIC_TRUE)
@@ -345,18 +348,18 @@ void extractRule()
 			  	myPushMul(&S, 3, S_CARKA, S_INTEGER, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_REAL)
+		     	  else if (actToken.stav == S_KLIC_REAL)
 		     	  {
 
 			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_REAL, LL_NSPLIST);
+			  	myPushMul(&S, 3, S_CARKA, S_KLIC_REAL, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_STRING)
+		     	  else if (actToken.stav == S_KLIC_STRING)
 		     	  {
 
 			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_STRING, LL_NSPLIST);
+			  	myPushMul(&S, 3, S_CARKA, S_KLIC_STRING, LL_NSPLIST);
 
 		     	  }	
 		     	  else if (actToken.stav == S_KLIC_TRUE)
@@ -397,20 +400,25 @@ bool parse()
 	{
 		if (myTop(&S) == EOF && actToken.stav != S_END_OF_FILE)
 		{
-			//CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor 
+			//CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor
+			printf("CHZBA\n"); 
 		}
-		else if (myTop(&S) >= LL_INIT && myTop(&S) <= LL_EXP )  // TERMINAL/NETERMINAL
+		else if (myTop(&S) >= LL_INIT && myTop(&S) <= LL_NSPLIST )  // TERMINAL/NETERMINAL
 		{
 			// NETERMINAL  velke mismenka
+			printf("PUSTAM EXTRACT\n");
 			extractRule(); // rozvin pravidla...
+			printf("HOTOVO EXTRACT\n");
 		}
 		else
 		{
 			// TERMINAL male pismenka
 			if (myTop(&S) == actToken.stav)
 			{
+				printf("PUSTAM TERMINAL GET TOKEN\n");
 				myPop(&S);	// odstranime z vrcholu zasobnika
 				actToken = get_token(); // nacitame novy token
+				printf("KOEC TERMINAL GET TOKEN\n");
 			}
 		}
 	}
