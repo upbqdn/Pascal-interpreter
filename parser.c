@@ -14,222 +14,222 @@ void extractRule()
 	switch(myTop(&S))
 	{
 		
-//------------------STLIST------------------------// 
-case  LL_STLIST:
-          if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
-          {
+		//------------------STLIST------------------------// 
+		case  LL_STLIST:
+			  if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
+			  {
 
-          	myPop(&S);
-          	myPushMul(&S, 2, LL_STAT, LL_NSTLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 2, LL_STAT, LL_NSTLIST);
 			
-          }
-          else 
-          {
+			  }
+			  else 
+			  {
 
-          	myPop(&S);
+			  	myPop(&S);
 
-          }
+			  }
 
-          break;
+			  break;
 
 
-//--------------------NSTLIST---------------------//
-case  LL_NSTLIST:
-          if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
-          {
+		//--------------------NSTLIST---------------------//
+		case  LL_NSTLIST:
+			  if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
+			  {
 
-          	myPop(&S);
-          	myPushMul(&S, 3, S_STREDNIK, LL_STAT, LL_NSTLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_STREDNIK, LL_STAT, LL_NSTLIST);
 			
-          }
-          else 
-          {
+			  }
+			  else 
+			  {
 
-          	myPop(&S);
+			  	myPop(&S);
 
-          }
+			  }
 
-          break;
-
-
-//------------------------STAT--------------------//
-case  LL_STAT:
-          switch(actToken.stav)
-	      {
-		     case S_IDENTIFIKATOR:
-
-		     		myPop(&S);
-             		myPushMul(&S, 3, S_IDENTIFIKATOR, S_PRIRAZENI, LL_RHS);
-		     		break;
-
-		     case S_KLIC_WHILE:
-
-		     		myPop(&S);      // mozna zmena LL_E //
-		     		myPushMul(&S, 4, S_KLIC_WHILE, LL_E, S_KLIC_DO, LL_BSTAT);
-             		break;
-
-		     case S_KLIC_IF:
-
-		     		myPop(&S);      // mozna zmena LL_E //
-		     		myPushMul(&S, 6, S_KLIC_IF, LL_E, S_KLIC_THEN, LL_BSTAT, S_KLIC_ELSE, LL_BSTAT);
-		     		break;
-
-		     case S_KLIC_READLN:
-
-		     		myPop(&S);
-		     		myPushMul(&S 4, S_KLIC_READLN, S_LEVA_ZAVORKA, S_IDENTIFIKATOR, S_PRAVA_ZAVORKA);
-		     		break;
-
-		     case S_KLIC_WRITE:
-
-		     		myPop(&S);
-		     		myPushMul(&S 4, S_KLIC_WRITE, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA);
-		     		break;
-            
-             default:   // co tu ? chyba alebo nie ?
+			  break;
 
 
-                    break;
+		//------------------------STAT--------------------//
+		case  LL_STAT:
+			  switch(actToken.stav)
+			      {
+				     case S_IDENTIFIKATOR:
 
-          }		
+				     		myPop(&S);
+			     		myPushMul(&S, 3, S_IDENTIFIKATOR, S_PRIRAZENI, LL_RHS);
+				     		break;
+
+				     case S_KLIC_WHILE:
+
+				     		myPop(&S);      // mozna zmena LL_E //
+				     		myPushMul(&S, 4, S_KLIC_WHILE, LL_E, S_KLIC_DO, LL_BSTAT);
+			     		break;
+
+				     case S_KLIC_IF:
+
+				     		myPop(&S);      // mozna zmena LL_E //
+				     		myPushMul(&S, 6, S_KLIC_IF, LL_E, S_KLIC_THEN, LL_BSTAT, S_KLIC_ELSE, LL_BSTAT);
+				     		break;
+
+				     case S_KLIC_READLN:
+
+				     		myPop(&S);
+				     		myPushMul(&S 4, S_KLIC_READLN, S_LEVA_ZAVORKA, S_IDENTIFIKATOR, S_PRAVA_ZAVORKA);
+				     		break;
+
+				     case S_KLIC_WRITE:
+
+				     		myPop(&S);
+				     		myPushMul(&S 4, S_KLIC_WRITE, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA);
+				     		break;
+			    
+			     default:   // co tu ? chyba alebo nie ?
 
 
-//--------------------------RHS----------------------//
-case  LL_RHS:
-          if (actToken.stav == S_IDENTIFIKATOR )     // !!!!!treba zmenit (FUNKCIA)
-          {
+				    break;
 
-          	myPop(&S);
-          	myPushMul(&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
-          	
+			  }		
+
+
+		//--------------------------RHS----------------------//
+		case  LL_RHS:
+			  if (actToken.stav == S_IDENTIFIKATOR )     // !!!!!treba zmenit (FUNKCIA)
+			  {
+
+			  	myPop(&S);
+			  	myPushMul(&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
+			  	
 			
-          }
-          else 
-          {
+			  }
+			  else 
+			  {
 
-          	myPop(&S);
+			  	myPop(&S);
 
-          }
-          break;
-
-
-//---------------BSTAT---------------//
-case  LL_BSTAT:
-          {
-
-          	myPop(&S);
-          	myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END );
-			         
-          }
-          break;
+			  }
+			  break;
 
 
+		//---------------BSTAT---------------//
+		case  LL_BSTAT:
+			  {
 
-//--------------SPLIST------------------//
-case  LL_SPLIST:                                              // rozne stavy mozu byt dplnit else if
-          if (actToken.stav == S_IDENTIFIKATOR )     
-          {
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END );
+						 
+			  }
+			  break;
 
-          	myPop(&S);
-          	myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
+
+
+		//--------------SPLIST------------------//
+		case  LL_SPLIST:                                              // rozne stavy mozu byt dplnit else if
+			  if (actToken.stav == S_IDENTIFIKATOR )     
+			  {
+
+			  	myPop(&S);
+			  	myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
 			
-          }
-     	  else if (actToken.stav == S_INTEGER)
-     	  {
-          	myPop(&S);
-          	myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
+			  }
+		     	  else if (actToken.stav == S_INTEGER)
+		     	  {
+			  	myPop(&S);
+			  	myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_REAL)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_REAL)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 2, S_REAL, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 2, S_REAL, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_STRING)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_STRING)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 2, S_STRING, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 2, S_STRING, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_KLIC_TRUE)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_KLIC_TRUE)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_KLIC_FALSE)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_KLIC_FALSE)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
 
-     	  }	
-          else
-          {
+		     	  }	
+			  else
+			  {
 
-          	myPop(&S);
+			  	myPop(&S);
 
-          }
-          break;   
+			  }
+			  break;   
 
 
 
-//  -----------NSPLIST-------------------//
-case  LL_NSPLIST:
-          if (actToken.stav == S_IDENTIFIKATOR )     
-          {
+		//  -----------NSPLIST-------------------//
+		case  LL_NSPLIST:
+			  if (actToken.stav == S_IDENTIFIKATOR )     
+			  {
 
-          	myPop(&S);
-          	myPushMul(&S, 3, S_CARKA, S_IDENTIFIKATOR, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_CARKA, S_IDENTIFIKATOR, LL_NSPLIST);
 			
-          }
-          else if (actToken.stav == S_INTEGER)
-     	  {
-          	myPop(&S);
-          	myPushMul(&S, 3, S_CARKA, S_INTEGER, LL_NSPLIST);
+			  }
+			  else if (actToken.stav == S_INTEGER)
+		     	  {
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_CARKA, S_INTEGER, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_REAL)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_REAL)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 3, S_CARKA, S_REAL, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_CARKA, S_REAL, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_STRING)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_STRING)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 3, S_CARKA, S_STRING, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_CARKA, S_STRING, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_KLIC_TRUE)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_KLIC_TRUE)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 3, S_CARKA, S_KLIC_TRUE, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_CARKA, S_KLIC_TRUE, LL_NSPLIST);
 
-     	  }	
-     	  else if (actToken.stav == S_KLIC_FALSE)
-     	  {
+		     	  }	
+		     	  else if (actToken.stav == S_KLIC_FALSE)
+		     	  {
 
-          	myPop(&S);
-          	myPushMul(&S, 3, S_CARKA, S_KLIC_FALSE, LL_NSPLIST);
+			  	myPop(&S);
+			  	myPushMul(&S, 3, S_CARKA, S_KLIC_FALSE, LL_NSPLIST);
 
-     	  }	
-          else 
-          {
+		     	  }	
+			  else 
+			  {
 
-          	myPop(&S);
+			  	myPop(&S);
 
-          }
+			  }
 
-          break; 
-	}
+			  break; 
+			}
 }
 
 
