@@ -52,9 +52,20 @@
 
   SPLIST -> eps
   SPLIST -> id NSPLIST
+  SPLIST -> integer NSPLIST
+  SPLIST -> real NSPLIST
+  SPLIST -> string NSPLIST
+  SPLIST -> True NSPLIST
+  SPLIST -> False NSPLIST
+
 
   NSPLIST -> eps
   NSPLIST -> , id NSPLIST
+  NSPLIST -> , integer NSPLIST
+  NSPLIST -> , real NSPLIST
+  NSPLIST -> , string NSPLIST
+  NSPLIST -> , True NSPLIST
+  NSPLIST -> , False NSPLIST
 
 
 // Rules for the precedence parser
