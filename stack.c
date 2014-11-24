@@ -35,6 +35,24 @@ void myPush(stack *S ,int data)
 }
 
 /*
+ *Funkcia ktora ulozi na zasobnik niekolko hodnot podla poctu argumentov
+ *Parameter: Zasobnik, pocet dalsich parametrov a vkladanane hodnoty
+ */
+void myPushMul(stack *S ,int num, ...)
+{
+	va_list valist;
+    va_start(valist, num);
+    for (int i = 0; i < num; i++)
+    {
+    stack_element pomocna = malloc(sizeof(struct stack_elementS));
+	pomocna->data = va_arg(valist, int);;
+	pomocna->ptr_next = S->First;
+	S->First = pomocna;
+    }
+    va_end(valist);
+}
+
+/*
  *Funkcia na popnutie vrcholu zasobniku
  *Parameter: Zasobnik
  */
@@ -51,6 +69,7 @@ void myPop(stack *S)
  */
 int myTop(stack *S)
 {
+	printf("%d\n", S->First->data);
 	return S->First->data;
 }
 
@@ -73,12 +92,13 @@ void destroyStack(stack *S)
 /*int main()
 {
 	stack_init(&S);
-	myPush(&S, 5);
-	myTop(&S);
-	myPush(&S, 6);
+	myPushMul(&S, 3, 5 ,4, 3);
 	myTop(&S);
 	myPop(&S);
 	myTop(&S);
+	myPop(&S);
+	myTop(&S);
+	myPop(&S);
 	destroyStack(&S);
  	return 0;
 }*/

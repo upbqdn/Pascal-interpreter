@@ -8,6 +8,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 /*
  *Deklaracia struktur a premennych
@@ -28,6 +29,7 @@ typedef struct //samotny zasobnik
  */
 void stack_init(stack *); //inicializacia zasobniku
 void myPush(stack *, int); //pushnutie hodnoty na zasobnik
+void myPushMul(stack *, int, ...); //pushnutie niekolkych hodnoty na zasobnik, poct je podla 2 argumentu
 void myPop(stack *); //popnutie hodnoty zo zasobniku
 int myTop(stack *); //precitaniestack *S hodnoty z vrchola zasobniku
 void destroyStack(stack *); //zrusi vsetky prvky zoasobniku
