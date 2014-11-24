@@ -78,6 +78,58 @@
 %% Priloha B - LL gramatika %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Príloha B - LL gramatika}
+1. \textit{INIT} $\rightarrow$ \textit{VLIST} \textit{FLIST} \texttt{begin} \textit{STLIST} \texttt{end .}\\
+2. \textit{VLIST} $\rightarrow$ $\varepsilon$\\
+3. \textit{VLIST} $\rightarrow$ \texttt{var} \textit{VDEC} \texttt{;} \textit{NVLIST}\\
+4. \textit{VDEC} $\rightarrow$ \texttt{id :} \textit{TYPE}\\
+5. \textit{NVLIST} $\rightarrow$ $\varepsilon$\\
+6. \textit{NVLIST} $\rightarrow$ \textit{VDEC} \texttt{;} \textit{NVLIST}\\
+7. \textit{TYPE} $\rightarrow$ \texttt{integer}\\
+8. \textit{TYPE} $\rightarrow$ \texttt{real}\\
+9. \textit{TYPE} $\rightarrow$ \texttt{string}\\
+10.\textit{TYPE} $\rightarrow$ \texttt{boolean}\\
+11.\textit{FLIST} $\rightarrow$ $\varepsilon$\\
+12. \textit{FLIST} $\rightarrow$ \texttt{function id (} \textit{PLIST} \texttt{) : } \textit{TYPE} \texttt{;} \textit{FUNC}\\
+13. \textit{FUNC} $\rightarrow$ \texttt{forward ;} \textit{FLIST}\\
+14. \textit{FUNC} $\rightarrow$ \textit{VLIST} \texttt{begin} \textit{STLIST} \texttt{end ;} \textit{FLIST}\\
+15. \textit{PLIST} $\rightarrow$ $\varepsilon$\\
+16. \textit{PLIST} $\rightarrow$ \texttt{id ;} \textit{TYPE NPLIST}\\
+17. \textit{NPLIST} $\rightarrow$ $\varepsilon$\\
+18. \textit{NPLIST} $\rightarrow$ \texttt{; id :} \textit{TYPE NPLIST}\\
+19. \textit{STLIST} $\rightarrow$ $\varepsilon$\\
+20. \textit{STLIST} $\rightarrow$ \textit{STAT NSTLIST}\\
+21. \textit{NSTLIST} $\rightarrow$ $\varepsilon$\\
+22. \textit{STLIST} $\rightarrow$ \texttt{ ; } \textit{STAT NSTLIST}\\
+23. \textit{STAT} $\rightarrow$ \texttt{ id := } \textit{RHS}\\
+24. \textit{STAT} $\rightarrow$ \texttt{ id := } \textit{RHS}\\
+
+  STAT -> if E then BSTAT else BSTAT
+  STAT -> while E do BSTAT
+  STAT -> readln ( id )
+  STAT -> write ( SPLIST )
+  
+  RHS -> E                              // the precedence parser will be used
+  RHS -> fid ( SPLIST )
+
+  BSTAT -> begin STLIST end
+
+  SPLIST -> eps                      // pridane pravidla
+  SPLIST -> id NSPLIST
+  SPLIST -> integer NSPLIST
+  SPLIST -> real NSPLIST
+  SPLIST -> string NSPLIST
+  SPLIST -> True NSPLIST
+  SPLIST -> False NSPLIST
+
+
+  NSPLIST -> eps                      // pridane pravidla
+  NSPLIST -> , id NSPLIST
+  NSPLIST -> , integer NSPLIST
+  NSPLIST -> , real NSPLIST
+  NSPLIST -> , string NSPLIST
+  NSPLIST -> , True NSPLIST
+  NSPLIST -> , False NSPLIST
+
 \newpage
 
 \end{document}

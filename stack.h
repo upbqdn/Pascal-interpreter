@@ -33,3 +33,4 @@ void myPushMul(stack *, int, ...); //pushnutie niekolkych hodnoty na zasobnik, p
 void myPop(stack *); //popnutie hodnoty zo zasobniku
 int myTop(stack *); //precitaniestack *S hodnoty z vrchola zasobniku
 void destroyStack(stack *); //zrusi vsetky prvky zoasobniku
+void showStack(stack *); //funkcia na vypis celeho zasobniku pre testovacie ucely
