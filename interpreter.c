@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include "ial.h"
 #include "header.h"
+#include "interpreter.h"
 
 
 int inter() // doplnit predavanie
