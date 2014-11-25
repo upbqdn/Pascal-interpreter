@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "IAL.h"
 #include "header.h"
 
