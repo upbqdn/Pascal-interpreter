@@ -1,10 +1,10 @@
 /*
 -----------------------------------------------------
- *Autors: Marek Bielik    bieli05@stud.fit.vutbr.cz
- 	        Filip Gulan 	   xgulan00@stud.fit.vutbr.cz
-          Filip Ježovica  xjezov01@stud.fit.vutbr.cz
-          Luboš Matouška  xmatus29@stud.fit.vutbr.cz
-          Eduard Rybár 	  xrybar04@stud.fit.vutbr.cz
+ *@Author: Marek Bielik    bieli05@stud.fit.vutbr.cz
+  @Author: Filip Gulan 	   xgulan00@stud.fit.vutbr.cz
+  @Author: Filip Ježovica  xjezov01@stud.fit.vutbr.cz
+  @Author: Luboš Matouška  xmatus29@stud.fit.vutbr.cz
+  @Author: Eduard Rybár 	  xrybar04@stud.fit.vutbr.cz
 -----------------------------------------------------          
 */
 
