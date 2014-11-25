@@ -25,9 +25,29 @@ int inter() // doplnit predavanie
 
         	case I_SORT:
              
-                                    // doplnit sortovanie
+                   sort()                  // doplnit sortovanie parametre
 
             break;
+
+            case I_FIND:
+             
+                  find()                  // doplnit find parametre
+
+            break;
+
+            case I_LENGTH:
+             
+                                    // doplnit length
+            break;
+
+            case I_COPY:
+             
+                    podretazec=malloc(sizeof (char)*dlzka);            // zatial len na konkretny pripad
+                    copy(retazec, i, n, *podretazec);
+
+            break;
+
+        
         
         	default:  
                   // tuto bude asi chybicka nejaka 
