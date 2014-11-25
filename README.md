@@ -9,16 +9,16 @@ Autori
 4. @Author: Luboš Matouška	xmatus29@stud.fit.vutbr.cz  
 5. @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz  
   
-Hotové veci:
+Hotové veci možno menšie zmeny už iba:
 ------------
-knižnica ial
-knižnica stack
-knižnica scaner
+1. ial
+2. buildin
+3. main
+4. scaner
+5. whattoken
+6. scaner
 
-Rozpracované veci:
+Rozpracované veci veľke zmeny ešte treba:
 ------------------
-knižnica parser
-
-Nezačaté:
----------
-knižnica interpreter
+1. parser
+2. interpreter
