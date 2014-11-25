@@ -436,7 +436,7 @@ bool parse()
 				printf("KOEC TERMINAL GET TOKEN token je "); whattoken( actToken.stav);
 				printf("KOEC TERMINAL GET TOKEN TOP  je "); whattoken(myTop(&S)) ;
 			}
-			els
+			else
 			{
 				printf("mas to napicu ja som cakal  >> "); whattoken(myTop(&S));
 				printf("mas to napicu NAPISAL SI    >> "); whattoken( actToken.stav);
