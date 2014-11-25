@@ -1,6 +1,13 @@
 /*
- *Autor: Filip Gulan xgulan00@stud.fit.vutbr.cz
- *	 Eduar Rybár xrybar04@stud.fit.vutbr.cz
+ *Autors: Marek Bielik  	bieli05@stud.fit.vutbr.cz
+ 	  Filip Gulan 	xgulan00@stud.fit.vutbr.cz
+          Filip Ježovica xjezov01@stud.fit.vutbr.cz
+          Luboš Matouška xmatus29@stud.fit.vutbr.cz
+          Eduard Rybár 	xrybar04@stud.fit.vutbr.cz
+         
+*/
+
+/*
  *Kniznica obsahujuca funkcie na pracu so zasobnikom.
  */
 
