@@ -7,7 +7,7 @@
 /*
  *Nainkludovanie hackoveho suboru
  */
-#include "stack.h"
+#include "buildin.h"
 
 /*
  *Premenne definicie
