@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include "header.h"
 #include "scanner.h"
 #include "stack.h"
 #include "prec.h"
