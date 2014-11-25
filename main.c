@@ -32,7 +32,9 @@ int main()
 
       printf("GREAT WORK %d\n", parsEXT);
 
-  		
+  	  free(actToken.data);
+
+      fclose(soubor);
 
 	return 0;
 }
