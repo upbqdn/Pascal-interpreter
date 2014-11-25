@@ -1,5 +1,6 @@
 /*
  *Autor: Filip Gulan xgulan00@stud.fit.vutbr.cz
+ *	 Eduar Rybár xrybar04@stud.fit.vutbr.cz
  *Kniznica obsahujuca funkcie na pracu so zasobnikom.
  */
 
@@ -30,7 +31,21 @@ void copy(char *s, int i, int n, char *podretazec )
   
   }
 
-
+/*
+ *Funkcia lenght na zistenie dlzky retazca
+ *Parameter: retazec ktoreho dlzku chceme pocitat
+ */
+int lenght(char *str)
+{
+	int i = 0;
+	char c = str[i];
+	while(c != '\0')
+	{
+		i++;
+		c = str[i];
+	}
+	return i;
+}
 
 /*int main()
 {
