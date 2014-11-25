@@ -5,14 +5,12 @@
 #include <string.h>
 #include "scanner.h"
 #include "stack.h"
+#include "prec.h"
 
-#define MAX_PT 18
-stack s;
-tToken token;
 int ahoj_jsem_pomoc = 999;
 int chyba = 0;
 int left = 111;
-const S_E = 18; 
+//const S_E = 42; 
 
 int magicFunction(int a)
 {
@@ -36,7 +34,7 @@ switch (a)
 	case S_DOUBLE: 					{return 15; break; }
 	case S_RETEZEC:					{return 16; break; }
 	case S_BOOLEAN:					{return 17; break; }
-	case S_E:						{return 18; break; }
+	//case S_E:						{return 18; break; }
 	default: 						{return 13; break; } 
 	 	
 }
@@ -47,28 +45,6 @@ switch (a)
 
 int isVyraz()
 {
-
-
-const char precedent_table[MAX_PT][MAX_PT] = {
-">>>>>>>>>><><><<<<", // *
-">>>>>>>>>><><><<<<", // /
-"<<>>>>>>>><><><<<<", // +
-"<<>>>>>>>><><><<<<", // -
-"<<<<>>>>>><><><<<<", // <
-"<<<<>>>>>><><><<<<", // >
-"<<<<>>>>>><><><<<<", // <=
-"<<<<>>>>>><><><<<<", // >=
-"<<<<>>>>>><><><<<<", // =
-"<<<<>>>>>><><><<<<", // <>
-"<<<<<<<<<<<=<E<<<<", // (
-">>>>>>>>>>E>E>EEEE", // )
-">>>>>>>>>>E>E<EEEE", // id
-"<<<<<<<<<<<E<E<<<<", // $
-">>>>>>>>>>E>E<EEEE", // integer
-">>>>>>>>>>E>E<EEEE", // double
-">>>>>>>>>>E>E<EEEE", // string
-">>>>>>>>>>E>E<EEEE", // boolean
-};
 
 
 myPush(&s, 13);
@@ -87,13 +63,13 @@ do
 		}
 		case '<':
 		{
-			if (magicFunction(myTop(&s)) == S_E) {myPop(&s); pricti = 1;}
+			if ((myTop(&s)) == 42) {myPop(&s); pricti = 1;}
 			ahoj_jsem_pomoc = magicFunction(myTop(&s));
 			myPop(&s);
 			myPush(&s, left);
 			myPush(&s, ahoj_jsem_pomoc);
 			myPush(&s, b);
-			if (pricti == 1) { myPush(&s, S_E); }
+			if (pricti == 1) { myPush(&s, 42); }
 			get_token();
 			break;
 		}
@@ -104,43 +80,43 @@ do
 				case S_BOOLEAN: /* pravidlo c. 16 */
 				{
 						myPop(&s);
-						myPush(&s, magicFunction(S_E));
+						myPush(&s, 42);
 						break;
 				}
 				case S_INTEGER: /* 13 */
 				{
 						myPop(&s);
-						myPush(&s, magicFunction(S_E));
+						myPush(&s, 42);
 						break;
 				}
 				case S_DOUBLE: /* 14 */
 				{
 						myPop(&s);
-						myPush(&s, magicFunction(S_E));
+						myPush(&s, 42);
 						break;
 				}
 				case S_RETEZEC: /* 15 */
 				{
 						myPop(&s);
-						myPush(&s, magicFunction(S_E));
+						myPush(&s, 42);
 						break;
 				}
 				case S_IDENTIFIKATOR: /* 12 */
 				{
 						myPop(&s);
-						myPush(&s, magicFunction(S_E));
+						myPush(&s, 42);
 						break;
 				}
 				case S_PRAVA_ZAVORKA:
 				{
 						myPop(&s);
-						if (magicFunction(myTop(&s)) == magicFunction(S_E)) 
+						if ((myTop(&s)) == 42) 
 						{
 							myPop(&s);
-							if (magicFunction(myTop(&s)) == magicFunction(S_LEVA_ZAVORKA)) /* 11 */
+							if ((myTop(&s)) == magicFunction(S_LEVA_ZAVORKA)) /* 11 */
 							{
 								myPop(&s);
-								myPush(&s, S_E);
+								myPush(&s, 42);
 							}
 							else 
 							{
@@ -153,7 +129,7 @@ do
 						}
 						break;
 				}
-				case S_E:
+				case 42:
 				{		
 						myPop(&s);
 						switch (myTop(&s))
@@ -161,10 +137,10 @@ do
 							case S_KRAT:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 1 */
+								if ((myTop(&s)) == 42) /* 1 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -175,10 +151,10 @@ do
 							case S_DELENO:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 2 */
+								if ((myTop(&s)) == 42) /* 2 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -189,10 +165,10 @@ do
 							case S_PLUS:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 3 */
+								if ((myTop(&s)) == 42) /* 3 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -203,10 +179,10 @@ do
 							case S_MINUS:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 4 */
+								if ((myTop(&s)) == 42) /* 4 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -217,10 +193,10 @@ do
 							case S_MENSI:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 5 */
+								if ((myTop(&s)) == 42) /* 5 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -231,10 +207,10 @@ do
 							case S_VETSI:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 6 */
+								if ((myTop(&s)) == 42) /* 6 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -245,10 +221,10 @@ do
 							case S_MENSI_NEBO_ROVNO:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 7 */
+								if ((myTop(&s)) == 42) /* 7 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -259,10 +235,10 @@ do
 							case S_VETSI_NEBO_ROVNO:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 8 */
+								if ((myTop(&s)) == 42) /* 8 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -273,10 +249,10 @@ do
 							case S_ROVNO:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 9 */
+								if ((myTop(&s)) == 42) /* 9 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -287,10 +263,10 @@ do
 							case S_NEROVNO:
 							{
 								myPop(&s);
-								if (magicFunction(myTop(&s)) == magicFunction(S_E)) /* 10 */
+								if ((myTop(&s)) == 42) /* 10 */
 								{
 									myPop(&s);
-									myPush(&s, S_E);
+									myPush(&s, 42);
 								}
 								else 
 								{
@@ -316,3 +292,4 @@ while (!((magicFunction(myTop(&s) == S_DOLAR ) && ( magicFunction(token.stav) ==
 
 return chyba; /* if chyba == 0, tak je vyraz v poradku */
 }
+
