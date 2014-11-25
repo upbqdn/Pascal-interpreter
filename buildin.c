@@ -11,8 +11,24 @@
 /*
  *Premenne definicie
  */
-stack S; //zasobnik
+ //zasobnik
 
+ //------------------funkcia COPY----------------------//
+
+void copy(char *s, int i, int n, char *podretazec )
+  {
+
+  	 
+    for (int j = 0; j < n; j++)
+    {   
+    
+    	podretazec[j]=s[i-1+j];
+
+      //printf("%c\n", podretazec[j]);
+    }
+
+  
+  }
 
 
 

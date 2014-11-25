@@ -8,19 +8,33 @@ int inter() // doplnit predavanie
 	while(1)
 	{
       
-      switch() // doplnit
-      {
-        case I_WRITE:
+      	switch() // doplnit
+      	{
+      		case I_STOP:
+             return; 
+            break;
+
+            case I_READ:
+             scanf( );  // doplnit 
+            break;
+
+        	case I_WRITE:
              printf("%s\n", );   // doplnit
 
-        break;
+        	break;
+
+        	case I_SORT:
+             
+                                    // doplnit sortovanie
+
+            break;
         
-        default:  
+        	default:  
                   // tuto bude asi chybicka nejaka 
-        break  
+        	break  
 
 
-      }
+      	}
 
 
 	}
