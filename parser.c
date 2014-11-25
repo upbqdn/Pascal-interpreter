@@ -1,8 +1,13 @@
 /*
-** @author Filip Ježovica xjezov01
-** @author Eduard Rybár
-**
+-----------------------------------------------------
+ *@Author: Marek Bielik		xbieli05@stud.fit.vutbr.cz
+  @Author: Filip Gulan		xgulan00@stud.fit.vutbr.cz
+  @Author: Filip Ježovica	xjezov01@stud.fit.vutbr.cz
+  @Author: Luboš Matouška	xmatus29@stud.fit.vutbr.cz
+  @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz
+-----------------------------------------------------          
 */
+
 /* hlavickove soubory */
 #include "header.h"
 #include "stack.h"
@@ -435,6 +440,7 @@ bool parse()
 				printf("Pustam TERMINAL  actToken je "); whattoken( actToken.stav);
 				printf("PUSTAM TERMINAL  a mam na TOPE %d a zmazem ho "); whattoken(myTop(&S)) ;
 				myPop(&S);	// odstranime z vrcholu zasobnika
+				//free(actToken.data); // free
 				actToken = get_token(); // nacitame novy token
 				printf("KOEC TERMINAL GET TOKEN token je "); whattoken( actToken.stav);
 				printf("KOEC TERMINAL GET TOKEN TOP  je "); whattoken(myTop(&S)) ;
@@ -445,6 +451,7 @@ bool parse()
 				printf("mas to napicu NAPISAL SI    >> "); whattoken( actToken.stav);
 				printf("mas to napicu riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
 				myPop(&S);	// odstranime z vrcholu zasobnika
+				//free(actToken.data); // free
 				actToken = get_token(); // nacitame novy token
 			}
 		}
@@ -456,6 +463,6 @@ bool parse()
 	}
    
 
-
+	//free(actToken.data); // free
 	return true;
 }
