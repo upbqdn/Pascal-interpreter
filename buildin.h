@@ -17,4 +17,5 @@
 /*
  *Deklaracie funkcii
  */
-void stack_init(stack *); 
+void copy(char *, int, int, char *); //funkcia na  kopirovanie podretazca z retazca
+int lenght(char *); //funkcia na zistenie dlzky retazca
