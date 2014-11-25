@@ -127,7 +127,6 @@ tToken get_token(void)
             else if	(c == '[')			stav = S_LEVA_HRANATA_ZAVORKA;
             else if 	(c == ']')			stav = S_PRAVA_HRANATA_ZAVORKA;
             else if	(c == '>')			stav = S_VETSI;
-            /*  else if	(c == '#')			{stav = S_MRIZKA; break;} */
             else if	(c == '\'')
             {
                 stav = S_RETEZEC;
