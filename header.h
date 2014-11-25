@@ -126,6 +126,8 @@ typedef enum
 
 
     F_ID, // 78
+    S_BOOLEAN, /* */
+    S_DOLAR, /* pomocny stav pro precedencni analyzu */
 
 } tStav;
 
