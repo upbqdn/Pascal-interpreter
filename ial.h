@@ -28,8 +28,6 @@ typedef struct elementS //struktura, ktora je prvok zoznamu
 	struct elementS *ptr; //ukazatel na dalsi prvok
 	int token_state; //stav tokenu
 	char *token_data; //data tokenu
-	int type; //typ premennej int/real/bool/string
-	int tid; //premennej, funkcie,  ostatne
 } *list_element;
 
 typedef struct listS //struktura, ktora je zoznam
@@ -45,9 +43,8 @@ extern list list_array[HASH_ARRAY_SIZE]; //globalna tabulka hash klucov
  */
  int hash(char *);
  void hash_init();
- void hash_insert(char *, int, int, int);
+ void hash_insert(char *, int);
  int hash_search(char *);
- list_element hash_return(char *);
  void hash_destroy();
  void sort(char *, int, int);
  int find(char *, char *);

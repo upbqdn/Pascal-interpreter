@@ -5,6 +5,7 @@
 #include "stack.h"
 #include "scanner.h"
 #include "parser.h"
+#include "whattoken.h"
 
 extern FILE *soubor;
 
@@ -29,7 +30,9 @@ int main()
   		bool parsEXT;
   		parsEXT = parse();
 
-  		printf("%d hovno \n",parsEXT );
+      printf("GREAT WORK %d\n", parsEXT);
+
+  		
 
 	return 0;
 }

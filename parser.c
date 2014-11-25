@@ -8,16 +8,18 @@
 #include "stack.h"
 #include "scanner.h"
 #include "parser.h"
+#include "whattoken.h"
 
 
 void extractRule()
 {
 	switch(myTop(&S))
 	{
-		case LL_INIT:
+		    case LL_INIT:
 			{
 			    myPop(&S);
 			    myPushMul(&S, 6, LL_VLIST, LL_FLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, S_TECKA);
+			   
 			    // INIT -> VLIST FLIST begin STLIST end.
 			}
 			break;
@@ -26,11 +28,14 @@ void extractRule()
 			if (actToken.stav == S_KLIC_VAR)
 			{
 			    myPop(&S);
+			    
 			    myPushMul(&S, 4, S_KLIC_VAR, LL_VDEC, S_STREDNIK, LL_NVLIST);
+			    
 			    // VLIST -> var VDEC ; NVLIST
 			}
 			else // eps prechod
 			{
+			
 			    myPop(&S);
 			    // VLIST -> eps
 			}
@@ -42,6 +47,8 @@ void extractRule()
 			{
 			    myPop(&S);
 			    myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
+			   
+
 			    // VDEC -> id : TYPE
 			}
 			break;
@@ -52,25 +59,29 @@ void extractRule()
 			{
 			    myPop(&S);
 			    myPushMul(&S, 3, LL_VDEC, S_STREDNIK, LL_NVLIST);
+			  
 			    //  NVLIST -> VDEC ; NVLIST
 			}
 			else // eps prechod
 			{
 			    myPop(&S);
+		
 			    //  NVLIST -> eps
 			}
 			break;
 
 
 
-			/*case LL_TYPE:
+			case LL_TYPE:
 				{
+					
 				switch(actToken.stav) //pri deklaracii
-
+                   {
 					case S_KLIC_INTEGER:
 					{
 					myPop(&S);
 					myPush(&S, S_KLIC_INTEGER);
+					
 					}
 					break;
 
@@ -85,6 +96,7 @@ void extractRule()
 					{
 					    myPop(&S);
 					    myPush(&S, S_KLIC_STRING);
+					  
 					}
 					break;
 
@@ -92,17 +104,19 @@ void extractRule()
 					{
 					    myPop(&S);
 					    myPush(&S, S_KLIC_BOOLEAN);
+					  
 					}
 					break;
 
 					default:
 					{
-					    // chyba !!
+					   // doplnime casom
 					}
 					break;
 				}
-				break;   */
-
+			  }
+				break;   
+                
 
 			case LL_FLIST:
 			if (actToken.stav == S_KLIC_FUNCTION)
@@ -114,6 +128,7 @@ void extractRule()
 			else // eps prechod
 			{
 			    myPop(&S);
+			    
 			    //  FLIST -> eps
 			}
 			break;
@@ -125,15 +140,11 @@ void extractRule()
 			    myPushMul(&S, 3, S_KLIC_FORWARD, S_STREDNIK, LL_FLIST);
 			    // FUNC -> forward ; FLIST
 			}
-			else if((actToken.stav == S_KLIC_VAR ) || (actToken.stav == S_KLIC_BEGIN) )
+			else
 			{
 			    myPop(&S);
 			    myPushMul(&S, 6, LL_VLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, S_STREDNIK, LL_FLIST );
 			    // FUNC -> VLIST begin STLIST end ; FLIST
-			}
-			else
-			{
-			    /* nejaka chybyčka */
 			}
 			break;
 
@@ -179,7 +190,7 @@ void extractRule()
 			  }
 			  else 
 			  {
-
+              
 			  	myPop(&S);
 
 			  }
@@ -398,12 +409,15 @@ bool parse()
 
 	while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
 	{
+		
 		if (myTop(&S) == EOF && actToken.stav != S_END_OF_FILE)
 		{
 			//CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor
-			printf("CHZBA\n"); 
+			printf("CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n"); 
 		}
-		else if (myTop(&S) >= LL_INIT && myTop(&S) <= LL_NSPLIST )  // TERMINAL/NETERMINAL
+		
+
+	    if (myTop(&S) >= LL_INIT && myTop(&S) <= LL_NSPLIST )  // TERMINAL/NETERMINAL
 		{
 			// NETERMINAL  velke mismenka
 			printf("PUSTAM EXTRACT\n");
@@ -415,14 +429,29 @@ bool parse()
 			// TERMINAL male pismenka
 			if (myTop(&S) == actToken.stav)
 			{
-				printf("PUSTAM TERMINAL GET TOKEN\n");
+				printf("Pustam TERMINAL  actToken je "); whattoken( actToken.stav);
+				printf("PUSTAM TERMINAL  a mam na TOPE %d a zmazem ho "); whattoken(myTop(&S)) ;
 				myPop(&S);	// odstranime z vrcholu zasobnika
 				actToken = get_token(); // nacitame novy token
-				printf("KOEC TERMINAL GET TOKEN\n");
+				printf("KOEC TERMINAL GET TOKEN token je "); whattoken( actToken.stav);
+				printf("KOEC TERMINAL GET TOKEN TOP  je "); whattoken(myTop(&S)) ;
+			}
+			els
+			{
+				printf("mas to napicu ja som cakal  >> "); whattoken(myTop(&S));
+				printf("mas to napicu NAPISAL SI    >> "); whattoken( actToken.stav);
+				printf("mas to napicu riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
+				myPop(&S);	// odstranime z vrcholu zasobnika
+				actToken = get_token(); // nacitame novy token
 			}
 		}
-	}
 
+		if (myTop(&S) != EOF && actToken.stav == S_END_OF_FILE)
+		{
+			printf("ChyBA na zasobniku nieco zostalo a my sme na konci suboru\n"); 
+		}
+	}
+   
 
 
 	return true;

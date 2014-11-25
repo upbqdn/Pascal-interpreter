@@ -392,9 +392,12 @@ tToken get_token(void)
       {
 	stav = S_LEVA_SLOZENA_ZAVORKA;
       }
-      else
+      else // mame aj pravu zlozenu = komentar
       {
-	stav = S_KOMENTAR;
+        stav = S_START;
+        i = 0;
+        inicializuj_token();
+	//stav = S_KOMENTAR;
       }
       break;
     }

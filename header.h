@@ -35,22 +35,22 @@ typedef enum
     S_KLIC_BOOLEAN,
     S_KLIC_DO,
     S_KLIC_ELSE,
-    S_KLIC_END,
-    S_KLIC_FALSE,
+    S_KLIC_END, // 4
+    S_KLIC_FALSE, // 5
     S_KLIC_FIND,
     S_KLIC_FORWARD,
     S_KLIC_FUNCTION,
     S_KLIC_IF,
-    S_KLIC_INTEGER,
+    S_KLIC_INTEGER,  // 10
     S_KLIC_READLN,
     S_KLIC_REAL,
     S_KLIC_SORT,
-    S_KLIC_STRING,
-    S_KLIC_THEN,
+    S_KLIC_STRING,  // 14
+    S_KLIC_THEN,  // 15
     S_KLIC_TRUE,
-    S_KLIC_VAR,
+    S_KLIC_VAR, // 17
     S_KLIC_WHILE,
-    S_KLIC_WRITE,
+    S_KLIC_WRITE, // 19
                           //klucove slova potialto ! posledne :: 19 :: 
 
     S_START,					//pocatecni stav :: 20 :: 
@@ -63,7 +63,7 @@ typedef enum
     S_DOUBLE_CELA_CAST_A_EXPONENT,		//cislo typu double
     S_DOUBLE_CELA_A_DESETINNA_CAST_A_EXPONENT,//cislo typu double
     S_DOUBLE_POMOC,				//pomocny double 
-    S_IDENTIFIKATOR,				//identifikator
+    S_IDENTIFIKATOR,				//identifikator  // 29
     S_PLUS,					// +
     S_MINUS,					// -
     S_KRAT,					// *
@@ -73,12 +73,12 @@ typedef enum
     S_MENSI_NEBO_ROVNO,				// <=
     S_VETSI,					// >
     S_VETSI_NEBO_ROVNO,				// >= 
-    S_ROVNO,					// =
-    S_NEROVNO,					// <>
-    S_STREDNIK,					// ;
+    S_ROVNO,					// =   
+    S_NEROVNO,					// <>  //40
+    S_STREDNIK,					// ; //41
     S_DVOJTECKA,				// :
     S_PRIRAZENI,				// := 
-    S_TECKA,					// .
+    S_TECKA,					// . //44
     S_DVE_TECKY,				// ..
     S_CARKA,					// ,
     S_LEVA_ZAVORKA,				// (
@@ -93,25 +93,25 @@ typedef enum
     S_END_OF_FILE,				// EOF
     S_DOUBLE_POMOCDES1,			
     S_DOUBLE_POMOCDES2,
-    S_DOUBLE_POMOCDES3,
-    S_DOUBLE_POMOCDES4,
+    S_DOUBLE_POMOCDES3,   
+    S_DOUBLE_POMOCDES4,   // 60
 
-    LL_INIT,
-    LL_VLIST,
-    LL_VDEC,
-    LL_NVLIST,
-    LL_TYPE,
-    LL_FLIST,
-    LL_FUNC,
-    LL_PLIST,
-    LL_NPLIST,
-    LL_STLIST,
-    LL_NSTLIST,
-    LL_STAT,
-    LL_RHS,
-    LL_BSTAT,
-    LL_SPLIST,
-    LL_NSPLIST,
+    LL_INIT,    // 61
+    LL_VLIST,   //62
+    LL_VDEC,    //63
+    LL_NVLIST,  //64
+    LL_TYPE,    //65
+    LL_FLIST,   //66
+    LL_FUNC,    //67
+    LL_PLIST,   //68
+    LL_NPLIST,  //69
+    LL_STLIST,  //70
+    LL_NSTLIST, //71
+    LL_STAT,    //72
+    LL_RHS,     //73
+    LL_BSTAT,   //74
+    LL_SPLIST,  //75
+    LL_NSPLIST, //76
     LL_E,
 
 } tStav;
