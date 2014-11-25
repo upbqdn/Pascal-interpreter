@@ -1,6 +1,18 @@
+/*
+ *Autors: Marek Bielik    bieli05@stud.fit.vutbr.cz
+ 	  Filip Gulan 	  xgulan00@stud.fit.vutbr.cz
+          Filip Ježovica  xjezov01@stud.fit.vutbr.cz
+          Luboš Matouška  xmatus29@stud.fit.vutbr.cz
+          Eduard Rybár 	  xrybar04@stud.fit.vutbr.cz
+         
+*/
+
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "IAL.h"
+#include "ial.h"
 #include "header.h"
 
 
