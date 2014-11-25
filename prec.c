@@ -4,9 +4,10 @@
 #include <stdbool.h>
 #include <string.h>
 #include "header.h"
-#include "scanner.h"
 #include "stack.h"
+#include "scanner.h"
 #include "prec.h"
+#include "ial.h"
 
 int ahoj_jsem_pomoc = 999;
 int chyba = 0;
