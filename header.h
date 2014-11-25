@@ -114,4 +114,7 @@ typedef enum
     LL_NSPLIST, //76
     LL_E,
 
+
+    F_ID, // 78
+
 } tStav;

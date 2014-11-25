@@ -9,7 +9,10 @@
 #include "scanner.h"
 #include "parser.h"
 #include "whattoken.h"
+#include "ial.h"
 
+
+list_element Tab_prvok;
 
 void extractRule()
 {
@@ -262,7 +265,7 @@ void extractRule()
 
 		//--------------------------RHS----------------------//
 		case  LL_RHS:
-			  if (actToken.stav == S_IDENTIFIKATOR )     // !!!!!treba zmenit (FUNKCIA)
+			  if ((actToken.stav == S_IDENTIFIKATOR ) && (F_ID == Tab_prvok->tid))     // zavolat funkciu co pozre do tabulky symbolov a pozre sa na FID porovname
 			  {
 
 			  	myPop(&S);
@@ -272,7 +275,7 @@ void extractRule()
 			  }
 			  else 
 			  {
-
+                // tuto ma byt chybove hlasenie  aj tento pop ma ist prec // 
 			  	myPop(&S);
 
 			  }
