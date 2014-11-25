@@ -45,7 +45,7 @@ void hash_init()
  *Funkcia na vkladanie do hashovacej tabulky
  *Parametre: data - ktore vkladame a state - ktory vkladame
  */
-void hash_insert(char *data, int state)
+void hash_insert(char *data, int state, int type, int tid)
 {
  	list_element help_var = malloc(sizeof(struct elementS));
  	help_var->token_data = malloc(strlen(data) * sizeof(char));
@@ -58,6 +58,8 @@ void hash_insert(char *data, int state)
  		int i = hash(data);
  		strcpy(help_var->token_data, data); //ulozime token data
  		help_var->token_state = state; //ulozime token stav
+ 		help_var->type = type;
+ 		help_var->tid = tid;
  		help_var->ptr = list_array[i].First;
  		list_array[i].First = help_var;
  	}
@@ -81,6 +83,26 @@ int hash_search(char *data)
 		list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
 	}
 	return NOCONTAINS;
+}
+
+/*
+ *Funkcia na zistenie vratenie polozky tabulky, ktoru hladame
+ *Parameter: data - hladane podla data
+ *Vracia: polozku ak sa v tabulke nachadza, alebo NULL ak sa polozka nenachadza
+ */
+list_element hash_return(char *data)
+{
+	int i = hash(data);
+	list_array[i].Act = list_array[i].First;
+	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+	{
+		if(strcmp(list_array[i].Act->token_data, data) == 0) //porovna retazce
+		{
+			return list_array[i].Act;
+		}
+		list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+	}
+	return NULL;
 }
 
 /*
@@ -208,8 +230,10 @@ void vector(char *P, int *Fail)
 /*
 int main()
 {
-	char *A = "Acbc";
-	char *B = "xc";
-	find(A, B);
+	hash_init();
+	hash_insert("aaa", 5, 2, 3);
+	
+	list_element special = hash_return("aaa");
+	printf("%d\n", special->token_state);
  	return 0;
 }*/
