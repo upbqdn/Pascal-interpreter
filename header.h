@@ -118,3 +118,17 @@ typedef enum
     F_ID, // 78
 
 } tStav;
+
+/*
+ *Enumarecie instrukcii
+ */
+typedef enum
+{
+    I_STOP = 0, //0
+    I_READ, //1
+    I_WRITE, //2
+    I_SORT, //3
+    I_FIND, //4
+    I_LENGTH, //5
+    I_COPY, //6
+} tIns
