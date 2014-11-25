@@ -329,7 +329,11 @@ void whattoken(tStav stav)
         	printf("LL_E");
         	printf("\n");
         	break;
- 	 	default:
+        case EOF:
+        	printf("EOF zarazka");
+        	printf("\n");
+        	break;
+ 	 default:
         	printf("Nedefinovaneeeeeee!!!!!");
         	printf("\n");
         	break;
