@@ -141,4 +141,4 @@ typedef enum
     I_FIND, //4
     I_LENGTH, //5
     I_COPY, //6
-} tIns
+} tIns;
