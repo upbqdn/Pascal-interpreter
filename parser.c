@@ -664,7 +664,6 @@ if (chyba == 1) {printf("POSRALO SE TO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			  break;   
 
 
-
 		//  -----------NSPLIST-------------------//
 		case  LL_NSPLIST:
 			  if (actToken.stav == S_IDENTIFIKATOR )     
@@ -715,7 +714,16 @@ if (chyba == 1) {printf("POSRALO SE TO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 			  }
 
-			  break; 
+			  break;
+
+			   
+	    case LL_E:
+
+              // tuto sa pusti funkcia E 
+
+        
+          break;
+		  
 			}
 }
 
