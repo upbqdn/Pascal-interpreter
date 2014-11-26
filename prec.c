@@ -1,4 +1,19 @@
-	printf("Spoustim precedencni analyzu");
+/*
+-----------------------------------------------------
+  @Author: Marek Bielik		xbieli05@stud.fit.vutbr.cz
+  @Author: Filip Gulan		xgulan00@stud.fit.vutbr.cz
+  @Author: Filip Ježovica	xjezov01@stud.fit.vutbr.cz
+  @Author: Luboš Matouška	xmatus29@stud.fit.vutbr.cz
+  @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz
+-----------------------------------------------------          
+*/
+
+/* hlavickove soubory */
+#include "header.h"
+#include "scanner.h"
+#include "stack.h"
+#include "prec.h"
+
 #define MAX_PT 18
 int chyba = 0;
 int left = 111;
@@ -54,17 +69,18 @@ switch (a)
 }
 int isVyraz()
 {
+	printf("Spoustim precedencni analyzu");
 myPush(&S, 13);
 do
 {
 	int a = magicFunction(myTop(&S));
-	int b = magicFunction(actToken.stav);
+	int b = magicFunction(actPrecToken.stav);
 	switch(precedent_table[a][b])
 	{
 		case '=': 
 		{
 			myPush(&S, b);
-			actToken = get_token();
+			actPrecToken = get_token();
 			break;
 		}
 		case '<':
@@ -74,7 +90,7 @@ do
 				myPush(&S, left);
 				myPush(&S, b);
 			}
-			actToken = get_token();
+			actPrecToken = get_token();
 			break;
 		}
 		case '>':
@@ -308,7 +324,7 @@ do
 	
 	}
 }
-while (!((magicFunction(myTop(&S) == S_DOLAR ) && ( magicFunction(actToken.stav) == S_DOLAR))));
+while (!((magicFunction(myTop(&S) == S_DOLAR ) && ( magicFunction(actPrecToken.stav) == S_DOLAR))));
 if (chyba == 1) {printf("POSRALO SE TO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); exit(42);}
 return chyba;	
 }
