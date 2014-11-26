@@ -79,11 +79,11 @@ do
 	printf("actToken je %d \n", actPrecToken.stav);
 	printf("na TOPE %d \n", myTop(&S));
 
-	if (actPrecToken.stav == S_END_OF_FILE || actPrecToken.stav == S_STREDNIK)
-	{
-		printf("KOKOKOKOKOKOT\n");
-		break;
-	}
+	//if (actPrecToken.stav == S_END_OF_FILE || actPrecToken.stav == S_STREDNIK)
+	//{
+	//	printf("KOKOKOKOKOKOT\n");
+	//	break;
+	//}
 
 	/****************overenie potialto ********/
 
