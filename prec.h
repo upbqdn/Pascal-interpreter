@@ -1,7 +1,6 @@
-stack s; /* PROBLEM */
-tToken token; /* PROBLEM */
+stack s;
+tToken token1;
 
 int magicFunction(int a);
 int isVyraz();
 
-#define MAX_PT 18
