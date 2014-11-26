@@ -69,10 +69,24 @@ switch (a)
 }
 int isVyraz()
 {
-	printf("Spoustim precedencni analyzu");
-myPush(&S, 13);
+	printf("Spoustim precedencni analyzu \n");
+	
+	actPrecToken = get_token();
+	myPush(&S, 13);
 do
 {
+	/****************overenie dole ********/
+	printf("actToken je %d \n", actPrecToken.stav);
+	printf("na TOPE %d \n", myTop(&S));
+
+	if (actPrecToken.stav == S_END_OF_FILE || actPrecToken.stav == S_STREDNIK)
+	{
+		printf("KOKOKOKOKOKOT\n");
+		break;
+	}
+
+	/****************overenie potialto ********/
+
 	int a = magicFunction(myTop(&S));
 	int b = magicFunction(actPrecToken.stav);
 	switch(precedent_table[a][b])
