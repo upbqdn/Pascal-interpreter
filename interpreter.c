@@ -17,12 +17,12 @@
 #include "interpreter.h"
 
 
-int inter() // doplnit predavanie
+int inter(AKCIA, KDE, PRVA, DRUHA) // doplnit predavanie
 {
 	while(1)
 	{
       
-      	switch() // doplnit
+      	switch(AKCIA) // doplnit
       	{
       		case I_STOP:
              return; 
@@ -60,6 +60,39 @@ int inter() // doplnit predavanie
                     copy(retazec, i, n, *podretazec);
 
             break;
+
+            case I_PLUS:
+                   if (KDE==)
+                   {
+
+                   }
+                   if (KDE==)
+
+             
+                                    
+            break;
+            
+            case I_MINUS:
+             
+                                    
+            break;
+
+            case I_KRAT:
+             
+                                    
+            break;
+
+            case I_DELENO:
+             
+                                    
+            break;
+            
+            case I_SKOK:
+             
+                                    
+            break;
+
+
 
         
         
