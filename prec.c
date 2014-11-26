@@ -31,12 +31,12 @@ const char precedent_table[MAX_PT][MAX_PT] = {
 "<<<<>>>>>><><><<<<", // <>
 "<<<<<<<<<<<=<E<<<<", // (
 ">>>>>>>>>>E>E>EEEE", // )
-">>>>>>>>>>E>E<EEEE", // id
+">>>>>>>>>>E>E>EEEE", // id
 "<<<<<<<<<<<E<E<<<<", // $
-">>>>>>>>>>E>E<EEEE", // integer
-">>>>>>>>>>E>E<EEEE", // double
-">>>>>>>>>>E>E<EEEE", // string
-">>>>>>>>>>E>E<EEEE", // boolean
+">>>>>>>>>>E>E>EEEE", // integer
+">>>>>>>>>>E>E>EEEE", // double
+">>>>>>>>>>E>E>EEEE", // string
+">>>>>>>>>>E>E>EEEE", // boolean
 };
 
 
