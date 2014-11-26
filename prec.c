@@ -102,35 +102,35 @@ do
 				case S_BOOLEAN: /* pravidlo c. 16 */
 				{
 						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
+						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 						myPush(&s, 42);
 						break;
 				}
 				case S_INTEGER: /* 13 */
 				{
 						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
+						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 						myPush(&s, 42);
 						break;
 				}
 				case S_DOUBLE: /* 14 */
 				{
 						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
+						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 						myPush(&s, 42);
 						break;
 				}
 				case S_RETEZEC: /* 15 */
 				{
 						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
+						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 						myPush(&s, 42);
 						break;
 				}
 				case S_IDENTIFIKATOR: /* 12 */
 				{
 						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
+						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 						myPush(&s, 42);
 						break;
 				}
@@ -143,6 +143,7 @@ do
 							if ((myTop(&s)) == magicFunction(S_LEVA_ZAVORKA)) /* 11 */
 							{
 								myPop(&s);
+								if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 								myPush(&s, 42);
 							}
 							else 
@@ -167,6 +168,7 @@ do
 								if ((myTop(&s)) == 42) /* 1 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -181,6 +183,7 @@ do
 								if ((myTop(&s)) == 42) /* 2 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -195,6 +198,7 @@ do
 								if ((myTop(&s)) == 42) /* 3 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -209,6 +213,7 @@ do
 								if ((myTop(&s)) == 42) /* 4 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -223,6 +228,7 @@ do
 								if ((myTop(&s)) == 42) /* 5 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -237,6 +243,7 @@ do
 								if ((myTop(&s)) == 42) /* 6 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -251,6 +258,7 @@ do
 								if ((myTop(&s)) == 42) /* 7 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -265,6 +273,7 @@ do
 								if ((myTop(&s)) == 42) /* 8 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -279,6 +288,7 @@ do
 								if ((myTop(&s)) == 42) /* 9 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
@@ -293,6 +303,7 @@ do
 								if ((myTop(&s)) == 42) /* 10 */
 								{
 									myPop(&s);
+									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
 									myPush(&s, 42);
 								}
 								else 
