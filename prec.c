@@ -1,7 +1,15 @@
-#include "header.h"
-#include "stack.h"
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #include "scanner.h"
+#include "stack.h"
 #include "prec.h"
+#define MAX_PT 18
+int ahoj_jsem_pomoc = 999;
+int chyba = 0;
+int left = 111;
 
 const char precedent_table[MAX_PT][MAX_PT] = {
 ">>>>>>>>>><><><<<<", // *
@@ -24,9 +32,6 @@ const char precedent_table[MAX_PT][MAX_PT] = {
 ">>>>>>>>>>E>E<EEEE", // boolean
 };
 
-int ahoj_jsem_pomoc = 999;
-int chyba = 0;
-int left = 111;
 //const S_E = 42; 
 
 int magicFunction(int a)
@@ -63,19 +68,19 @@ switch (a)
 int isVyraz()
 {
 
-
+stack_init(&s);
 myPush(&s, 13);
 do
 {
 	int pricti = 0;
 	int a = magicFunction(myTop(&s));
-	int b = magicFunction(token.stav);
+	int b = magicFunction(token1.stav);
 	switch(precedent_table[a][b])
 	{
 		case '=': 
 		{
 			myPush(&s, b);
-			get_token();
+			token1 = get_token();
 			break;
 		}
 		case '<':
@@ -87,7 +92,7 @@ do
 			myPush(&s, ahoj_jsem_pomoc);
 			myPush(&s, b);
 			if (pricti == 1) { myPush(&s, 42); }
-			get_token();
+			token1 = get_token();
 			break;
 		}
 		case '>':
@@ -97,30 +102,35 @@ do
 				case S_BOOLEAN: /* pravidlo c. 16 */
 				{
 						myPop(&s);
+						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
 						myPush(&s, 42);
 						break;
 				}
 				case S_INTEGER: /* 13 */
 				{
 						myPop(&s);
+						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
 						myPush(&s, 42);
 						break;
 				}
 				case S_DOUBLE: /* 14 */
 				{
 						myPop(&s);
+						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
 						myPush(&s, 42);
 						break;
 				}
 				case S_RETEZEC: /* 15 */
 				{
 						myPop(&s);
+						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
 						myPush(&s, 42);
 						break;
 				}
 				case S_IDENTIFIKATOR: /* 12 */
 				{
 						myPop(&s);
+						if (myTop(&s) == left) { myPop(&s); } else (chyba = 1; break ;)
 						myPush(&s, 42);
 						break;
 				}
@@ -305,7 +315,7 @@ do
 	
 	}
 }
-while (!((magicFunction(myTop(&s) == S_DOLAR ) && ( magicFunction(token.stav) == S_DOLAR))));
+while (!((magicFunction(myTop(&s) == S_DOLAR ) && ( magicFunction(token1.stav) == S_DOLAR))));
 
 return chyba; /* if chyba == 0, tak je vyraz v poradku */
 }
