@@ -1,13 +1,5 @@
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include "scanner.h"
-#include "stack.h"
-#include "prec.h"
+	printf("Spoustim precedencni analyzu");
 #define MAX_PT 18
-int ahoj_jsem_pomoc = 999;
 int chyba = 0;
 int left = 111;
 
@@ -32,7 +24,6 @@ const char precedent_table[MAX_PT][MAX_PT] = {
 ">>>>>>>>>>E>E<EEEE", // boolean
 };
 
-//const S_E = 42; 
 
 int magicFunction(int a)
 {
@@ -56,95 +47,86 @@ switch (a)
 	case S_DOUBLE: 					{return 15; break; }
 	case S_RETEZEC:					{return 16; break; }
 	case S_BOOLEAN:					{return 17; break; }
-	//case S_E:						{return 18; break; }
+	//case S_E:						{return 18; break; } /* 42 */
 	default: 						{return 13; break; } 
 	 	
 }
 }
-
-
-
-
 int isVyraz()
 {
-
-stack_init(&s);
-myPush(&s, 13);
+myPush(&S, 13);
 do
 {
-	int pricti = 0;
-	int a = magicFunction(myTop(&s));
-	int b = magicFunction(token1.stav);
+	int a = magicFunction(myTop(&S));
+	int b = magicFunction(actToken.stav);
 	switch(precedent_table[a][b])
 	{
 		case '=': 
 		{
-			myPush(&s, b);
-			token1 = get_token();
+			myPush(&S, b);
+			actToken = get_token();
 			break;
 		}
 		case '<':
 		{
-			if ((myTop(&s)) == 42) {myPop(&s); pricti = 1;}
-			ahoj_jsem_pomoc = magicFunction(myTop(&s));
-			myPop(&s);
-			myPush(&s, left);
-			myPush(&s, ahoj_jsem_pomoc);
-			myPush(&s, b);
-			if (pricti == 1) { myPush(&s, 42); }
-			token1 = get_token();
+			if ((myTop(&S)) == 42) {myPop(&S); myPush(&S, left); myPush(&S, 42); myPush(&S, b);}
+			else{
+				myPush(&S, left);
+				myPush(&S, b);
+			}
+			actToken = get_token();
 			break;
 		}
 		case '>':
 		{
-			switch (myTop(&s))
+			switch (myTop(&S))
 			{
 				case S_BOOLEAN: /* pravidlo c. 16 */
 				{
-						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-						myPush(&s, 42);
+						myPop(&S);
+						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+						myPush(&S, 42);
 						break;
 				}
 				case S_INTEGER: /* 13 */
 				{
-						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-						myPush(&s, 42);
+						myPop(&S);
+						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+						myPush(&S, 42);
 						break;
 				}
 				case S_DOUBLE: /* 14 */
 				{
-						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-						myPush(&s, 42);
+						myPop(&S);
+						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+						myPush(&S, 42);
 						break;
 				}
 				case S_RETEZEC: /* 15 */
 				{
-						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-						myPush(&s, 42);
+						myPop(&S);
+						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+						myPush(&S, 42);
 						break;
 				}
 				case S_IDENTIFIKATOR: /* 12 */
 				{
-						myPop(&s);
-						if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-						myPush(&s, 42);
+						myPop(&S);
+						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+						myPush(&S, 42);
 						break;
 				}
 				case S_PRAVA_ZAVORKA:
 				{
-						myPop(&s);
-						if ((myTop(&s)) == 42) 
+						myPop(&S);
+						if ((myTop(&S)) == 42) 
 						{
-							myPop(&s);
-							if ((myTop(&s)) == magicFunction(S_LEVA_ZAVORKA)) /* 11 */
+							myPop(&S);
+							if ((myTop(&S)) == magicFunction(S_LEVA_ZAVORKA)) /* 11 */
 							{
-								myPop(&s);
-								if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-								myPush(&s, 42);
+								myPop(&S);
+								if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+								myPush(&S, 42);
 							}
 							else 
 							{
@@ -159,17 +141,17 @@ do
 				}
 				case 42:
 				{		
-						myPop(&s);
-						switch (myTop(&s))
+						myPop(&S);
+						switch (myTop(&S))
 						{
 							case S_KRAT:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 1 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 1 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -179,12 +161,12 @@ do
 							}
 							case S_DELENO:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 2 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 2 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -194,12 +176,12 @@ do
 							}
 							case S_PLUS:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 3 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 3 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -209,12 +191,12 @@ do
 							}
 							case S_MINUS:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 4 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 4 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -224,12 +206,12 @@ do
 							}
 							case S_MENSI:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 5 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 5 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -239,12 +221,12 @@ do
 							}
 							case S_VETSI:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 6 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 6 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -254,12 +236,12 @@ do
 							}
 							case S_MENSI_NEBO_ROVNO:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 7 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 7 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -269,12 +251,12 @@ do
 							}
 							case S_VETSI_NEBO_ROVNO:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 8 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 8 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -284,12 +266,12 @@ do
 							}
 							case S_ROVNO:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 9 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 9 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -299,12 +281,12 @@ do
 							}
 							case S_NEROVNO:
 							{
-								myPop(&s);
-								if ((myTop(&s)) == 42) /* 10 */
+								myPop(&S);
+								if ((myTop(&S)) == 42) /* 10 */
 								{
-									myPop(&s);
-									if (myTop(&s) == left) { myPop(&s); } else {chyba = 1; break ;}
-									myPush(&s, 42);
+									myPop(&S);
+									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
+									myPush(&S, 42);
 								}
 								else 
 								{
@@ -326,8 +308,7 @@ do
 	
 	}
 }
-while (!((magicFunction(myTop(&s) == S_DOLAR ) && ( magicFunction(token1.stav) == S_DOLAR))));
-
-return chyba; /* if chyba == 0, tak je vyraz v poradku */
+while (!((magicFunction(myTop(&S) == S_DOLAR ) && ( magicFunction(actToken.stav) == S_DOLAR))));
+if (chyba == 1) {printf("POSRALO SE TO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); exit(42);}
+return chyba;	
 }
-
