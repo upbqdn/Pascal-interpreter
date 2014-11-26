@@ -13,16 +13,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ial.h"
+#include "ial.c"          
 #include "header.h"
 #include "interpreter.h"
 
+list list_array[HASH_ARRAY_SIZE];
 
-int inter(AKCIA, KDE, PRVA, DRUHA) // doplnit predavanie
+int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
+ hash_init();
 	while(1)
 	{
+		Instr=getinstrukciu()
       
-      	switch(AKCIA) // doplnit
+      	switch(Instr.AKCIA) // doplnit
       	{
       		case I_STOP:
              return; 
@@ -62,28 +66,280 @@ int inter(AKCIA, KDE, PRVA, DRUHA) // doplnit predavanie
             break;
 
             case I_PLUS:
-                   if (KDE==)
-                   {
+               {
+                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
+	                   {
+	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                        ???  =Instr.PRVA+Instr.DRUHA;
+	                      // treba doplnit ulozenie
 
-                   }
-                   if (KDE==)
+	                    } 
+
+	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	??? =Instr.PRVA+ ??? ;
+
+	                     }  
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	??? = ??? + Instr.DRUHA;
+
+	                     }   
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	??? = ??? + ??? ;          // otocit treba
+
+	                     }    
+	                    
+	                   }
+
+                 else   // ---ak mame urcene kam--------------------------------------------//
+	                   {
+	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                    Instr.KDE=Instr.PRVA+Instr.DRUHA;
+	                      // treba doplnit ulozenie
+
+	                    } 
+
+	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	Instr.KDE=Instr.PRVA+ ??? ;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	Instr.KDE=??? + Instr.DRUHA;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	Instr.KDE= ??? + ??? ;         
+
+	                     }  
+
+	                   }
+               } 
 
              
                                     
             break;
             
             case I_MINUS:
-             
-                                    
+               {
+                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
+	                   {
+	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                        ???  =Instr.PRVA-Instr.DRUHA;
+	                      // treba doplnit ulozenie
+
+	                    } 
+
+	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	??? =Instr.PRVA- ??? ;
+
+	                     }  
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	??? = ??? - Instr.DRUHA;
+
+	                     }   
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	??? = ??? - ??? ;          // otocit treba
+
+	                     }    
+	                    
+	                   }
+
+                 else   // ---ak mame urcene kam--------------------------------------------//
+	                   {
+	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                    Instr.KDE=Instr.PRVA-Instr.DRUHA;
+	                      // treba doplnit ulozenie
+
+	                    } 
+
+	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	Instr.KDE=Instr.PRVA- ??? ;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	Instr.KDE=??? - Instr.DRUHA;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	Instr.KDE= ??? - ??? ;          // otocit treba
+
+	                     }  
+
+	                   }
+               }                     
             break;
 
             case I_KRAT:
+               {
+                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
+	                   {
+	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                        ???  =Instr.PRVA*Instr.DRUHA;
+	                      // treba doplnit ulozenie
+
+	                    } 
+
+	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	??? =Instr.PRVA* ??? ;
+
+	                     }  
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	??? = ??? * Instr.DRUHA;
+
+	                     }   
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	??? = ??? * ??? ;          // otocit treba
+
+	                     }    
+	                    
+	                   }
+
+                 else   // ---ak mame urcene kam--------------------------------------------//
+	                   {
+	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                    Instr.KDE=Instr.PRVA*Instr.DRUHA;
+	                      // treba doplnit ulozenie
+
+	                    } 
+
+	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	Instr.KDE=Instr.PRVA* ??? ;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	Instr.KDE=??? * Instr.DRUHA;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	Instr.KDE= ??? * ??? ;         
+
+	                     }  
+
+	                   }
+               } 
              
                                     
             break;
 
             case I_DELENO:
-             
+               {
+                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
+	                   {
+	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                        ???  =Instr.PRVA/Instr.DRUHA;
+	                      // treba doplnit ulozenie
+
+	                    } 
+
+	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	??? =Instr.PRVA/ ??? ;
+
+	                     }  
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	??? = ??? / Instr.DRUHA;
+
+	                     }   
+
+	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	??? = ??? / ??? ;          // otocit treba
+
+	                     }    
+	                    
+	                   }
+
+                 else   // ---ak mame urcene kam--------------------------------------------//
+	                   {
+	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
+	                    {	
+	                    Instr.KDE=Instr.PRVA/Instr.DRUHA;
+	                      // treba doplnit ulozenie
+
+	                    } 
+
+	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
+	                     {
+
+	                     	Instr.KDE=Instr.PRVA/ ??? ;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
+	                     {
+
+	                     	Instr.KDE=??? / Instr.DRUHA;
+
+	                     } 
+
+	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
+	                     {
+
+	                     	Instr.KDE= ??? / ??? ;          // otocit treba
+
+	                     }  
+
+	                   }
+               } 
                                     
             break;
             
