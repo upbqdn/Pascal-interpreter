@@ -36,7 +36,7 @@ const char precedent_table[MAX_PT][MAX_PT] = {
 ">>>>>>>>>>E>E>EEEE", // integer
 ">>>>>>>>>>E>E>EEEE", // double
 ">>>>>>>>>>E>E>EEEE", // string
-">>>>>>>>>>E>E>EEEE", // boolean
+">>>>>>>>>>E>E>EEEE" // boolean
 };
 
 
@@ -73,272 +73,104 @@ int isVyraz()
 	
 	actPrecToken = get_token();
 	myPush(&S, 13);
+	int a = (myTop(&S));
 do
 {
 	/****************overenie dole ********/
-	printf("actToken je %d \n", actPrecToken.stav);
-	printf("na TOPE %d \n", myTop(&S));
+	//printf("actToken je %d \n", magicFunction(actPrecToken.stav));
+	printf("\naktualni token : "); whattoken(actPrecToken.stav); 
+	printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
+	printf("na vrcholu zasobniku je : %d \n", myTop(&S));
+	//printf("pouzivam pravidlo %c \n", precedent_table[myTop(&S)][magicFunction(actPrecToken.stav)]);
 
-	//if (actPrecToken.stav == S_END_OF_FILE || actPrecToken.stav == S_STREDNIK)
-	//{
-	//	printf("KOKOKOKOKOKOT\n");
-	//	break;
-	//}
-
+	/*if (actPrecToken.stav == S_END_OF_FILE || actPrecToken.stav == S_STREDNIK)
+	{
+		printf("KOKOKOKOKOKOT\n");
+		break;
+	}*/
+	
 	/****************overenie potialto ********/
 
-	int a = magicFunction(myTop(&S));
+	//if (myTop(&S) != 42) {int a = (myTop(&S));}
+	//else { myPop(&S); a = myTop(&S); myPush(&S, a); myPush(&S, 42); }
+	int a = myTop(&S);
 	int b = magicFunction(actPrecToken.stav);
 	switch(precedent_table[a][b])
 	{
 		case '=': 
-		{
+	   showStack(&S);
+	   printf(" pouzivam pravidlo = \n");
 			myPush(&S, b);
+			printf("vkladam na zasobnik : %d \n", b);
+			showStack(&S);
 			actPrecToken = get_token();
-			break;
-		}
+			printf("ZAVOLAL JSEM SI DALSI TOKEN \n");
+			printf("\naktualni token : "); whattoken(actPrecToken.stav); 
+			printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav));
+			printf(" ukoncuji pravidlo = \n ******************** \n");
+		//	printf(" brejkuji = \n ");
+		//	break;
 		case '<':
-		{
-			if ((myTop(&S)) == 42) {myPop(&S); myPush(&S, left); myPush(&S, 42); myPush(&S, b);}
-			else{
-				myPush(&S, left);
-				myPush(&S, b);
-			}
+	   showStack(&S);
+	   printf(" pouzivam pravidlo < \n");
+			//if ((myTop(&S)) == 42) {myPop(&S); myPush(&S, left); myPush(&S, 42); myPush(&S, b);}
+			//else
+			myPush(&S, left);
+			myPush(&S, b);
+			printf("vkladam na zasobnik : 111 \n");
+			printf("vkladam na zasobnik : %d \n", b);
+			showStack(&S);
+			//
 			actPrecToken = get_token();
-			break;
-		}
+			printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
+			printf("\naktualni token : "); whattoken(actPrecToken.stav); 
+			printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
+			printf(" ukoncuji pravidlo < \n ******************** \n");
+		//	printf(" brejkuji < \n");
+		//	break;
 		case '>':
-		{
-			switch (myTop(&S))
-			{
-				case S_BOOLEAN: /* pravidlo c. 16 */
-				{
-						myPop(&S);
-						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-						myPush(&S, 42);
-						break;
-				}
-				case S_INTEGER: /* 13 */
-				{
-						myPop(&S);
-						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-						myPush(&S, 42);
-						break;
-				}
-				case S_DOUBLE: /* 14 */
-				{
-						myPop(&S);
-						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-						myPush(&S, 42);
-						break;
-				}
-				case S_RETEZEC: /* 15 */
-				{
-						myPop(&S);
-						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-						myPush(&S, 42);
-						break;
-				}
-				case S_IDENTIFIKATOR: /* 12 */
-				{
-						myPop(&S);
-						if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-						myPush(&S, 42);
-						break;
-				}
-				case S_PRAVA_ZAVORKA:
-				{
-						myPop(&S);
-						if ((myTop(&S)) == 42) 
-						{
-							myPop(&S);
-							if ((myTop(&S)) == magicFunction(S_LEVA_ZAVORKA)) /* 11 */
-							{
-								myPop(&S);
-								if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-								myPush(&S, 42);
-							}
-							else 
-							{
-								chyba = 1;
-							}
-						}
-						else
-						{
-							chyba = 1;
-						}
-						break;
-				}
-				case 42:
-				{		
-						myPop(&S);
-						switch (myTop(&S))
-						{
-							case S_KRAT:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 1 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_DELENO:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 2 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_PLUS:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 3 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_MINUS:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 4 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_MENSI:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 5 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_VETSI:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 6 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_MENSI_NEBO_ROVNO:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 7 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_VETSI_NEBO_ROVNO:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 8 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_ROVNO:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 9 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-							case S_NEROVNO:
-							{
-								myPop(&S);
-								if ((myTop(&S)) == 42) /* 10 */
-								{
-									myPop(&S);
-									if (myTop(&S) == left) { myPop(&S); } else {chyba = 1; break ;}
-									myPush(&S, 42);
-								}
-								else 
-								{
-									chyba = 1;
-								}
-								break;
-							}
-						} /* operator */
-				} /* S_E */
-			
+			showStack(&S);
+			printf(" pouzivam pravidlo > \n");
+			switch(myTop(&S))
+			{			
+			case 12: /* identifikator E -> id */	
+			case 14: /* integer E -> int */	
+			case 15: /* double E -> double */	
+			case 16: /* retezec E -> string */	
+			case 17: /* boolean E -> boolean */	
+					printf(" popuji %d \n", myTop(&S));
+					myPop(&S);
+					showStack(&S);
+					if (myTop(&S) == left) 
+					{ 
+						printf(" popuji %d \n", myTop(&S));
+						myPop(&S); 
+						showStack(&S);
+						//printf("vkladam na zasobnik : E == 42 \n");
+						//myPush(&S, 42);
+						//showStack(&S);
+					}
 			}
-		
-	}
-	case 'E': 
-	{
-		chyba = 1;
-		break;
-	}
-	
+			printf(" ukoncuji pravidlo > \n ******************** \n");
+		//	printf(" brejkuji > \n");
+		//	break;
+			
+		case 'E': 
+		showStack(&S);
+	    printf(" pouzivam pravidlo E \n");
+	    printf(" ukoncuji pravidlo E \n ******************** \n");
+	//	chyba = 1;
+	//	printf(" brejkuji E \n");
+	//	exit(42);
+	//	break;
 	}
 }
-while (!((magicFunction(myTop(&S) == S_DOLAR ) && ( magicFunction(actPrecToken.stav) == S_DOLAR))));
-if (chyba == 1) {printf("POSRALO SE TO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); exit(42);}
+while (!(((myTop(&S) == 13 ) && ( magicFunction(actPrecToken.stav) == 13))));
+if (chyba == 1) {printf("NE, tohle neni vyraz! \n");}
+if (chyba == 0) {printf("OK \n");
+printf("Odstranuji umele vytvorenou zarazku a vracim zasobnik v puvodnim stavu\n");
+myPop(&S);
+showStack(&S);
+}
 return chyba;	
 }
