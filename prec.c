@@ -32,7 +32,7 @@ const char precedent_table[MAX_PT][MAX_PT] = {
 "<<<<<<<<<<<=<E<<<<", // ( 10
 ">>>>>>>>>>E>E>EEEE", // ) 11
 ">>>>>>>>>>E>E>EEEE", // id 12
-"<<<<<<<<<<<E<E<<<<", // $ 13
+"<<<<<<<<<<<E<O<<<<", // $ 13
 ">>>>>>>>>>E>E>EEEE", // integer 14
 ">>>>>>>>>>E>E>EEEE", // double 15
 ">>>>>>>>>>E>E>EEEE", // string 16
@@ -50,20 +50,19 @@ switch (a)
 	case S_MINUS:					{return 3; break; }
 	case S_MENSI: 					{return 4; break; }
 	case S_VETSI:					{return 5; break; }
-	case S_MENSI_NEBO_ROVNO: 		{return 6; break; }
-	case S_VETSI_NEBO_ROVNO:		{return 7; break; }
+	case S_MENSI_NEBO_ROVNO: 			{return 6; break; }
+	case S_VETSI_NEBO_ROVNO:			{return 7; break; }
 	case S_ROVNO: 					{return 8; break; }
 	case S_NEROVNO:					{return 9; break; }
-	case S_LEVA_ZAVORKA: 			{return 10; break; }
-	case S_PRAVA_ZAVORKA:			{return 11; break; }
-	case S_IDENTIFIKATOR: 			{return 12; break; }
+	case S_LEVA_ZAVORKA: 				{return 10; break; }
+	case S_PRAVA_ZAVORKA:				{return 11; break; }
+	case S_IDENTIFIKATOR: 				{return 12; break; }
 	case S_DOLAR:					{return 13; break; }
 	case S_INTEGER:					{return 14; break; }
 	case S_DOUBLE: 					{return 15; break; }
 	case S_RETEZEC:					{return 16; break; }
 	case S_BOOLEAN:					{return 17; break; }
-	//case S_E:						{return 18; break; } /* 42 */
-	default: 						{return 13; break; } 
+	default: 					{return 13; break; } 
 	 	
 }
 }
@@ -77,28 +76,17 @@ int isVyraz()
 	int b = 0;
 do
 {
-	//ahoj:
+	// POZNAMKA: "E" = 42, "<" = 111, "$" = 13
 	
 	if (myTop(&S) != 42) {a = (myTop(&S));}
 	else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
 	 
 	 int b = magicFunction(actPrecToken.stav);
 	
-	 
-	/****************overenie dole ********/
-	//printf("actToken je %d \n", magicFunction(actPrecToken.stav));
 	printf("\naktualni token : "); whattoken(actPrecToken.stav); 
 	printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
 	printf("na vrcholu zasobniku je : %d \n", a);
 	printf("[%d][%d] = %c", a , b, precedent_table[a][b] );
-	//printf("pouzivam pravidlo %c \n", precedent_table[myTop(&S)][magicFunction(actPrecToken.stav)]);
-
-	/*if (actPrecToken.stav == S_END_OF_FILE || actPrecToken.stav == S_STREDNIK)
-	{
-		printf("KOKOKOKOKOKOT\n");
-		break;
-	}*/
-	
 	/****************overenie potialto ********/
 	
 	switch(precedent_table[a][b])
@@ -111,17 +99,8 @@ do
 			showStack(&S);
 			actPrecToken = get_token();
 			printf("ZAVOLAL JSEM SI DALSI TOKEN \n");
-			//printf("\naktualni token : "); whattoken(actPrecToken.stav); 
-			//printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav));
 			printf(" ukoncuji pravidlo = \n ******************** \n");
-			//goto ahoj;
 			break;
-			//if (myTop(&S) != 42) {a = (myTop(&S));}
-			//else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
-	 
-		//	b = magicFunction(actPrecToken.stav);
-		//	printf(" brejkuji = \n ");
-		//	break;
 		case '<':
 	   showStack(&S);
 	   printf(" pouzivam pravidlo < \n");
@@ -141,14 +120,8 @@ do
 				showStack(&S);
 				actPrecToken = get_token();
 				printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
-				//printf("\naktualni token : "); whattoken(actPrecToken.stav); 
-				//printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
 				printf(" ukoncuji pravidlo < \n ******************** \n");
 				break;
-				//if (myTop(&S) != 42) {a = (myTop(&S));}
-				//else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
-	 
-				//b = magicFunction(actPrecToken.stav);
 			}
 			else
 			{   printf("vkladam na zasobnik : 111 \n");
@@ -159,68 +132,51 @@ do
 				showStack(&S);
 				actPrecToken = get_token();
 				printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
-				//printf("\naktualni token : "); whattoken(actPrecToken.stav); 
-				//printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
 				printf(" ukoncuji pravidlo < \n ******************** \n");
 				break;
-				//if (myTop(&S) != 42) {a = (myTop(&S));}
-				//else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
-	 
-				//b = magicFunction(actPrecToken.stav);
 			}
 		case '>':
 			showStack(&S);
 			printf(" pouzivam pravidlo > \n");
-			//switch(myTop(&S))
-			//{			
-			//case 12: /* identifikator E -> id */	
-			//case 14: /* integer E -> int */	
-			//case 15: /* double E -> double */	
-			//case 16: /* retezec E -> string */	
-			//case 17: /* boolean E -> boolean */	
-			//case 2: /* plus E -> E + E */
-			//case 0: /* krat E -> E * E */
-			//case 1: /* deleno E -> E / E */
-			//case 3: /* minus E -> E - E */
-				do 
-				{ 
-					printf(" popuji %d \n", myTop(&S));
-					myPop(&S);
-				}
-				while (myTop(&S) != 111);
+			do 
+			{ 
 				printf(" popuji %d \n", myTop(&S));
 				myPop(&S);
-				printf("vkladam na zasobnik : E = 42 \n");
-				myPush(&S, 42);
-				showStack(&S);
-				printf(" ukoncuji pravidlo > \n ******************** \n");
-				break;
-			//}
-		//	printf(" brejkuji > \n");
-		//	break;
+			}
+			while (myTop(&S) != 111);
+			printf(" popuji %d \n", myTop(&S));
+			myPop(&S);
+			printf("vkladam na zasobnik : E = 42 \n");
+			myPush(&S, 42);
+			showStack(&S);
+			printf(" ukoncuji pravidlo > \n ******************** \n");
+			break;
 			
-		case 'E': 
-		showStack(&S);
-	   printf(" pouzivam pravidlo E \n");
-	    printf(" ukoncuji pravidlo E \n ******************** \n");
-	    goto zdar ;
-	//    printf(" popuji %d \n", myTop(&S));
-	//    myPop(&S);
-	//    showStack(&S);
-	//	chyba = 1;
-	//	printf(" brejkuji E \n");
-	//	exit(42);
-	//	break;
+		case 'O': /* VYRAZ JE OK */ /* O [o, nikoli nula] je specialni stav, kdy na zasobniku je dolar a narazi se na konec vyrazu */
+			showStack(&S);
+			printf(" pouzivam pravidlo O \n");
+			printf(" ukoncuji pravidlo O \n ******************** \n");
+			myPop(&S); /* posledni E hazu pryc */
+			goto adios ;
+	    
+	    case 'E': /* VYRAZ JE SPATNE */
+			showStack(&S);
+			chyba = 1;
+			printf("pouzivam pravidlo E \n");
+			printf("vyraz je spatne, uklizim zasobnik!! \n ");
+			while (myTop(&S) != 13)
+			{
+				myPop(&S); /* nechavam jen zarazku */
+			}
+			printf("ukoncuji pravidlo E \n ********************* \n");
+			goto adios;
 	}
-	//printf("overuji podminky platnosti\n");
-	//printf(" a = %d, b = %d\n", a, b);
 }
-while (!((a == 13 ) && (b == 13)));
-zdar:
+while (!((a == 13 ) && (b == 13))); /* naprosto nefugujici podminka jen pro formalitu, obesel jsem ji pomoci skoku */
+adios:
 if (chyba == 1) {printf("NE, tohle neni vyraz! \n");}
-if (chyba == 0) {printf("OK \n");
+if (chyba == 0) {printf("OK, tohle je vyraz \n");
 printf("Odstranuji umele vytvorenou zarazku a vracim zasobnik do puvodniho stavu\n");
-myPop(&S);
 myPop(&S);
 showStack(&S);
 }
