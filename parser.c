@@ -19,7 +19,7 @@
 
 list_element Tab_prvok;
 
-void extractRule()
+void extractRule(tSem_context* sem_context)
 {
 	switch(myTop(&S))
 	{
@@ -56,7 +56,7 @@ void extractRule()
 			    myPop(&S);
 			    myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
 			   
-
+          sem_context->act_id = actToken.data;
 			    // VDEC -> id : TYPE
 			}
 			break;
@@ -89,7 +89,7 @@ void extractRule()
 					{
 					myPop(&S);
 					myPush(&S, S_KLIC_INTEGER);
-					
+	  			sem_context->act_type = actToken.stav;
 					}
 					break;
 
@@ -97,6 +97,7 @@ void extractRule()
 					{
 					    myPop(&S);
 					    myPush(&S, S_KLIC_REAL);
+              sem_context->act_type = actToken.stav;
 					}
 					break;
 
@@ -104,7 +105,7 @@ void extractRule()
 					{
 					    myPop(&S);
 					    myPush(&S, S_KLIC_STRING);
-					  
+					    sem_context->act_type = actToken.stav;
 					}
 					break;
 
@@ -112,7 +113,7 @@ void extractRule()
 					{
 					    myPop(&S);
 					    myPush(&S, S_KLIC_BOOLEAN);
-					  
+					    sem_context->act_type = actToken.stav;
 					}
 					break;
 
@@ -401,7 +402,7 @@ void extractRule()
 			  }
 
 			  break;
-
+  
 			   
 	    case LL_E:
 
@@ -422,6 +423,9 @@ bool parse()
 	
 	actToken = get_token();
 
+  tSem_context sem_context;
+  sem_context.context = g_var_dec;
+
 	while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
 	{
 		
@@ -436,7 +440,7 @@ bool parse()
 		{
 			// NETERMINAL  velke mismenka
 			printf("PUSTAM EXTRACT\n");
-			extractRule(); // rozvin pravidla...
+			extractRule(& sem_context); // rozvin pravidla...
 			printf("HOTOVO EXTRACT\n");
 		}
 		else
@@ -469,7 +473,11 @@ bool parse()
 		}
 	}
    
-
 	//free(actToken.data); // free
 	return true;
+}
+
+void sem_check (tSem_context* sem_context) 
+{
+  
 }
