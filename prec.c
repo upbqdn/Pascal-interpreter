@@ -3,7 +3,7 @@
   @Author: Marek Bielik		xbieli05@stud.fit.vutbr.cz
   @Author: Filip Gulan		xgulan00@stud.fit.vutbr.cz
   @Author: Filip Ježovica	xjezov01@stud.fit.vutbr.cz
-  @Author: Luboš Matouška	xmatus29@stud.fit.vutbr.cz
+  @Author: Lubomir Matuška	xmatus29@stud.fit.vutbr.cz
   @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz
 -----------------------------------------------------          
 */
@@ -71,20 +71,26 @@ int isVyraz()
 {
 	printf("Spoustim precedencni analyzu \n");
 	
-	actPrecToken = get_token();
+	actPrecToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
 	myPush(&S, 13);
 	int a = 0;
 	int b = 0;
 do
 {
-		if (myTop(&S) != 42) {int a = (myTop(&S));}
+	//ahoj:
+	
+	if (myTop(&S) != 42) {a = (myTop(&S));}
 	else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
+	 
+	 int b = magicFunction(actPrecToken.stav);
+	
 	 
 	/****************overenie dole ********/
 	//printf("actToken je %d \n", magicFunction(actPrecToken.stav));
 	printf("\naktualni token : "); whattoken(actPrecToken.stav); 
 	printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
 	printf("na vrcholu zasobniku je : %d \n", a);
+	printf("[%d][%d] = %c", a , b, precedent_table[a][b] );
 	//printf("pouzivam pravidlo %c \n", precedent_table[myTop(&S)][magicFunction(actPrecToken.stav)]);
 
 	/*if (actPrecToken.stav == S_END_OF_FILE || actPrecToken.stav == S_STREDNIK)
@@ -94,9 +100,6 @@ do
 	}*/
 	
 	/****************overenie potialto ********/
-	
-	int b = magicFunction(actPrecToken.stav);
-	
 	
 	switch(precedent_table[a][b])
 	{
@@ -108,9 +111,15 @@ do
 			showStack(&S);
 			actPrecToken = get_token();
 			printf("ZAVOLAL JSEM SI DALSI TOKEN \n");
-			printf("\naktualni token : "); whattoken(actPrecToken.stav); 
-			printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav));
+			//printf("\naktualni token : "); whattoken(actPrecToken.stav); 
+			//printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav));
 			printf(" ukoncuji pravidlo = \n ******************** \n");
+			//goto ahoj;
+			break;
+			//if (myTop(&S) != 42) {a = (myTop(&S));}
+			//else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
+	 
+		//	b = magicFunction(actPrecToken.stav);
 		//	printf(" brejkuji = \n ");
 		//	break;
 		case '<':
@@ -132,9 +141,14 @@ do
 				showStack(&S);
 				actPrecToken = get_token();
 				printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
-				printf("\naktualni token : "); whattoken(actPrecToken.stav); 
-				printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
+				//printf("\naktualni token : "); whattoken(actPrecToken.stav); 
+				//printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
 				printf(" ukoncuji pravidlo < \n ******************** \n");
+				break;
+				//if (myTop(&S) != 42) {a = (myTop(&S));}
+				//else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
+	 
+				//b = magicFunction(actPrecToken.stav);
 			}
 			else
 			{   printf("vkladam na zasobnik : 111 \n");
@@ -145,9 +159,14 @@ do
 				showStack(&S);
 				actPrecToken = get_token();
 				printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
-				printf("\naktualni token : "); whattoken(actPrecToken.stav); 
-				printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
+				//printf("\naktualni token : "); whattoken(actPrecToken.stav); 
+				//printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
 				printf(" ukoncuji pravidlo < \n ******************** \n");
+				break;
+				//if (myTop(&S) != 42) {a = (myTop(&S));}
+				//else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
+	 
+				//b = magicFunction(actPrecToken.stav);
 			}
 		case '>':
 			showStack(&S);
@@ -163,7 +182,6 @@ do
 			//case 0: /* krat E -> E * E */
 			//case 1: /* deleno E -> E / E */
 			//case 3: /* minus E -> E - E */
-				showStack(&S);
 				do 
 				{ 
 					printf(" popuji %d \n", myTop(&S));
@@ -176,14 +194,16 @@ do
 				myPush(&S, 42);
 				showStack(&S);
 				printf(" ukoncuji pravidlo > \n ******************** \n");
+				break;
 			//}
 		//	printf(" brejkuji > \n");
 		//	break;
 			
-	//	case 'E': 
-	//	showStack(&S);
-	//    printf(" pouzivam pravidlo E \n");
-	//    printf(" ukoncuji pravidlo E \n ******************** \n");
+		case 'E': 
+		showStack(&S);
+	   printf(" pouzivam pravidlo E \n");
+	    printf(" ukoncuji pravidlo E \n ******************** \n");
+	    goto zdar ;
 	//    printf(" popuji %d \n", myTop(&S));
 	//    myPop(&S);
 	//    showStack(&S);
@@ -192,8 +212,11 @@ do
 	//	exit(42);
 	//	break;
 	}
+	//printf("overuji podminky platnosti\n");
+	//printf(" a = %d, b = %d\n", a, b);
 }
-while ((a != 13 ) && ( b != 13));
+while (!((a == 13 ) && (b == 13)));
+zdar:
 if (chyba == 1) {printf("NE, tohle neni vyraz! \n");}
 if (chyba == 0) {printf("OK \n");
 printf("Odstranuji umele vytvorenou zarazku a vracim zasobnik do puvodniho stavu\n");
