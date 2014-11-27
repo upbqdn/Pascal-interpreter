@@ -15,7 +15,6 @@
 #include "prec.h"
 
 #define MAX_PT 18
-int chyba = 0;
 int left = 111;
 
 const char precedent_table[MAX_PT][MAX_PT] = {
@@ -50,26 +49,26 @@ switch (a)
 	case S_MINUS:					{return 3; break; }
 	case S_MENSI: 					{return 4; break; }
 	case S_VETSI:					{return 5; break; }
-	case S_MENSI_NEBO_ROVNO: 			{return 6; break; }
-	case S_VETSI_NEBO_ROVNO:			{return 7; break; }
+	case S_MENSI_NEBO_ROVNO: 		{return 6; break; }
+	case S_VETSI_NEBO_ROVNO:		{return 7; break; }
 	case S_ROVNO: 					{return 8; break; }
 	case S_NEROVNO:					{return 9; break; }
-	case S_LEVA_ZAVORKA: 				{return 10; break; }
-	case S_PRAVA_ZAVORKA:				{return 11; break; }
-	case S_IDENTIFIKATOR: 				{return 12; break; }
+	case S_LEVA_ZAVORKA: 			{return 10; break; }
+	case S_PRAVA_ZAVORKA:			{return 11; break; }
+	case S_IDENTIFIKATOR: 			{return 12; break; }
 	case S_DOLAR:					{return 13; break; }
 	case S_INTEGER:					{return 14; break; }
 	case S_DOUBLE: 					{return 15; break; }
 	case S_RETEZEC:					{return 16; break; }
 	case S_BOOLEAN:					{return 17; break; }
-	default: 					{return 13; break; } 
+	default: 						{return 13; break; } 
 	 	
 }
 }
 int isVyraz()
 {
 	printf("Spoustim precedencni analyzu \n");
-	
+	int chyba = 0;
 	actPrecToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
 	myPush(&S, 13);
 	int a = 0;
@@ -87,7 +86,6 @@ do
 	printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
 	printf("na vrcholu zasobniku je : %d \n", a);
 	printf("[%d][%d] = %c", a , b, precedent_table[a][b] );
-	/****************overenie potialto ********/
 	
 	switch(precedent_table[a][b])
 	{
