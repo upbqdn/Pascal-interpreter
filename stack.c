@@ -29,9 +29,12 @@ void stack_init(stack *S)
 void myPush(stack *S ,int data)
 {
 	stack_element pomocna = malloc(sizeof(struct stack_elementS));
-	pomocna->data = data;
-	pomocna->ptr_next = S->First;
-	S->First = pomocna;
+	if (pomocna != NULL)
+	{
+		pomocna->data = data;
+		pomocna->ptr_next = S->First;
+		S->First = pomocna;
+	}
 }
 
 /*
@@ -60,18 +63,25 @@ void myPushMul(stack *S ,int num, ...)
  */
 void myPop(stack *S)
 {
-	stack_element pomocna = S->First;
-	S->First = S->First->ptr_next;
-	free(pomocna);
-}
+	if(S->First != NULL)
+	{
+		stack_element pomocna = S->First;
+		S->First = S->First->ptr_next;
+		free(pomocna);
+	}
+} 
 
 /*
- *Funkcia vrati hodnotu vrcholu zasobniku
+ *Funkcia vrati hodnotu vrcholu zasobniku, ak je stack prazdny, vrati NAN
  *Parameter: Zasobnik
  */
 int myTop(stack *S)
 {
-	return S->First->data;
+	if(S->First != NULL)
+	{
+		return S->First->data;
+	}
+	return NAN;
 }
 
 /*
@@ -105,8 +115,8 @@ void showStack(stack *S)
 	printf("YYYYYYYYY          Stack End         YYYYYYYYYYY \n\n");
 }
 
-
-/*int main()
+/*
+int main()
 {
 	stack_init(&S);
 	myPushMul(&S ,8, 1,2,3,4,5,80,75,87);
