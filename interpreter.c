@@ -17,7 +17,18 @@
 #include "header.h"
 #include "interpreter.h"
 
+
 list list_array[HASH_ARRAY_SIZE];
+astack aS;
+astack_init(&aS);
+
+
+// ----------------alokacia pomocnych premennych roznych TIPOV------------//
+int *c_integer = malloc(sizeof(int));
+int *c_double = malloc(sizeof(double));
+int *c_boolean = malloc(sizeof(boolean));
+
+
 
 int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
@@ -28,337 +39,186 @@ int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, 
       
       	switch(Instr.AKCIA) // doplnit
       	{
-      		case I_STOP:
-             return; 
+      		
+      		case I_PREC:
+               myaPUSH(&aS, Instr.ADDR_PRVA);
+               tStav TIP=Inst.ADDR_DRUHA;
+              
             break;
 
-            case I_READ:
-             scanf( );  // doplnit 
-            break;
+            case I_PRIRAD:
+               if (TIP==S_INTEGER)
+               {	
+               Instr.KDE= (*(int*)(myaTop(&aS)));  // chcem zmenit hodnotu .KDE nie adresu //
+               myaPop(&aS);
+               }
 
-        	case I_WRITE:
-             printf("%s\n", );   // doplnit
-
-        	break;
-
-        	case I_SORT:
-             
-                   sort()                  // doplnit sortovanie parametre
-
-            break;
-
-            case I_FIND:
-             
-                  find()                  // doplnit find parametre
+               else if (TIP==S_DOUBLE)
+               {	
+               Instr.KDE= (*(float*)(myaTop(&aS)));  // float ?
+               myaPop(&aS);
+               }
 
             break;
 
-            case I_LENGTH:
-             
-                                    // doplnit length
-            break;
-
-            case I_COPY:
-             
-                    podretazec=malloc(sizeof (char)*dlzka);            // zatial len na konkretny pripad
-                    copy(retazec, i, n, *podretazec);
-
-            break;
+           
 
             case I_PLUS:
+               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
                {
-                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
-	                   {
-	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                        ???  =Instr.PRVA+Instr.DRUHA;
-	                      // treba doplnit ulozenie
 
-	                    } 
+                 int a = *(int *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 int b = *(int *)(myaTop(&aS) ; 
+                 myaPop(&aS);
+                 
+                 c_integer = b + a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
+                 myaPUSH(&aS, c_integer);
+                 ;
 
-	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
+               }
 
-	                     	??? =Instr.PRVA+ ??? ;
-
-	                     }  
-
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
-
-	                     	??? = ??? + Instr.DRUHA;
-
-	                     }   
-
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
-
-	                     	??? = ??? + ??? ;          // otocit treba
-
-	                     }    
-	                    
-	                   }
-
-                 else   // ---ak mame urcene kam--------------------------------------------//
-	                   {
-	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                    Instr.KDE=Instr.PRVA+Instr.DRUHA;
-	                      // treba doplnit ulozenie
-
-	                    } 
-
-	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
-
-	                     	Instr.KDE=Instr.PRVA+ ??? ;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
-
-	                     	Instr.KDE=??? + Instr.DRUHA;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
-
-	                     	Instr.KDE= ??? + ??? ;         
-
-	                     }  
-
-	                   }
-               } 
-
-             
-                                    
-            break;
-            
-            case I_MINUS:
+               else if (TIP==S_DOUBLE)
                {
-                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
-	                   {
-	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                        ???  =Instr.PRVA-Instr.DRUHA;
-	                      // treba doplnit ulozenie
+               	 float a = *(float *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 float b = *(float *)(myaTop(&aS) ; 
+                 myaPop(&aS);   
+                 c_double = b + a;   
+                 myaPUSH(&aS, c_double);
+               	
+               }
 
-	                    } 
-
-	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
-
-	                     	??? =Instr.PRVA- ??? ;
-
-	                     }  
-
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
-
-	                     	??? = ??? - Instr.DRUHA;
-
-	                     }   
-
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
-
-	                     	??? = ??? - ??? ;          // otocit treba
-
-	                     }    
-	                    
-	                   }
-
-                 else   // ---ak mame urcene kam--------------------------------------------//
-	                   {
-	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                    Instr.KDE=Instr.PRVA-Instr.DRUHA;
-	                      // treba doplnit ulozenie
-
-	                    } 
-
-	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
-
-	                     	Instr.KDE=Instr.PRVA- ??? ;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
-
-	                     	Instr.KDE=??? - Instr.DRUHA;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
-
-	                     	Instr.KDE= ??? - ??? ;          // otocit treba
-
-	                     }  
-
-	                   }
-               }                     
-            break;
-
-            case I_KRAT:
+               else if (TIP==S_BOOLEAN)
                {
-                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
-	                   {
-	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                        ???  =Instr.PRVA*Instr.DRUHA;
-	                      // treba doplnit ulozenie
+               	
+               }
 
-	                    } 
+               else if (TIP==S_STRING)
+               {
+               	
+               }
+        	
+        	break;  
 
-	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
+        	case I_MINUS:
+               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
+               {
 
-	                     	??? =Instr.PRVA* ??? ;
+                 int a = *(int *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 int b = *(int *)(myaTop(&aS) ; 
+                 myaPop(&aS);
+                 
+                 c_integer = b - a;   
+                 myaPUSH(&aS, c);
+                 ;
 
-	                     }  
+               }
 
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
+               else if (TIP==S_DOUBLE)
+               {
+                 float a = *(float *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 float b = *(float *)(myaTop(&aS) ; 
+                 myaPop(&aS);   
+                 c_double = b - a;   
+                 myaPUSH(&aS, c_double);
+               	
+               }
 
-	                     	??? = ??? * Instr.DRUHA;
+               else if (TIP==S_BOOLEAN)
+               {
+               	
+               }
 
-	                     }   
+               else if (TIP==S_STRING)
+               {
+               	
+               }
+        	
+        	break; 
 
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
+        	case I_KRAT:
+               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
+               {
 
-	                     	??? = ??? * ??? ;          // otocit treba
+                 int a = *(int *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 int b = *(int *)(myaTop(&aS) ; 
+                 myaPop(&aS);
+                 
+                 c_integer = b * a;   
+                 myaPUSH(&aS, c);
+                 ;
 
-	                     }    
-	                    
-	                   }
+               }
 
-                 else   // ---ak mame urcene kam--------------------------------------------//
-	                   {
-	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                    Instr.KDE=Instr.PRVA*Instr.DRUHA;
-	                      // treba doplnit ulozenie
+               else if (TIP==S_DOUBLE)
+               {
+               	 float a = *(float *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 float b = *(float *)(myaTop(&aS) ; 
+                 myaPop(&aS);   
+                 c_double = b * a;   
+                 myaPUSH(&aS, c_double);
+               	
+               }
 
-	                    } 
+               else if (TIP==S_BOOLEAN)
+               {
+               	
+               }
 
-	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
-
-	                     	Instr.KDE=Instr.PRVA* ??? ;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
-
-	                     	Instr.KDE=??? * Instr.DRUHA;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
-
-	                     	Instr.KDE= ??? * ??? ;         
-
-	                     }  
-
-	                   }
-               } 
-             
-                                    
-            break;
+               else if (TIP==S_STRING)
+               {
+               	
+               }
+        	
+        	break;   
 
             case I_DELENO:
+               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
                {
-                  if (Instr.KDE==NULL)  //------ ak nemame urcene kam---------------------------
-	                   {
-	                      if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                        ???  =Instr.PRVA/Instr.DRUHA;
-	                      // treba doplnit ulozenie
 
-	                    } 
+                 int a = *(int *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 int b = *(int *)(myaTop(&aS) ; 
+                 myaPop(&aS);
+                 
+                 c_integer = b / a;   
+                 myaPUSH(&aS, c);
+                 ;
 
-	                   else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
+               }
 
-	                     	??? =Instr.PRVA/ ??? ;
+               else if (TIP==S_DOUBLE)
+               {
+               	 float a = *(float *)(myaTop(&aS) ;  
+                 myaPop(&aS);
+                 float b = *(float *)(myaTop(&aS) ; 
+                 myaPop(&aS);   
+                 c_double = b / a;   
+                 myaPUSH(&aS, c_double);
+               	
+               }
 
-	                     }  
+               else if (TIP==S_BOOLEAN)
+               {
+               	
+               }
 
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
-
-	                     	??? = ??? / Instr.DRUHA;
-
-	                     }   
-
-	                   else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
-
-	                     	??? = ??? / ??? ;          // otocit treba
-
-	                     }    
-	                    
-	                   }
-
-                 else   // ---ak mame urcene kam--------------------------------------------//
-	                   {
-	                    if((Instr.PRVA!=NULL)&&(Instr.DRUHA!=NULL))   // ak su obe zadane
-	                    {	
-	                    Instr.KDE=Instr.PRVA/Instr.DRUHA;
-	                      // treba doplnit ulozenie
-
-	                    } 
-
-	                    else if (((Instr.PRVA!=NULL)&&(Instr.DRUHA==NULL))) // ak je prva zadana
-	                     {
-
-	                     	Instr.KDE=Instr.PRVA/ ??? ;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA!=NULL))) // ak je druha zadana
-	                     {
-
-	                     	Instr.KDE=??? / Instr.DRUHA;
-
-	                     } 
-
-	                    else if (((Instr.PRVA==NULL)&&(Instr.DRUHA==NULL))) // ak nie su zadane
-	                     {
-
-	                     	Instr.KDE= ??? / ??? ;          // otocit treba
-
-	                     }  
-
-	                   }
-               } 
-                                    
-            break;
-            
-            case I_SKOK:
-             
-                                    
-            break;
-
-
-
-        
-        
-        	default:  
-                  // tuto bude asi chybicka nejaka 
-        	break  
-
+               else if (TIP==S_STRING)
+               {
+               	
+               }
+        	
+        	break;  
 
       	}
 
 
 	}
+
+	// tuto bude dealokacia pomocnych premenych 
 }
