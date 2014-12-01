@@ -11,6 +11,24 @@
 /* instruction list - hlavickovy subor  */
 
 
+/* STAVY AKCII */
+typedef enum
+{
+  I_PREC, // 0
+  I_KRAT,
+  I_DELENO,
+  I_PLUS,
+  I_MINUS,
+  I_MENSI,  // 5
+  I_VETSI,
+  I_MENSIROVNO,
+  I_VETSIROVNO,
+  I_ROVNO,
+  I_NEROVNO // 10 
+  
+} tINSTR;
+
+
 /* JEDNA INSTRUKCIA */
 typedef struct{
     tINSTR AKCIA;        // ** 1 > AKCIA AKA SA MA VYKONAT {int konstanta} : JMP, +,-,*,/,aloc,....
@@ -37,22 +55,6 @@ typedef struct{
 
 /* GLOBALNA INSTRUKCNA PASKA ...*/
 extern tListInstrukcii listok;
-
-/* STAVY AKCII */
-typedef enum
-{
-  I_PREC; // 0
-  I_KRAT;
-  I_DELENO;
-  I_PLUS;
-  I_MINUS;
-  I_MENSI;  // 5
-  I_VETSI;
-  I_MENSIROVNO;
-  I_VETSIROVNO;
-  I_ROVNO;
-  I_NEROVNO; // 10 
-} tINSTR;
 
 
 /* Deklaracia funkcii nad INSTRUKCNOU PASKOU */
