@@ -4,6 +4,7 @@
  */
 
 #include "ial.h"
+#include "htable.h"
 
 list list_array[HASH_ARRAY_SIZE];
 
@@ -41,28 +42,85 @@ void hash_init()
  		list_array[i].First = NULL;
  	}
 }
+
+void hash_insert_i(char *id)
+{
+	if(hash_search(id) == NOCONTAINS)
+	{
+		list_element help_var = malloc(sizeof(struct elementS));
+ 		help_var->id = malloc(strlen(id) * sizeof(char));
+ 		if(help_var == NULL || help_var->id == NULL) //alokacia prebehla chybne
+ 		{
+ 			//doplnit error
+ 		}
+ 		else //alokacia prebehla spravne
+ 		{
+ 			int i = hash(id);
+ 			strcpy(help_var->id, id);
+ 			help_var->ptr = list_array[i].First;
+ 			list_array[i].First = help_var;
+ 		}
+	}
+}
+
 /*
  *Funkcia na vkladanie do hashovacej tabulky
  *Parametre: data - ktore vkladame a state - ktory vkladame
  */
-void hash_insert(char *data, int state, int type, int tid)
+void hash_insert_it(char *id, int type)
 {
- 	list_element help_var = malloc(sizeof(struct elementS));
- 	help_var->token_data = malloc(strlen(data) * sizeof(char));
- 	if(help_var == NULL || help_var->token_data == NULL) //alokacia prebehla chybne
+ 	if(hash_search(id) == NOCONTAINS) //polozka sa v tabulke este nenachadza 
  	{
- 		//doplnit error
+ 		list_element help_var = malloc(sizeof(struct elementS));
+ 		help_var->id = malloc(strlen(id) * sizeof(char));
+ 		if(help_var == NULL || help_var->id == NULL) //alokacia prebehla chybne
+ 		{
+ 			//doplnit error
+ 		}
+ 		else //alokacia prebehla spravne
+ 		{
+ 			int i = hash(id);
+ 			strcpy(help_var->id, id); //ulozime token data
+ 			help_var->type = type;
+ 			help_var->ptr = list_array[i].First;
+ 			list_array[i].First = help_var;
+ 		}
  	}
- 	else //alokacia prebehla spravne
+ 	else //ak sa tam nachadza tak iba doplnim jeho typ
  	{
- 		int i = hash(data);
- 		strcpy(help_var->token_data, data); //ulozime token data
- 		help_var->token_state = state; //ulozime token stav
- 		help_var->type = type;
- 		help_var->tid = tid;
- 		help_var->ptr = list_array[i].First;
- 		list_array[i].First = help_var;
+ 		int i = hash(id);
+		list_array[i].Act = list_array[i].First;
+		while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+		{
+			if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+			{
+				list_array[i].Act->type = type;
+			}
+			list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+		}
  	}
+}
+ 
+void hash_insert_func(char *id)
+{
+	if(hash_search(id) == NOCONTAINS)
+	{
+		
+	}
+	else
+	{
+		int i = hash(id);
+		list_array[i].Act = list_array[i].First;
+		while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+		{
+			if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+			{
+
+				list_array[i].Act->ref = Lhash_init();
+			}
+			list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+		}
+	}
 }
 
 /*
@@ -70,13 +128,13 @@ void hash_insert(char *data, int state, int type, int tid)
  *Parameter: data - hladane data
  *Vracia: 0/CONTAINS v pripade ze sa prvok nachadza, 1/NOCONTAINS v ripade ze nie
  */
-int hash_search(char *data)
+int hash_search(char *id)
 {
-	int i = hash(data);
+	int i = hash(id);
 	list_array[i].Act = list_array[i].First;
 	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
 	{
-		if(strcmp(list_array[i].Act->token_data, data) == 0) //porovna retazce
+		if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
 		{
 			return CONTAINS;
 		}
@@ -85,18 +143,33 @@ int hash_search(char *data)
 	return NOCONTAINS;
 }
 
+void *hash_adress(char *id)
+{
+	int i = hash(id);
+	list_array[i].Act = list_array[i].First;
+	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+	{
+		if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+		{
+			return (void*) (list_array[i].Act); //vratime adresu aktualnej vo void formate
+		}
+		list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+	}
+	return NULL;
+}
+
 /*
  *Funkcia na zistenie vratenie polozky tabulky, ktoru hladame
  *Parameter: data - hladane podla data
  *Vracia: polozku ak sa v tabulke nachadza, alebo NULL ak sa polozka nenachadza
  */
-list_element hash_return(char *data)
+list_element hash_return(char *id)
 {
-	int i = hash(data);
+	int i = hash(id);
 	list_array[i].Act = list_array[i].First;
 	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
 	{
-		if(strcmp(list_array[i].Act->token_data, data) == 0) //porovna retazce
+		if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
 		{
 			return list_array[i].Act;
 		}
@@ -120,7 +193,7 @@ void hash_destroy()
  			}
  			list_element help_var = list_array[i].First;
  			list_array[i].First = list_array[i].First->ptr;
- 			free(help_var->token_data);
+ 			free(help_var->id);
  			free(help_var);
  		}
  	}
@@ -227,13 +300,15 @@ void vector(char *P, int *Fail)
 	}
 }
 
-/*
+
 int main()
 {
 	hash_init();
-	hash_insert("aaa", 5, 2, 3);
-	
-	list_element special = hash_return("aaa");
-	printf("%d\n", special->token_state);
+	//hash_insert_i("aaa");
+	hash_insert_it("aaa", 40);
+	hash_insert_func("aaa");
+	list_element adresa = (list_element) (hash_adress("aaa"));
+	//list_element special = hash_return("aaa");
+	printf("%d\n", (adresa->type));
  	return 0;
-}*/
+}
