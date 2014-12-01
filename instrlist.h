@@ -13,7 +13,7 @@
 
 /* JEDNA INSTRUKCIA */
 typedef struct{
-    int AKCIA;        // ** 1 > AKCIA AKA SA MA VYKONAT {int konstanta} : JMP, +,-,*,/,aloc,....
+    tINSTR AKCIA;        // ** 1 > AKCIA AKA SA MA VYKONAT {int konstanta} : JMP, +,-,*,/,aloc,....
     void *ADDR_KDE;   // ** 2 > ADDR_KDE   > KAM SA MA UKLADAT nieco, pri jednoadresovych instrukciach sa pouziva univerzalne ostatne budu NULL!
     void *ADDR_PRVA;  // ** 3 > ADDR_PRVA  > ODKIAL sa cita 1 adresa
     void *ADDR_DRUHA; // ** 4 > ADDR_DRUHA > ODKIAL sa cita 2 adresa
@@ -38,6 +38,22 @@ typedef struct{
 /* GLOBALNA INSTRUKCNA PASKA ...*/
 extern tListInstrukcii listok;
 
+/* STAVY AKCII */
+typedef enum
+{
+  I_PREC; // 0
+  I_KRAT;
+  I_DELENO;
+  I_PLUS;
+  I_MINUS;
+  I_MENSI;  // 5
+  I_VETSI;
+  I_MENSIROVNO;
+  I_VETSIROVNO;
+  I_ROVNO;
+  I_NEROVNO; // 10 
+} tINSTR;
+
 
 /* Deklaracia funkcii nad INSTRUKCNOU PASKOU */
 void InitInstrList (tListInstrukcii *I_List);
@@ -49,4 +65,4 @@ void InstrDalsia(tListInstrukcii *I_List);
 void *InstrDajPosledPoz(tListInstrukcii *I_List);
 void *InstrDajPoz(tListInstrukcii *I_List);
 tInstrukcia *DajInstr(tListInstrukcii *I_List);
-void NaplnInstr(int AKCIA, void *ADDR_KDE, void *ADDR_PRVA, void *ADDR_DRUHA);
+void NaplnInstr(tINSTR AKCIA, void *ADDR_KDE, void *ADDR_PRVA, void *ADDR_DRUHA);

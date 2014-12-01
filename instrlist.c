@@ -80,7 +80,7 @@ void InstrInsert (tListInstrukcii *I_List, tInstrukcia DataOfInstr)
 ** 4 > ADDR_DRUHA	> ODKIAL sa cita 2 adresa
 ** ::: vsetky adresy su typu void * >> pri pouzivani pouzi PRETYPOVANIE :::
 */
-void NaplnInstr(int AKCIA, void *ADDR_KDE, void *ADDR_PRVA, void *ADDR_DRUHA)
+void NaplnInstr(tINSTR AKCIA, void *ADDR_KDE, void *ADDR_PRVA, void *ADDR_DRUHA)
 {
     tInstrukcia Ins;
     Ins.AKCIA = AKCIA;
