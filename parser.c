@@ -450,14 +450,14 @@ bool parse()
 		else
 		{
 			// TERMINAL male pismenka
-			if (myTop(&S) == actToken.stav)
+			if (((unsigned int) myTop(&S)) == actToken.stav)
 			{
-				printf("Pustam TERMINAL  actToken je "); whattoken( actToken.stav);
-				printf("PUSTAM TERMINAL  a mam na TOPE %d a zmazem ho "); whattoken(myTop(&S)) ;
+				printf("Pustam TERMINAL  actToken je "); whattoken(actToken.stav);
+				printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho "); whattoken(myTop(&S));
 				myPop(&S);	// odstranime z vrcholu zasobnika
 				//free(actToken.data); // free
 				actToken = get_token(); // nacitame novy token
-				printf("KOEC TERMINAL GET TOKEN token je "); whattoken( actToken.stav);
+				printf("KOEC TERMINAL GET TOKEN token je "); whattoken(actToken.stav);
 				printf("KOEC TERMINAL GET TOKEN TOP  je "); whattoken(myTop(&S)) ;
 			}
 			else

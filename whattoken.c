@@ -11,13 +11,14 @@
 /*
  *Nainkludovanie hackoveho suboru
  */
+#include "whattoken.h"
 #include "header.h"
 
 
 /*
  *Premenne definicie
  */
-
+ 
 void whattoken(tStav stav)
 {
 	switch (stav)
@@ -332,10 +333,6 @@ void whattoken(tStav stav)
         	break;
         case LL_E:
         	printf("LL_E");
-        	printf("\n");
-        	break;
-        case EOF:
-        	printf("EOF zarazka");
         	printf("\n");
         	break;
  	 default:

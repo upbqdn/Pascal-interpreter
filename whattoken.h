@@ -8,6 +8,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+//#include "header.h"
 
 /*
  *Deklaracia struktur a premennych
@@ -17,4 +18,4 @@
 /*
  *Deklaracie funkcii
  */
-void whatt(tStav); //funkcia na vypis tokenu
+void whattoken(); //funkcia na vypis tokenu
