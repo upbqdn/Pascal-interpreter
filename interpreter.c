@@ -33,23 +33,45 @@ int *c_boolean = malloc(sizeof(boolean));
 int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
  hash_init();
+ tStav TIP;
+
+
 	while(1)
 	{
-		Instr=getinstrukciu()
+		Instr=getinstrukciu();
       
-      	switch(Instr.AKCIA) // doplnit
+      	switch(Instr.AKCIA) 
       	{
-      		
+
+      		//============ak pride int,double,boolean,string...===============//
       		case I_PREC:
                myaPUSH(&aS, Instr.ADDR_PRVA);
-               tStav TIP=Inst.ADDR_DRUHA;
+               TIP=Inst.ADDR_DRUHA;
+              
+            break;
+           
+
+            //============ak pride IDENTIFIKATOR===============//
+            case I_PREC_ID:
+
+
+                Llist TOPFRAME = myTop(&FRAME); 
+			
+			    Llist_element* prvok = Lhash_adress(TOPFRAME, Instr.ADDR_PRVA);
+                if (prvok == NULL) // nenasli sme v LOKALNE
+				{
+				// hladame v GLOBALTABLE
+				prvok = Lhash_adress(GLOBFRAME, stoken->data);
+				}
+				TIP=prvok.type;
+				myaPUSH(&aS, prvok.data);
               
             break;
 
             case I_PRIRAD:
                if (TIP==S_INTEGER)
                {	
-               Instr.KDE= (*(int*)(myaTop(&aS)));  // chcem zmenit hodnotu .KDE nie adresu //
+               Instr.ADDR_KDE= (*(int*)(myaTop(&aS)));  // chcem zmenit hodnotu .KDE nie adresu //
                myaPop(&aS);
                }
 
