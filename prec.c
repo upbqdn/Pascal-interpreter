@@ -18,6 +18,8 @@
 #define MAX_PT 18
 int left = 111;
 
+
+
 const char precedent_table[MAX_PT][MAX_PT] = {
 ">>>>>>>>>><><><<<<", // * 0
 ">>>>>>>>>><><><<<<", // / 1
@@ -77,13 +79,10 @@ int isVyraz()
 do
 {
 	// POZNAMKA: "E" = 42, "<" = 111, "$" = 13
-	if (actPrecToken.stav == S_IDENTIFIKATOR) /* + int , double ... */
+	if ((actPrecToken.stav == S_IDENTIFIKATOR) || (actPrecToken.stav == S_INTEGER) || (actPrecToken.stav == S_DOUBLE) || (actPrecToken.stav == S_RETEZEC) || (actPrecToken.stav == S_BOOLEAN))/* + int , double ... */
 	{
 		printf("GREEP generuji instrukci vloz na zasobnik %d \n", actPrecToken.stav );
-			/* void *frameTop = stackTop(&frame); */
-			/* void *AddrCo = hashSearch(frameTop , actPrecToken.data); */ 
-			/* NaplnInstr( I_PREC, NULL, AddrCo, NULL ); */
-			/* instrukce pro ulozeni adresy na zasobnik */
+		NaplnInstr( I_PREC, NULL, &actPrecToken, NULL );
 	}
 	
 	
@@ -161,27 +160,60 @@ do
 			{	
 				do 
 				{ 
-					if (myTop(&S) == 0) 
+					if (myTop(&S) == 0) /* * */
 					{ 
-					printf("GREEP ********** g e n e r u j i  i n st r u k c i * \n");
-					/* NaplnInstr( I_KRAT, NULL, NULL, NULL ); */
-					
-					
-					 }
-					if (myTop(&S) == 1) { /* / */}
-					if (myTop(&S) == 2) { printf("GREEP ********** g e n e r u j i  i n st r u k c i + \n");}
-					if (myTop(&S) == 3) { /*  -  */}
-					if (myTop(&S) == 4) {}
-					if (myTop(&S) == 5) {}
-					if (myTop(&S) == 6) {}
-					if (myTop(&S) == 7) {}
-					if (myTop(&S) == 8) {}
-					if (myTop(&S) == 9) {}
+						printf("GREEP ********** g e n e r u j i  i n st r u k c i * \n");
+						NaplnInstr( I_KRAT, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 1) /* / */ 
+					{
+						 printf("GREEP ********** g e n e r u j i  i n st r u k c i / \n");
+						 NaplnInstr( I_DELENO, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 2) /* + */
+					{
+						 printf("GREEP ********** g e n e r u j i  i n st r u k c i + \n");
+						 NaplnInstr( I_PLUS, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 3) /* - */
+					{
+						 printf("GREEP ********** g e n e r u j i  i n st r u k c i - \n");
+						 NaplnInstr( I_MINUS, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 4) /* < */
+					{
+						printf("GREEP ********** g e n e r u j i  i n st r u k c i < \n");
+						NaplnInstr( I_MENSI, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 5) /* > */
+					{
+						printf("GREEP ********** g e n e r u j i  i n st r u k c i > \n");
+						NaplnInstr( I_VETSI, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 6) /* <= */
+					{
+						printf("GREEP ********** g e n e r u j i  i n st r u k c i <= \n");
+						NaplnInstr( I_MENSIROVNO, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 7) /* >= */
+					{
+						printf("GREEP ********** g e n e r u j i  i n st r u k c i >= \n");
+						NaplnInstr( I_VETSIROVNO, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 8) /* = */
+					{
+						printf("GREEP ********** g e n e r u j i  i n st r u k c i = \n");
+						NaplnInstr( I_ROVNO, NULL, NULL, NULL );
+					}
+					else if (myTop(&S) == 9) /* <> */
+					{
+						printf("GREEP ********** g e n e r u j i  i n st r u k c i <> \n");
+						NaplnInstr( I_NEROVNO, NULL, NULL, NULL );
+					}
 					printf(" popuji %d \n", myTop(&S)); 
 					myPop(&S);
 				}
 				while (myTop(&S) != 111);
-				//= myTop(&S);
 				printf(" popuji %d \n", myTop(&S));
 				myPop(&S);
 			}
