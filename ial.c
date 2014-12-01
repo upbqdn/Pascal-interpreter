@@ -301,7 +301,7 @@ void vector(char *P, int *Fail)
 }
 
 
-int main()
+/*int main()
 {
 	hash_init();
 	//hash_insert_i("aaa");
@@ -311,4 +311,4 @@ int main()
 	//list_element special = hash_return("aaa");
 	printf("%d\n", (adresa->type));
  	return 0;
-}
+}*/
