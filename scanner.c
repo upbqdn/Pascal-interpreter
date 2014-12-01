@@ -585,6 +585,10 @@ tToken get_token(void)
             konec = true;
             break;
         }
+        default:
+        {
+            break;
+        }
         }
         if (error) break;
         if (c == '\n')

@@ -410,7 +410,11 @@ void extractRule(tSem_context* sem_context)
 
         
           break;
-		  
+
+        default:
+        {
+        	break;
+        }
 			}
 }
 
