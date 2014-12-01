@@ -79,10 +79,34 @@ int isVyraz()
 do
 {
 	// POZNAMKA: "E" = 42, "<" = 111, "$" = 13
-	if ((actPrecToken.stav == S_IDENTIFIKATOR) || (actPrecToken.stav == S_INTEGER) || (actPrecToken.stav == S_DOUBLE) || (actPrecToken.stav == S_RETEZEC) || (actPrecToken.stav == S_BOOLEAN))/* + int , double ... */
+	if ( (actPrecToken.stav == S_INTEGER) || (actPrecToken.stav == S_DOUBLE) || (actPrecToken.stav == S_RETEZEC) || (actPrecToken.stav == S_BOOLEAN))/* + int , double ... */
 	{
-		printf("GREEP generuji instrukci vloz na zasobnik %d \n", actPrecToken.stav );
-		NaplnInstr( I_PREC, NULL, &actPrecToken, NULL );
+		void *spracADDR = spracuj(actPrecToken.stav, actPrecToken.data);
+		if (spracADDR == NULL )
+		{
+			// chybiska
+			printf("CHYBISKA.....\n");
+			return 1; // tu nejaky ERR KOD
+		}
+
+		tStav *TIPSTAV = malloc(sizeof(tStav));
+		*TIPSTAV = actPrecToken.stav;
+
+		printf("GREEP generuji instrukci vloz na zasobnik I_PREC >>"); whattoken(actPrecToken.stav);
+		NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+	}
+
+	if (actPrecToken.stav == S_IDENTIFIKATOR)
+	{
+		void *spracADDR = spracuj(actPrecToken.stav, actPrecToken.data);
+		if (spracADDR == NULL )
+		{
+			// chybiska
+			printf("CHYBISKA.....\n");
+			return 1; // tu nejaky ERR KOD
+		}
+		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID >>"); whattoken(actPrecToken.stav);
+		NaplnInstr( I_PREC_ID, NULL, spracADDR, NULL );
 	}
 	
 	

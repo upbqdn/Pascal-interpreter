@@ -14,17 +14,19 @@
 /* STAVY AKCII */
 typedef enum
 {
-  I_PREC, // 0
-  I_KRAT,
+  I_KRAT,	//	0
   I_DELENO,
   I_PLUS,
   I_MINUS,
-  I_MENSI,  // 5
-  I_VETSI,
+  I_MENSI,  // 4
+  I_VETSI,	//5
   I_MENSIROVNO,
   I_VETSIROVNO,
   I_ROVNO,
-  I_NEROVNO // 10 
+  I_NEROVNO,	// 9
+
+  I_PREC,		//10
+  I_PREC_ID,	//11
   
 } tINSTR;
 
