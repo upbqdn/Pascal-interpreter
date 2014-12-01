@@ -15,7 +15,7 @@ typedef struct {
   tErr err;
   tContext context;
   tStav act_type;
-  *char act_id;
+  char *act_id;
 } tSem_context;
 
 
