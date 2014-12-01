@@ -143,3 +143,84 @@ void InstrDalsia(tListInstrukcii *I_List)
         I_List->Aktivna = I_List->Aktivna->dalsiPtr;
     }
 }
+
+
+
+
+/* SPECIAL FUNKCION */
+/* premeni data napr z tokenu na odpovedajuce typy
+** pretoze mi ich dostavame ako char..
+*/
+
+void *spracuj(tStav TIPSTAV, char* data)
+{
+    switch(TIPSTAV)
+    {
+
+        case S_INTEGER:
+        {
+            void *pomocnicek = malloc(sizeof(int));
+            if (pomocnicek == NULL) // chyba alokacie
+            {
+                return NULL;
+            }
+            *(int *) pomocnicek = atoi(data);
+            return pomocnicek;
+        }
+
+        case S_DOUBLE:
+        {
+            void *pomocnicek = malloc(sizeof(float));
+            if (pomocnicek == NULL) // chyba alokacie
+            {
+                return NULL;
+            }
+            *(float *) pomocnicek = atof(data);
+            return pomocnicek;
+        }
+
+
+        /* take iste lebo identifikator vraciam ako string 
+        ** koli zapichu do tabulky
+        ** STRING - klasicky ako aj tie cisla hore
+        */
+        case S_RETEZEC:
+        case S_IDENTIFIKATOR:
+        {
+            int dlzka = strlen(data);
+            void *pomocnicek = malloc(((sizeof(char))*dlzka)+1);
+            if (pomocnicek == NULL) // chyba alokacie
+            {
+                return NULL;
+            }
+            strcpy( pomocnicek, data);
+            return pomocnicek;
+        }
+
+        case S_KLIC_TRUE:
+        {
+            void *pomocnicek = malloc(sizeof(bool));
+            if (pomocnicek == NULL) // chyba alokacie
+            {
+                return NULL;
+            }
+            *(bool *) pomocnicek = true;
+            return pomocnicek;
+        }
+        case S_KLIC_FALSE:
+        {
+            void *pomocnicek = malloc(sizeof(bool));
+            if (pomocnicek == NULL) // chyba alokacie
+            {
+                return NULL;
+            }
+            *(bool *) pomocnicek = false;
+            return pomocnicek;
+        }
+
+
+        default:
+        return NULL; // chybiska ..
+    }
+    
+}

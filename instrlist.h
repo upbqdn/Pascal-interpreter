@@ -68,3 +68,4 @@ void *InstrDajPosledPoz(tListInstrukcii *I_List);
 void *InstrDajPoz(tListInstrukcii *I_List);
 tInstrukcia *DajInstr(tListInstrukcii *I_List);
 void NaplnInstr(tINSTR AKCIA, void *ADDR_KDE, void *ADDR_PRVA, void *ADDR_DRUHA);
+void *spracuj(tStav TIPSTAV, char* data);
