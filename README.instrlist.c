@@ -50,13 +50,13 @@ int main()
 
 
     // takto sa naplni instrukcia .. cize to :retaz: predstavuje adresu vid hore ako ziskat adresu{v tom printf}
-    NaplnIntr(42, (void*) retaz, NULL, NULL); // 42 moze byt konstanta urcitej AKCIE , 3 dalsie su adresy
+    NaplnInstr(42, (void*) retaz, NULL, NULL); // 42 moze byt konstanta urcitej AKCIE , 3 dalsie su adresy
 
 
 // vyskusame pridat instrukciu 2*****************************************************************
     void *retaz2 = malloc(sizeof(char)*15);
     *(char**) retaz2 ="DRUHY RETAZEC";
-    NaplnIntr(2444, (void*) retaz2, NULL, NULL); // 2444 moze byt konstanta urcitej AKCIE , 3 dalsie su adresy
+    NaplnInstr(2444, (void*) retaz2, NULL, NULL); // 2444 moze byt konstanta urcitej AKCIE , 3 dalsie su adresy
 
 
     InstrStart(&listok); // aktivacia intrukcnej pasky od PRVEJ instrukcie
