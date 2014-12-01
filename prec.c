@@ -220,6 +220,5 @@ printf("Odstranuji umele vytvorenou zarazku a vracim zasobnik do puvodniho stavu
 //myPop(&S);
 myPop(&S);
 showStack(&S);
-}
 return chyba;	
 }
