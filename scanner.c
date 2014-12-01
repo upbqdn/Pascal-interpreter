@@ -36,7 +36,7 @@ const char *klicova_slova[POCET_KLICOVYCH_SLOV] =
     "begin\0", "boolean\0", "do\0", "else\0", "end\0", "false\0", "find\0", "forward\0", "function\0", "if\0", "integer\0", "readln\0", "real\0", "sort\0", "string\0", "then\0", "true\0", "var\0", "while\0", "write\0"
 };
 
-static void vloz_znak_do_tokenu(int znak, int *i)
+void vloz_znak_do_tokenu(int znak, int *i)
 {
     if ((token.data = (char *) realloc(token.data, (*i) + 2)))
     {
@@ -47,20 +47,20 @@ static void vloz_znak_do_tokenu(int znak, int *i)
     else error = interni_chyba_interpretu; /* interni chyba prekladace */
 }
 
-static void vrat_se_o_znak(int znak)
+void vrat_se_o_znak(int znak)
 {
     if (!isspace(znak)) ungetc(znak, soubor);
     if (isprint(znak)) sloupec--;
 }
 
-static tStav porovnej_rezervovana_slova(char *slovo)
+tStav porovnej_rezervovana_slova(char *slovo)
 {
     for (int i = S_KLIC_BEGIN; i < POCET_KLICOVYCH_SLOV; i++)
         if (!(strcmp(slovo, klicova_slova[i]))) return i;
     return S_IDENTIFIKATOR;
 }
 
-static void inicializuj_token(void)
+void inicializuj_token(void)
 {
     token.stav = S_START;
     token.data = NULL;
@@ -68,7 +68,7 @@ static void inicializuj_token(void)
     token.sloupec = sloupec;
 }
 
-static void napln_token(tStav stav)
+void napln_token(tStav stav)
 {
     token.stav = stav;
 }

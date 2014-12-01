@@ -27,8 +27,8 @@ int radek;
  */
 
 tToken get_token(void);
-static void inicializuj_token(void);
-static void vloz_znak_do_tokenu(int , int *);
-static void napln_token(tStav);
-static void vrat_se_o_znak(int);
-static tStav porovnej_rezervovana_slova(char *);
+void inicializuj_token(void);
+void vloz_znak_do_tokenu(int , int *);
+void napln_token(tStav);
+void vrat_se_o_znak(int);
+tStav porovnej_rezervovana_slova(char *);
