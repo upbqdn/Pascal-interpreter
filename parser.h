@@ -7,12 +7,8 @@ typedef enum {
   function_dec
 } tContext;
 
-typedef enum {
-  err
-} tErr;
-
 typedef struct {
-  tErr err;
+  tERROR err;
   tContext context;
   tStav act_type;
   char *act_id;

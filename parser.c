@@ -57,8 +57,9 @@ void extractRule(tSem_context* sem_context)
 			    myPop(&S);
 			    myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
 			   
-          sem_context->act_id = actToken.data;
-			    // VDEC -> id : TYPE
+          // VDEC -> if : TYPE
+          
+          sem_context->act_id = actToken.data;  //ulozenie id premennej
 			}
 			break;
 
@@ -70,12 +71,16 @@ void extractRule(tSem_context* sem_context)
 			    myPushMul(&S, 3, LL_VDEC, S_STREDNIK, LL_NVLIST);
 			  
 			    //  NVLIST -> VDEC ; NVLIST
+          
+          sem_check (sem_context);  //volam analyzu novo deklarovanej premennej
 			}
 			else // eps prechod
 			{
 			    myPop(&S);
 		
 			    //  NVLIST -> eps
+
+          sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
 			}
 			break;
 
@@ -510,7 +515,10 @@ bool parse()
 	actToken = get_token();
 
   tSem_context sem_context;
-  sem_context.context = g_var_dec;
+  sem_context.context = g_var_dec;     //na zaciatku zdrojaku je kontext deklaracii glob. premennych
+
+  hash_init ();     //inicializacia globalnej tabulky symbolov
+
 
 	while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
 	{
@@ -565,5 +573,15 @@ bool parse()
 
 void sem_check (tSem_context* sem_context) 
 {
-  
+  switch (sem_context->context)     
+    
+    case function_dec: {             //kontext deklaracii glob. premennych
+
+      if ( hash_search (sem_context->act_id) == CONTAINS ) {  //chyba, ak premenna existuje
+        sem_context->err = semanticka_chyba_pri_deklaraci;
+        return;
+      }
+
+      hash_insert_it (sem_context->act_id, sem_context->act_type );  //ulozi premennu do GTS
+    }
 }

@@ -26,7 +26,7 @@ typedef enum ERROR
   vsechno_ok,							// 0
   chyba_v_programu_v_ramci_lexikalni_analyzy,			// 1
   chyba_v_programu_v_ramci_syntakticke_analyzy,		// 2
-  semanticka_chyba_v_programu,					// 3
+  semanticka_chyba_pri_deklaraci,					// 3
   semanticka_chyba_typove_kompatibility,			// 4
   ostatni_semanticke_chyby,					// 5
   behova_chyba_pri_nacitani_ciselne_hodnoty_ze_vstupu,	// 6
