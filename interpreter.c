@@ -71,20 +71,35 @@ int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, 
             case I_PRIRAD:
                if (TIP==S_INTEGER)
                {	
-               Instr.ADDR_KDE= (*(int*)(myaTop(&aS)));  // chcem zmenit hodnotu .KDE nie adresu //
+               // namiesto ??? sa musi vyriesit to aby sa dalo z KEY pristupit priamo na HODNOTU
+               ???= (*(int*)(myaTop(&aS)));  
                myaPop(&aS);
                }
 
                else if (TIP==S_DOUBLE)
                {	
-               Instr.KDE= (*(float*)(myaTop(&aS)));  // float ?
+               ???= (*(float*)(myaTop(&aS)));  // float ?
                myaPop(&aS);
                }
 
             break;
 
-           
+           case I_WRITE_INT:
 
+            break;
+
+           case I_WRITE_DOU:
+
+            break;
+
+           case I_WRITE_STR:
+
+            break; 
+
+           case I_WRITE_BOO:
+
+            break;
+ 
             case I_PLUS:
                if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
                {

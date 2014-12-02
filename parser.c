@@ -18,6 +18,7 @@
 
 
 list_element Tab_prvok;
+int priznak;
 
 void extractRule(tSem_context* sem_context)
 {
@@ -234,12 +235,28 @@ void extractRule(tSem_context* sem_context)
 
 				     		myPop(&S);
 			     		myPushMul(&S, 3, S_IDENTIFIKATOR, S_PRIRAZENI, LL_RHS);
+                        // tuto musi byt... // 
+                        // generovanie kodu pre hodenie Identifikatoru na zosobnik v interprete// 
+                        // 2. NULL treba zmenit asi na KEY....(!prediskutovat!)  //
+//******************************************************************************//
+                         NaplnInstr( I_PREC_ID, NULL , NULL, NULL ); 
+
+
+
+
+
 				     		break;
 
 				     case S_KLIC_WHILE:
 
 				     		myPop(&S);      // mozna zmena LL_E //
 				     		myPushMul(&S, 4, S_KLIC_WHILE, LL_E, S_KLIC_DO, LL_BSTAT);
+
+                            // tuto sa musi hned vygenerovat instrukcia skoku // 
+
+
+
+
 			     		break;
 
 				     case S_KLIC_IF:
@@ -252,12 +269,22 @@ void extractRule(tSem_context* sem_context)
 
 				     		myPop(&S);
 				     		myPushMul(&S, 4, S_KLIC_READLN, S_LEVA_ZAVORKA, S_IDENTIFIKATOR, S_PRAVA_ZAVORKA);
+
+
 				     		break;
 
 				     case S_KLIC_WRITE:
 
 				     		myPop(&S);
 				     		myPushMul(&S, 4, S_KLIC_WRITE, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA);
+				     		
+
+
+				     		/***********nastavim tu priznak aby som vedel ze ked pridem do***********
+				     		 ***********SPLISTU mam generovat hned printf a nie nieco z RHS *********
+				     		*/ 
+				     		priznak=42; 
+				     		
 				     		break;
 			    
 			         default:   // co tu ? chyba alebo nie ?
@@ -271,18 +298,25 @@ void extractRule(tSem_context* sem_context)
 
 		//--------------------------RHS----------------------//
 		case  LL_RHS:
-			  if ((actToken.stav == S_IDENTIFIKATOR ) && (F_ID == Tab_prvok->tid))     // zavolat funkciu co pozre do tabulky symbolov a pozre sa na FID porovname
-			  {
+			  if ((actToken.stav == S_IDENTIFIKATOR ) && (F_ID == Tab_prvok->tid))     
+			  {         // skontrolovat ci je su v podmienke aktualne nazvy// 
 
 			  	myPop(&S);
 			  	myPushMul(&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
 			  	
 			
 			  }
+			  // skontrolovat !!! /////
+			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_KLIC_INTEGER) || (actToken.stav == S_KLIC_STRING) || (actToken.stav == S_KLIC_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
+			  {
+					
+					myPushMul(&S, 1, LL_E ); 
+			  		myPop(&S);
+			  }
+
 			  else 
 			  {
-					 // tuto ma byt chybove hlasenie  aj tento pop ma ist prec // 
-			  		myPop(&S);
+			  	// chybova hlaska
 			  }
 			  break;
 
@@ -301,51 +335,64 @@ void extractRule(tSem_context* sem_context)
 
 		//--------------SPLIST------------------//
 		case  LL_SPLIST:                                              // rozne stavy mozu byt dplnit else if
-			  if (actToken.stav == S_IDENTIFIKATOR )     
-			  {
+			  	 if (actToken.stav == S_IDENTIFIKATOR )     
+			      {
 
-			  	myPop(&S);
-			  	myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
-			
-			  }
+			  		myPop(&S);
+			  		myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
+			  		if(priznak==42)
+               		 {
+                       // tuto sa vygeneruje instrukcia pre printovanie  //
+                   	   //  2 . NULL treba zamenit asi ze KEY !!!!!! // 	
+                  	   NaplnInstr( I_WRITE_IDE, NULL , NULL, NULL );
+                	 }
+			      }
+
 		     	  else if (actToken.stav == S_INTEGER)
 		     	  {
-			  	myPop(&S);
-			  	myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
+			  		myPop(&S);
+			  		myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
+			  		if(priznak==42)
+               		 {
+                       // tuto sa vygeneruje instrukcia pre printovanie  //
+                   	   //  2 . NULL treba zamenit asi tu fikovu extra funkciu //  	
+                  	   NaplnInstr( I_WRITE_INT, NULL , NULL, NULL );
+                	 }
 
 		     	  }	
 		     	  else if (actToken.stav == S_KLIC_REAL)
 		     	  {
 
-			  	myPop(&S);
-			  	myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
+			  		myPop(&S);
+			  		myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
 
 		     	  }	
 		     	  else if (actToken.stav == S_KLIC_STRING)
 		     	  {
 
-			  	myPop(&S);
-			  	myPushMul(&S, 2, S_KLIC_STRING, LL_NSPLIST);
+			  		myPop(&S);
+			  		myPushMul(&S, 2, S_KLIC_STRING, LL_NSPLIST);
 
 		     	  }	
 		     	  else if (actToken.stav == S_KLIC_TRUE)
 		     	  {
 
-			  	myPop(&S);
-			  	myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
+			  		myPop(&S);
+			  		myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
 
 		     	  }	
 		     	  else if (actToken.stav == S_KLIC_FALSE)
 		     	  {
 
-			  	myPop(&S);
-			  	myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+			  		myPop(&S);
+			  		myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
 
 		     	  }	
 			  else
 			  {
 
 			  	myPop(&S);
+			  	priznak=0;
 
 			  }
 			  break;   
@@ -355,39 +402,51 @@ void extractRule(tSem_context* sem_context)
 		case  LL_NSPLIST:
 			  if (actToken.stav == S_IDENTIFIKATOR )     
 			  {
-
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_CARKA, S_IDENTIFIKATOR, LL_NSPLIST);
-			
+			    if(priznak==42)
+                {
+                   // tuto sa vygeneruje instrukcia pre printovanie  //
+                   //  2 . NULL treba zamenit asi ze KEY !!!!!! // 	
+                   NaplnInstr( I_WRITE_IDE, NULL , NULL, NULL );
+                }
+
+
+
 			  }
 			  else if (actToken.stav == S_INTEGER)
-		     	  {
+		      {
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_CARKA, S_INTEGER, LL_NSPLIST);
-
-		     	  }	
-		     	  else if (actToken.stav == S_KLIC_REAL)
+                if(priznak==42)
+               	{
+                    // tuto sa vygeneruje instrukcia pre printovanie  //
+                   	//  2 . NULL treba zamenit asi tu fikovu extra funkciu //  	
+                  	NaplnInstr( I_WRITE_INT, NULL , NULL, NULL );
+                }
+		      }	
+		      else if (actToken.stav == S_KLIC_REAL)
 		     	  {
 
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_CARKA, S_KLIC_REAL, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_KLIC_STRING)
+		      else if (actToken.stav == S_KLIC_STRING)
 		     	  {
 
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_CARKA, S_KLIC_STRING, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_KLIC_TRUE)
+		      else if (actToken.stav == S_KLIC_TRUE)
 		     	  {
 
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_CARKA, S_KLIC_TRUE, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_KLIC_FALSE)
+		      else if (actToken.stav == S_KLIC_FALSE)
 		     	  {
 
 			  	myPop(&S);
@@ -398,15 +457,23 @@ void extractRule(tSem_context* sem_context)
 			  {
 
 			  	myPop(&S);
-
+                priznak=0;
 			  }
 
 			  break;
-  
+        
 			   
-	    case LL_E:
+	    case LL_E:    
+	         
+            
+             if ((isVyraz())==0)   // ak podmienka plati vytvorime instrukciu priradenia
+             {
+             	 // namiesto 1. NULL musi byt IDENTIFIKATOR  ale v SPRAVNOM tvare !!! //
+             	 // pravdepodobne asi KEY indentifikatoru //  
+                 NaplnInstr( I_PRIRAD, NULL , NULL, NULL ); 
 
-              // tuto sa pusti funkcia E TU PUSTIME PRECENDENCNU ...ISASCTIVE !
+             }
+              
 
         
           break;
