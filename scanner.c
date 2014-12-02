@@ -598,6 +598,7 @@ tToken get_token(void)
         	else if (isprint(c))
             	sloupec++;
         }
+        }
     }
     return token;
 }
