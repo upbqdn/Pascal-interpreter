@@ -14,8 +14,10 @@
 /*
  *Define na eliminovanie magickych konstant
  */
-#define LOCAL_HASH_ARRAY_SIZE (10) //velkost hashovacej tabulky
- #define ORIGIN (0)
+#define LOCAL_HASH_ARRAY_SIZE (365) //velkost hashovacej tabulky
+#define ORIGIN (0)
+#define CONTAINS (0) //obsahuje prvok/retazec...
+#define NOCONTAINS (1) //neobsahuje prvok/retazec
 
 /*
  *Deklaracia struktur a premennych
@@ -23,7 +25,9 @@
 typedef struct elementSL //struktura, ktora je prvok zoznamu
 {
 	struct elementSL *ptr; //ukazatel na dalsi prvok
-	int token_state; //stav tokenu zmenime a pridame ostatne !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	int type;
+	char *id;
+	void *ref;
 } *Llist_element;
 
 typedef struct listSL //struktura, ktora je zoznam
@@ -39,6 +43,9 @@ typedef Llist Llist_array[LOCAL_HASH_ARRAY_SIZE]; //tabulka ktoru budeme vytvara
  */
  int Lhash(char *);
  void *Lhash_init();
- void Lhash_insert(Llist*, int);
- void *Lhash_adress(Llist *, int);
+ void Lhash_insert_i(Llist *, char *);
+ void Lhash_insert_it(Llist *, char *, int);
+ void Lhash_insert_func(Llist *, char *);
+ void *Lhash_adress(Llist *, char *);
+ int Lhash_search(Llist *, char *);
  void Lhash_destroy(Llist *);
