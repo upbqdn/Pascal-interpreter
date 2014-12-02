@@ -18,7 +18,7 @@
 
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-list GLOBFRAME;
+list *GLOBFRAME;
 astack FRAME;
 
 astack aS; // pomocny zasobnik adries pre interpreter

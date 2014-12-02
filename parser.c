@@ -20,7 +20,7 @@
 #include "ial.h"
 
 
-Llist GLOBFRAME; // globalna tabulka
+list *GLOBFRAME; // globalna tabulka
 astack FRAME;
 
 stack S; //zasobnik

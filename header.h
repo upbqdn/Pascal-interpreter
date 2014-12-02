@@ -165,5 +165,5 @@ typedef enum
 extern tToken actToken;
 
 extern tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-extern list GLOBFRAME; // globalna tabulka
+extern list *GLOBFRAME; // globalna tabulka
 extern astack FRAME;
