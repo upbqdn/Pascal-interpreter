@@ -112,7 +112,7 @@ do
 			return 1; // tu nejaky ERR KOD
 		}
 		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actToken.data); whattoken(actToken.stav);
-		NaplnInstr( I_PREC_ID, NULL, spracADDR, NULL );
+		NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 	}
 	
 	

@@ -16,7 +16,6 @@
 #include "astack.h"
 #include "ial.h"
 #include "instrlist.h"
-#include "htable.h"
 #include "scanner.h"
 #include "parser.h"
 #include "whattoken.h"

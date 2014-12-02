@@ -12,22 +12,38 @@
 
 
 /* STAVY AKCII */
+/*
+ *Enumarecie instrukcii
+ */
 typedef enum
 {
-  I_KRAT, //  0
-  I_DELENO,
-  I_PLUS,
-  I_MINUS,
-  I_MENSI,  // 4
-  I_VETSI,  //5
-  I_MENSIROVNO,
-  I_VETSIROVNO,
-  I_ROVNO,
-  I_NEROVNO,  // 9
+    I_STOP = 0, //  
+    I_READ, //      
+    I_WRITE_INT, // 
+    I_WRITE_IDE,
+    I_WRITE_DOU, //
+    I_WRITE_STR, //
+    I_WRITE_BOO, // 
+    I_PREC, //     
+    I_IDENT, //     
+    I_PRIRAD, //   
+    I_PLUS, //     
+    I_MINUS, //     
+    I_KRAT, //      
+    I_DELENO, //    
+    I_ALLOC_INT,  
+    I_ALLOC_DOU,
+    I_ALLOC_BOO,
+    I_ALLOC_STR,
+    I_VAR_ZARAZKA,
+    I_VETSI,
+    I_MENSI,
+    I_MENSIROVNO,
+    I_VETSIROVNO,
+    I_ROVNO,
+    I_NEROVNO,
 
-  I_PREC,   //10
-  I_PREC_ID,  //11
-  
+
 } tINSTR;
 
 
@@ -54,6 +70,8 @@ typedef struct{
     tPrvokListuPtr Posledna;
 } tListInstrukcii;
 
+
+extern tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA GLOBALNA
 
 /* Deklaracia funkcii nad INSTRUKCNOU PASKOU */
 void InitInstrList (tListInstrukcii *I_List);
