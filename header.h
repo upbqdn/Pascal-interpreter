@@ -136,19 +136,25 @@ typedef enum
  */
 typedef enum
 {
-    I_STOP = 0, //  0
-    I_READ, //      1
-    I_WRITE_INT, // 2
-    I_WRITE_DOU, // 3
-    I_WRITE_STR, // 4
-    I_WRITE_BOO, // 5
-    I_PREC, //      6
-    I_PREC_ID, //   7
-    I_PRIRAD, //    8
-    I_PLUS, //      9
-    I_MINUS, //     10
-    I_KRAT, //      11
-    I_DELENO, //    12
+    I_STOP = 0, //  
+    I_READ, //      
+    I_WRITE_INT, // 
+    I_WRITE_IDE,
+    I_WRITE_DOU, //
+    I_WRITE_STR, //
+    I_WRITE_BOO, // 
+    I_PREC, //     
+    I_IDENT, //   	
+    I_PRIRAD, //   
+    I_PLUS, //     
+    I_MINUS, //     
+    I_KRAT, //      
+    I_DELENO, //    
+    I_ALLOC_INT,  
+    I_ALLOC_DOU,
+    I_ALLOC_BOO,
+    I_ALLOC_STR,
+
 
 } tIns;
 

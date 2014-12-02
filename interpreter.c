@@ -189,25 +189,26 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             switch(TIP)
             {
-              case I_WRITE_INT:
+              case S_INTEGER:
                 {
                   printf("%d", *(int*)prvok.data );
                   break;
                 }
 
-                case I_WRITE_DOU:
+                case S_DOUBLE:
                  {
                   printf("%f", *(float*)prvok.data );
                   break;
                 }
 
-                case I_WRITE_STR:
+                case S_STRING:
                  {
                   printf("%s", *(char**)prvok.data );
                   break;
                 }
 
-                case I_WRITE_BOO:
+                case S_KLIC_FALSE:
+                case S_KLIC_TRUE:
                  {
                   printf("%d", *(bool*)prvok.data );
                   break;
