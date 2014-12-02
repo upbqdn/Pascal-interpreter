@@ -18,7 +18,7 @@
 #include "ial.h"
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-
+Llist GLOBFRAME[365]; // globalna tabulka
 astack FRAME;
 
 
@@ -571,9 +571,6 @@ void extractRule(tSem_context* sem_context)
 
 bool parse()
 {
-	InitInstrList(&INSTR_PASKA); // inicializovat PASKU
-	astack_init(&FRAME);
-
 
 	stack_init(&S);
 	myPush(&S, EOF); // zarazka $$$$
@@ -616,9 +613,9 @@ bool parse()
 			}
 			else
 			{
-				printf("mas to napicu ja som cakal  >> "); whattoken(myTop(&S));
-				printf("mas to napicu NAPISAL SI    >> "); whattoken( actToken.stav);
-				printf("mas to napicu riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
+				printf("mas to zle ja som cakal  >> "); whattoken(myTop(&S));
+				printf("mas to zle NAPISAL SI    >> "); whattoken( actToken.stav);
+				printf("mas to zle riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
 				myPop(&S);	// odstranime z vrcholu zasobnika
 				//free(actToken.data); // free
 				actToken = get_token(); // nacitame novy token

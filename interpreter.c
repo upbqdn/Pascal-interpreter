@@ -21,6 +21,7 @@
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
 Llist GLOBFRAME[365];
+astack FRAME;
 
 astack aS;
 astack_init(&aS);
