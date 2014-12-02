@@ -6,8 +6,6 @@
 #include "ial.h"
 #include "htable.h"
 
-list list_array[HASH_ARRAY_SIZE];
-
 /**********************************
  *Implementacia hashovacej tabulky*
  *********************************/
@@ -32,24 +30,27 @@ int hash(char *my_string)
 }
 
 /*
- *Funkcia na inicializaciu pola zoznamov
+ *Funkcia na alokaciu inicializaciu pola zoznamov
+ *Vraxcia: voidovsku adresu naalokovanej tabulky
  */
-void hash_init()
+void *hash_init()
 {
+	list *localTable = malloc(sizeof(list) * HASH_ARRAY_SIZE); //naalokujeme miesto pre hash tabulku
  	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
  	{
- 		list_array[i].Act = NULL;
- 		list_array[i].First = NULL;
+ 		localTable[i].Act = NULL;
+ 		localTable[i].First = NULL;
  	}
+ 	return (void*) localTable; //vratime adresu vo void podobe
 }
 
 /*
  *Funkcia na vlozenie do tabulky string id
- *Parameter: id string
+ *Parameter: tabulka, id string
  */
-void hash_insert_i(char *id)
+void hash_insert_i(list *localTable, char *id)
 {
-	if(hash_search(id) == NOCONTAINS)
+	if(hash_search(localTable, id) == NOCONTAINS)
 	{
 		list_element help_var = malloc(sizeof(struct elementS));
  		help_var->id = malloc(strlen(id) * sizeof(char));
@@ -61,19 +62,19 @@ void hash_insert_i(char *id)
  		{
  			int i = hash(id);
  			strcpy(help_var->id, id);
- 			help_var->ptr = list_array[i].First;
- 			list_array[i].First = help_var;
+ 			help_var->ptr = localTable[i].First;
+ 			localTable[i].First = help_var;
  		}
 	}
 }
 
 /*
  *Funkcia na vkladanie do hashovacej tabulky podla id, ak sa tam prvok nachadza iba prepiseme type
- *Parametre: id - ktore vkladame a type - ktory vkladame
+ *Parametre: tabulka, id - ktore vkladame a type - ktory vkladame
  */
-void hash_insert_it(char *id, int type)
+void hash_insert_it(list *localTable, char *id, int type)
 {
- 	if(hash_search(id) == NOCONTAINS) //polozka sa v tabulke este nenachadza 
+ 	if(hash_search(localTable, id) == NOCONTAINS) //polozka sa v tabulke este nenachadza 
  	{
  		list_element help_var = malloc(sizeof(struct elementS));
  		help_var->id = malloc(strlen(id) * sizeof(char));
@@ -86,130 +87,156 @@ void hash_insert_it(char *id, int type)
  			int i = hash(id);
  			strcpy(help_var->id, id); //ulozime token data
  			help_var->type = type;
- 			help_var->ptr = list_array[i].First;
- 			list_array[i].First = help_var;
+ 			help_var->ptr = localTable[i].First;
+ 			localTable[i].First = help_var;
  		}
  	}
  	else //ak sa tam nachadza tak iba doplnim jeho typ
  	{
  		int i = hash(id);
-		list_array[i].Act = list_array[i].First;
-		while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+		localTable[i].Act = localTable[i].First;
+		while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
 		{
-			if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+			if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
 			{
-				list_array[i].Act->type = type;
+				localTable[i].Act->type = type;
 			}
-			list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+			localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 		}
  	}
 }
  
 /*
  *Funkcia na vytvorenie tabulky funkcie a ujlozenie jej adresy do ref
- *Parameter: id podla ktoreho najdeme kde ulozime adresu 
+ *Parameter: tabulka, id podla ktoreho najdeme kde ulozime adresu 
  */
-void hash_insert_func(char *id)
+void hash_insert_func(list *localTable, char *id)
 {
-	if(hash_search(id) == NOCONTAINS)
+	if(hash_search(localTable, id) == NOCONTAINS)
 	{
 		
 	}
 	else
 	{
 		int i = hash(id);
-		list_array[i].Act = list_array[i].First;
-		while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+		localTable[i].Act = localTable[i].First;
+		while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
 		{
-			if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+			if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
 			{
 
-				list_array[i].Act->ref = Lhash_init();
+				localTable[i].Act->ref = hash_init();
 			}
-			list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+			localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 		}
 	}
 }
 
 /*
  *Funkcia na zistenie ci sa hladany prvok nachadza v hashovacej tabulke, hlada podla kluca
- *Parameter: data - hladane data
+ *Parameter: tabulka, data - hladane data
  *Vracia: 0/CONTAINS v pripade ze sa prvok nachadza, 1/NOCONTAINS v ripade ze nie
  */
-int hash_search(char *id)
+int hash_search(list *localTable, char *id)
 {
 	int i = hash(id);
-	list_array[i].Act = list_array[i].First;
-	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
 	{
-		if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
 		{
 			return CONTAINS;
 		}
-		list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 	}
 	return NOCONTAINS;
 }
 
 /*
  *Funkcia, ktora vrati voidovsku adresu polozky
- *Parameter: id string
+ *Parameter: tabulka, id string
  *Vracia: void adresu
  */
-void *hash_adress(char *id)
+void *hash_adress(list *localTable, char *id)
 {
 	int i = hash(id);
-	list_array[i].Act = list_array[i].First;
-	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
 	{
-		if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
 		{
-			return (void*) (list_array[i].Act); //vratime adresu aktualnej vo void formate
+			return (void*) (localTable[i].Act); //vratime adresu aktualnej vo void formate
 		}
-		list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 	}
 	return NULL;
 }
 
 /*
  *Funkcia na zistenie vratenie polozky tabulky, ktoru hladame
- *Parameter: data - hladane podla data
+ *Parameter: tabulka, data - hladane podla data
  *Vracia: polozku ak sa v tabulke nachadza, alebo NULL ak sa polozka nenachadza
  */
-list_element hash_return(char *id)
+list_element hash_return(list *localTable, char *id)
 {
 	int i = hash(id);
-	list_array[i].Act = list_array[i].First;
-	while(list_array[i].Act != NULL) //prejde vsetky prvky zoznamu
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
 	{
-		if(strcmp(list_array[i].Act->id, id) == 0) //porovna retazce
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
 		{
-			return list_array[i].Act;
+			return localTable[i].Act;
 		}
-		list_array[i].Act = list_array[i].Act->ptr; //posunieme sa o prvok dalej
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 	}
 	return NULL;
 }
 
 /*
- *Funkcia na zrusenie vsetkych zoznamov v hashovacej tabulke
+ *Funkcia na skopirovanie celej hash tabulky
+ *Parameter: tabulka, ktoru chceme skopirovat
+ *Vracia: voidovsku adresu klonu tabulky
  */
-void hash_destroy()
+void *copyhash(list *localTable)
+{
+	void *newTable = hash_init();
+	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
+ 	{
+ 		localTable[i].Act = localTable[i].First;
+ 		while(localTable[i].Act != NULL) //prejde vsetky elementy zoznamu
+ 		{
+ 			hash_insert_it(newTable, localTable[i].Act->id, localTable[i].Act->type);
+ 			if(localTable[i].Act->ref != NULL) //ak sa nieco nachadza aj v ref tak nakopirujem tiez to
+ 			{
+ 				hash_insert_func(newTable, localTable[i].Act->ref);
+ 			}
+ 			localTable[i].Act = localTable[i].Act->ptr;
+ 		}
+ 	}
+ 	return (void*) newTable;
+}
+
+/*
+ *Funkcia na zrusenie vsetkych zoznamov v hashovacej tabulke
+ *Parametre: tabulka
+ */
+void hash_destroy(list *localTable)
 {
 	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
  	{
- 		while(list_array[i].First != NULL) //prejde vsetky elementy zoznamu
+ 		while(localTable[i].First != NULL) //prejde vsetky elementy zoznamu
  		{
- 			if(list_array[i].First == list_array[i].Act) //zrusi aj aktivny prvok
+ 			if(localTable[i].First == localTable[i].Act) //zrusi aj aktivny prvok
  			{
- 				list_array[i].Act = NULL;
+ 				localTable[i].Act = NULL;
  			}
- 			list_element help_var = list_array[i].First;
- 			list_array[i].First = list_array[i].First->ptr;
+ 			list_element help_var = localTable[i].First;
+ 			localTable[i].First = localTable[i].First->ptr;
  			free(help_var->id);
- 			free(help_var);
+ 			free(help_var); //uvolnime prvok zoznamu
  		}
  	}
+ 	free(localTable); //uvolnime tabulku
 }
 
 /***************************
@@ -314,14 +341,27 @@ void vector(char *P, int *Fail)
 }
 
 /*
+list *GLOB;
 int main()
 {
-	hash_init();
-	//hash_insert_i("aaa");
-	hash_insert_it("aaa", 40);
-	hash_insert_func("aaa");
-	list_element adresa = (list_element) (hash_adress("aaa"));
-	//list_element special = hash_return("aaa");
-	printf("%d\n", (adresa->type));
+	//UKAZKA
+	GLOB = hash_init(); //vytvorime tabulku a ulozime si jej adresu  //vytvorenie 2 tabulky, pre ukazku
+	hash_insert_i(GLOB, "aaa"); //vlozime hodnotu do 2 tabulky
+	hash_insert_it(GLOB, "aaa", 5);
+	printf("%d\n", (*((list_element) (hash_adress(GLOB, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
+	
+	//TO JE IBA PRE MNA!
+	//hash_insert_it(localTable, "bbbb", 15);
+	//Lhash_insert_it(local, "aaa", 10);
+	//hash_insert_it(localTable, "aaa", 50);
+	//void *local = copyhash(localTable);
+	//Lhash_insert(localTable, 10); //vlozime hodnotu do 1 tabulky
+	//Lhash_insert(localTable, 8); //vlozime hodnotu 2 do 1 tabulky
+	//int a = hash_search(local, 8); //nic iba ukazka
+	//Llist_element adresa = (Llist_element) (hash_adress(localTable, 10)); //nic iba ukazka
+	//printf("%d\n", (*((list_element) (hash_adress(GLOB, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
+	
+	//Lhash_destroy(local); //zrusime vsetky prvaky aj lokalnu 2 tabulku 
+	//hash_destroy(localTable); //a teraz 1 tabulku
  	return 0;
 }*/

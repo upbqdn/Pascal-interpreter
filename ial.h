@@ -37,20 +37,22 @@ typedef struct listS //struktura, ktora je zoznam
 	list_element First; //ukazatel na prvy prvok zoznamu
 } list;
 
-extern list list_array[HASH_ARRAY_SIZE]; //globalna tabulka hash klucov
+typedef list list_array[HASH_ARRAY_SIZE]; //tabulka ktoru budeme vytvarat malocom
+//extern list *GLOB;
 
 /*
  *Deklaracia funkcii
  */
  int hash(char *);
- void hash_init();
- void hash_insert_i(char *);
- void hash_insert_it(char *, int);
- void hash_insert_func(char *);
- int hash_search(char *);
- list_element hash_return(char *);
- void *hash_adress(char *id);
- void hash_destroy();
+ void *hash_init();
+ void hash_insert_i(list *, char *);
+ void hash_insert_it(list *, char *, int);
+ void hash_insert_func(list *, char *);
+ int hash_search(list *, char *);
+ list_element hash_return(list *, char *);
+ void *hash_adress(list *, char *);
+ void *copyhash(list *);
+ void hash_destroy(list *);
  void sort(char *, int, int);
  int find(char *, char *);
  void vector(char *, int *);
