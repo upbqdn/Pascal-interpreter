@@ -603,8 +603,6 @@ bool parse()
   tSem_context sem_context;
   sem_context.context = g_var_dec;     //na zaciatku zdrojaku je kontext deklaracii glob. premennych
 
-  hash_init ();     //inicializacia globalnej tabulky symbolov
-
 
 	while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
 	{
@@ -632,14 +630,18 @@ bool parse()
 				printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho "); whattoken(myTop(&S));
 				myPop(&S);	// odstranime z vrcholu zasobnika
 				//free(actToken.data); // free
-				actToken = get_token(); // nacitame novy token
+
+        if (actToken.stav == S_IDENTIFIKATOR) {   //ulozenie id funkcie pri deklaracii
+	        if (Id_sign == rem_id) {
+            Id_sign = for_id;                      //reset signum 
+            sem_context->act_fun = actToken.data;   //save actual id of function
+            check_sem (sem_context);
+          }
+        }
+
+			actToken = get_token(); // nacitame novy token
 				printf("KOEC TERMINAL GET TOKEN token je "); whattoken(actToken.stav);
 				printf("KOEC TERMINAL GET TOKEN TOP  je "); whattoken(myTop(&S)) ;
-
-        if (Id_sign == rem_id) {
-          Id_sign = for_id;                      //reset signum 
-          sem_context->act_id = actToken.data;   //save actual id
-        }
 			}
 			else
 			{
@@ -666,13 +668,23 @@ void sem_check (tSem_context* sem_context)
 {
   switch (sem_context->context)     
     
-    case function_dec: {             //kontext deklaracii glob. premennych
+    case G_VAR_DEC:              //kontext deklaracii glob. premennych
 
-      if ( hash_search (sem_context->act_id) == CONTAINS ) {  //chyba, ak premenna existuje
+      if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) { //error if var exists
         sem_context->err = semanticka_chyba_pri_deklaraci;
         return;
       }
 
-      hash_insert_it (sem_context->act_id, sem_context->act_type );  //ulozi premennu do GTS
-    }
+      hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
+      break;
+  
+/*
+    case FUNCTION_DEC: {
+    
+      if ( hash_search (GLOBFRAME, sem_context->act_fun) == CONTAINS &&
+           check_forward (sem_context->act_fun) != DEFINED )
+        {
+          
+        }
+      break;*/
 }
