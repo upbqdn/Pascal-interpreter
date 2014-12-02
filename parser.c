@@ -361,13 +361,16 @@ void extractRule(tSem_context* sem_context)
 
 
 		//--------------------------RHS----------------------//
+
+
+			  //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................
 		case  LL_RHS:
-			  if ((actToken.stav == S_IDENTIFIKATOR ) && (F_ID == Tab_prvok->tid))     
+			  if ((actToken.stav == S_IDENTIFIKATOR ))     // && (F_ID == Tab_prvok->tid)
 			  {         // skontrolovat ci je su v podmienke aktualne nazvy// 
 
 			  	myPop(&S);
 			  	myPushMul(&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
-			  	
+			  //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................	
 			
 			  }
 			  //*********************doleziteeee !!!!!! **************************************//
