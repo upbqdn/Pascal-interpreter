@@ -589,18 +589,15 @@ tToken get_token(void)
         }
         default:
         {
-            break;
+       		if (error) break;
+        	if (c == '\n')
+        	{
+            		radek++;
+            		sloupec = 1;
+        	}
+        	else if (isprint(c))
+            	sloupec++;
         }
-        }
-        if (error) break;
-        if (c == '\n')
-        {
-            radek++;
-            sloupec = 1;
-        }
-        else if (isprint(c))
-            sloupec++;
-
     }
     return token;
 }
