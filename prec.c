@@ -15,30 +15,31 @@
 #include "prec.h"
 #include "instrlist.h"
 
-#define MAX_PT 18
+#define MAX_PT 19
 int left = 111;
 
 
 
 const char precedent_table[MAX_PT][MAX_PT] = {
-">>>>>>>>>><><><<<<", // * 0
-">>>>>>>>>><><><<<<", // / 1
-"<<>>>>>>>><><><<<<", // + 2
-"<<>>>>>>>><><><<<<", // - 3 
-"<<<<>>>>>><><><<<<", // < 4
-"<<<<>>>>>><><><<<<", // > 5
-"<<<<>>>>>><><><<<<", // <= 6
-"<<<<>>>>>><><><<<<", // >= 7
-"<<<<>>>>>><><><<<<", // = 8
-"<<<<>>>>>><><><<<<", // <> 9
-"<<<<<<<<<<<=<E<<<<", // ( 10
-">>>>>>>>>>E>E>EEEE", // ) 11
-">>>>>>>>>>E>E>EEEE", // id 12
-"<<<<<<<<<<<E<O<<<<", // $ 13
-">>>>>>>>>>E>E>EEEE", // integer 14
-">>>>>>>>>>E>E>EEEE", // double 15
-">>>>>>>>>>E>E>EEEE", // string 16
-">>>>>>>>>>E>E>EEEE" // boolean 17
+">>>>>>>>>><><><<<<<", // * 0
+">>>>>>>>>><><><<<<<", // / 1
+"<<>>>>>>>><><><<<<<", // + 2 >
+"<<>>>>>>>><><><<<<<", // - 3 
+"<<<<>>>>>><><><<<<<", // < 4
+"<<<<>>>>>><><><<<<<", // > 5
+"<<<<>>>>>><><><<<<<", // <= 6
+"<<<<>>>>>><><><<<<<", // >= 7
+"<<<<>>>>>><><><<<<<", // = 8
+"<<<<>>>>>><><><<<<<", // <> 9
+"<<<<<<<<<<<=<E<<<<<", // ( 10
+">>>>>>>>>>E>E>EEEEE", // ) 11
+">>>>>>>>>>E>E>EEEEE", // id 12
+"<<<<<<<<<<<E<O<<<<<", // $ 13
+">>>>>>>>>>E>E>EEEEE", // integer 14
+">>>>>>>>>>E>E>EEEEE", // double 15
+">>>>>>>>>>E>E>EEEEE", // string 16
+">>>>>>>>>>E>E>EEEEE", // klic_true 17
+">>>>>>>>>>E>E>EEEEE", // klic_false 18
 };
 
 
@@ -46,16 +47,16 @@ int magicFunction(int a)
 {
 switch (a)
 {
-	case S_KRAT: 					{return 0; break; }
-	case S_DELENO:					{return 1; break; }
-	case S_PLUS: 					{return 2; break; }
-	case S_MINUS:					{return 3; break; }
-	case S_MENSI: 					{return 4; break; }
-	case S_VETSI:					{return 5; break; }
-	case S_MENSI_NEBO_ROVNO: 		{return 6; break; }
-	case S_VETSI_NEBO_ROVNO:		{return 7; break; }
-	case S_ROVNO: 					{return 8; break; }
-	case S_NEROVNO:					{return 9; break; }
+	case S_KRAT: 					{return 0; break;  }
+	case S_DELENO:					{return 1; break;  }
+	case S_PLUS: 					{return 2; break;  }
+	case S_MINUS:					{return 3; break;  }
+	case S_MENSI: 					{return 4; break;  }
+	case S_VETSI:					{return 5; break;  }
+	case S_MENSI_NEBO_ROVNO: 		{return 6; break;  }
+	case S_VETSI_NEBO_ROVNO:		{return 7; break;  }
+	case S_ROVNO: 					{return 8; break;  }
+	case S_NEROVNO:					{return 9; break;  }
 	case S_LEVA_ZAVORKA: 			{return 10; break; }
 	case S_PRAVA_ZAVORKA:			{return 11; break; }
 	case S_IDENTIFIKATOR: 			{return 12; break; }
@@ -63,7 +64,8 @@ switch (a)
 	case S_INTEGER:					{return 14; break; }
 	case S_DOUBLE: 					{return 15; break; }
 	case S_RETEZEC:					{return 16; break; }
-	case S_BOOLEAN:					{return 17; break; }
+	case S_KLIC_TRUE:				{return 17; break; }
+	case S_KLIC_FALSE:				{return 18; break; }
 	default: 						{return 13; break; } 
 	 	
 }
@@ -78,8 +80,10 @@ int isVyraz()
 	int b = 0;
 do
 {
+	//printf("[%d][%d] = %c", 2 , 13, precedent_table[2][13] );
+	//printf("\n###############\n>>>%s<<<\n###############\n", token.data);
 	// POZNAMKA: "E" = 42, "<" = 111, "$" = 13
-	if ( (actPrecToken.stav == S_INTEGER) || (actPrecToken.stav == S_DOUBLE) || (actPrecToken.stav == S_RETEZEC) || (actPrecToken.stav == S_BOOLEAN))/* + int , double ... */
+	if ( (actPrecToken.stav == S_INTEGER) || (actPrecToken.stav == S_DOUBLE) || (actPrecToken.stav == S_RETEZEC) || (actPrecToken.stav == S_KLIC_TRUE) || (actPrecToken.stav == S_KLIC_FALSE))/* + int , double ... */
 	{
 		void *spracADDR = spracuj(actPrecToken.stav, actPrecToken.data);
 		if (spracADDR == NULL )
@@ -92,7 +96,7 @@ do
 		tStav *TIPSTAV = malloc(sizeof(tStav));
 		*TIPSTAV = actPrecToken.stav;
 
-		printf("GREEP generuji instrukci vloz na zasobnik I_PREC >>"); whattoken(actPrecToken.stav);
+		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actPrecToken.data); whattoken(actPrecToken.stav);
 		NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
 	}
 
@@ -105,7 +109,7 @@ do
 			printf("CHYBISKA.....\n");
 			return 1; // tu nejaky ERR KOD
 		}
-		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID >>"); whattoken(actPrecToken.stav);
+		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actPrecToken.data); whattoken(actPrecToken.stav);
 		NaplnInstr( I_PREC_ID, NULL, spracADDR, NULL );
 	}
 	
@@ -182,8 +186,22 @@ do
 			}
 			else
 			{	
+				
+					if ((myTop(&S) == 42) || (myTop(&S) == 10) || (myTop(&S) == 11))
+					{
+					myPop(&S);  // popuji 42
+				
+				
 				do 
 				{ 
+					//if (magicFunction(actPrecToken.stav) == 13) 
+					//{
+					//	printf("NASTALA SUPER CHYBA!!"); 
+					//	chyba = 1;
+					//	goto chybicka;
+					//}
+					
+					
 					if (myTop(&S) == 0) /* * */
 					{ 
 						printf("GREEP ********** g e n e r u j i  i n st r u k c i * \n");
@@ -196,6 +214,8 @@ do
 					}
 					else if (myTop(&S) == 2) /* + */
 					{
+						//if (magicFunction(actPrecToken.stav) == 13) 
+						//{chyba = 1; goto chybicka;}
 						 printf("GREEP ********** g e n e r u j i  i n st r u k c i + \n");
 						 NaplnInstr( I_PLUS, NULL, NULL, NULL );
 					}
@@ -238,8 +258,23 @@ do
 					myPop(&S);
 				}
 				while (myTop(&S) != 111);
+			}
+			else chyba = 1;
+				chybicka:
 				printf(" popuji %d \n", myTop(&S));
 				myPop(&S);
+				if (chyba == 1) 
+				{
+				do 
+				{ 
+					printf(" popuji %d \n", myTop(&S)); 
+					myPop(&S);
+				}
+				while (myTop(&S) != 111);
+				printf(" popuji %d \n", myTop(&S)); 
+				myPop(&S);
+				goto adios;
+				}
 			}
 			printf("vkladam na zasobnik : E = 42 \n");
 			myPush(&S, 42);
