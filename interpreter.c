@@ -58,7 +58,16 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         //============ak pride int,double,boolean,string...===============//
         case I_PREC:
         {
+            printf("NICO ZAUJIMAVE..........................................................\n");
+            printf("AZARAZKA..... %p \n", zarazka );
+            printf("ADRESA NA ZASOBNIKU pred pushom %p \n", myaTop(&aS) );
+            printf("ADRESA PRED ZASOBNIKU %p \n", Instr->ADDR_PRVA );
+
+            printf("SKUSKA.....>>%s<< \n", Instr->ADDR_PRVA );
+
+
             myaPush(&aS, Instr->ADDR_PRVA);
+            printf("ADRESA NA ZASOBNIKU %p \n", myaTop(&aS) );
             TIP = *(tStav *)(Instr->ADDR_DRUHA); // na tejto adrese musi byt napr. S_INTEGER
 
             break;
@@ -67,7 +76,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         //============ak pride IDENTIFIKATOR===============//
         case I_IDENT:
         {
-          list *TOPFRAME;
+            list *TOPFRAME;
             TOPFRAME = myaTop(&FRAME);    // fiko magic //
 
             list_element prvok;
@@ -244,25 +253,30 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_INT:
         {
-            printf("%d", *(int*)Instr->ADDR_PRVA );
+            printf("%d", myaTop(&aS) );
+            myPop(&aS);
             break;
         }
 
         case I_WRITE_DOU:
         {
-            printf("%f", *(float*)Instr->ADDR_PRVA );
+            printf("%f", myaTop(&aS) );
+            myPop(&aS);
             break;
         }
 
         case I_WRITE_STR:
         {
-            printf("%s", *(char**)Instr->ADDR_PRVA );
+           // printf("ADD %p\n", *(void *) (Instr->ADDR_PRVA) );
+            printf("%s",  myaTop(&aS) );
+            myPop(&aS);
             break;
         }
 
         case I_WRITE_BOO:
         {
-            printf("%d", *(bool*)Instr->ADDR_PRVA );
+            printf("%d", myaTop(&aS) );
+            myPop(&aS);
             break;
         }
 

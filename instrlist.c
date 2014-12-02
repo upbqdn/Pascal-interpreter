@@ -75,9 +75,9 @@ void InstrInsert (tListInstrukcii *I_List, tInstrukcia DataOfInstr)
 /* Tato funkcia naprace INSTRUKCIU do instrukcnej pasky */
 /* 4 PARAMETRE
 ** 1 > AKCIA AKA SA MA VYKONAT {int konstanta} : JMP, +,-,*,/,aloc,....
-** 2 > ADDR_KDE 	> KAM SA MA UKLADAT nieco, pri jednoadresovych instrukciach sa pouziva univerzalne ostatne budu NULL!
-** 3 > ADDR_PRVA 	> ODKIAL sa cita 1 adresa
-** 4 > ADDR_DRUHA	> ODKIAL sa cita 2 adresa
+** 2 > ADDR_KDE     > KAM SA MA UKLADAT nieco, pri jednoadresovych instrukciach sa pouziva univerzalne ostatne budu NULL!
+** 3 > ADDR_PRVA    > ODKIAL sa cita 1 adresa
+** 4 > ADDR_DRUHA   > ODKIAL sa cita 2 adresa
 ** ::: vsetky adresy su typu void * >> pri pouzivani pouzi PRETYPOVANIE :::
 */
 void NaplnInstr(tINSTR AKCIA, void *ADDR_KDE, void *ADDR_PRVA, void *ADDR_DRUHA)

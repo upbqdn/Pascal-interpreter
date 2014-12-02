@@ -32,6 +32,9 @@ int sloupec;
 int radek;
 
 
+extern tToken actToken; // global TOKEN
+
+
 /*
  *Deklaracie funkcii
  */
