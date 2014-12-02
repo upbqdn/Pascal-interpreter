@@ -25,6 +25,8 @@ typedef struct //samotny zasobnik
 	astack_element Second; //ukazatel na druhy prvok
 } astack;
 
+extern astack FRAME; // globalny zasobnik TABULIEK SYMBOLOV
+
 /*
  *Deklaracie funkcii
  */

@@ -4,7 +4,6 @@
  */
 
 #include "ial.h"
-#include "htable.h"
 
 /**********************************
  *Implementacia hashovacej tabulky*
