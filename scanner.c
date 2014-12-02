@@ -1,27 +1,15 @@
 /*
 -----------------------------------------------------
- *@Author: Marek Bielik		xbieli05@stud.fit.vutbr.cz
-  @Author: Filip Gulan		xgulan00@stud.fit.vutbr.cz
-  @Author: Filip Ježovica	xjezov01@stud.fit.vutbr.cz
-  @Author: Luboš Matouška	xmatus29@stud.fit.vutbr.cz
-  @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz
+ *@Author: Marek Bielik     xbieli05@stud.fit.vutbr.cz
+  @Author: Filip Gulan      xgulan00@stud.fit.vutbr.cz
+  @Author: Filip Ježovica   xjezov01@stud.fit.vutbr.cz
+  @Author: Luboš Matuška    xmatus29@stud.fit.vutbr.cz
+  @Author: Eduard Rybár     xrybar04@stud.fit.vutbr.cz
 -----------------------------------------------------          
 */
 
 
-
-
 /* IFJ: scanner */
-
-/*
-textovy retazec NOT OK
-komentar! OK
-chyba OK
-asci OK
-double OK
-
-hlavickovy subor
-*/
 
 
 /* hlavickovy subor */
@@ -98,41 +86,41 @@ tToken get_token(void)
             token.radek = radek;
             token.sloupec = sloupec;
 
-            if 	((isalpha(c)) || (c == '_'))	stav = S_IDENTIFIKATOR;
-            else if	(isdigit(c))			stav = S_INTEGER;
-            else if	(c == EOF)			stav = S_END_OF_FILE;
-            else if 	(c == '+')			stav = S_PLUS;
-            else if	(c == '-')			stav = S_MINUS;
-            else if	(c == '*')			stav = S_KRAT;
-            else if	(c == '/')			stav = S_DELENO;
-            else if	(c == '=')			stav = S_ROVNO;
-            else if	(c == '.')			stav = S_TECKA;
-            else if	(c == ':')			stav = S_DVOJTECKA;
-            else if	(c == ';')			stav = S_STREDNIK;
-            else if	(c == '^')			stav = S_UKAZATEL;
-            else if	(c == ',')			stav = S_CARKA;
-            else if	(c == '<')			stav = S_MENSI;
-            else if	(c == '{')
+            if  ((isalpha(c)) || (c == '_'))    stav = S_IDENTIFIKATOR;
+            else if (isdigit(c))            stav = S_INTEGER;
+            else if (c == EOF)          stav = S_END_OF_FILE;
+            else if     (c == '+')          stav = S_PLUS;
+            else if (c == '-')          stav = S_MINUS;
+            else if (c == '*')          stav = S_KRAT;
+            else if (c == '/')          stav = S_DELENO;
+            else if (c == '=')          stav = S_ROVNO;
+            else if (c == '.')          stav = S_TECKA;
+            else if (c == ':')          stav = S_DVOJTECKA;
+            else if (c == ';')          stav = S_STREDNIK;
+            else if (c == '^')          stav = S_UKAZATEL;
+            else if (c == ',')          stav = S_CARKA;
+            else if (c == '<')          stav = S_MENSI;
+            else if (c == '{')
             {
                 stav = S_LEVA_SLOZENA_ZAVORKA;
                 break;
             }
-            else if	(c == '}')
+            else if (c == '}')
             {
                 stav = S_PRAVA_SLOZENA_ZAVORKA;
                 break;
             }
-            else if	(c == '(')			stav = S_LEVA_ZAVORKA;
-            else if	(c == ')')			stav = S_PRAVA_ZAVORKA;
-            else if	(c == '[')			stav = S_LEVA_HRANATA_ZAVORKA;
-            else if 	(c == ']')			stav = S_PRAVA_HRANATA_ZAVORKA;
-            else if	(c == '>')			stav = S_VETSI;
-            else if	(c == '\'')
+            else if (c == '(')          stav = S_LEVA_ZAVORKA;
+            else if (c == ')')          stav = S_PRAVA_ZAVORKA;
+            else if (c == '[')          stav = S_LEVA_HRANATA_ZAVORKA;
+            else if     (c == ']')          stav = S_PRAVA_HRANATA_ZAVORKA;
+            else if (c == '>')          stav = S_VETSI;
+            else if (c == '\'')
             {
                 stav = S_RETEZEC;
                 break;
             }
-            else if	(isspace(c))
+            else if (isspace(c))
             {
                 stav = S_START;
                 break;
@@ -439,12 +427,22 @@ tToken get_token(void)
         /******************************************************************************************************************/
         case S_RETEZEC:
         {
+            if (token.data == NULL && c == '#') // jedna sa o samostatnu ESCAPE SEKV
+            {
+                    stav = S_ESCAPE_SEKVENCE;
+                    // inicializujeme ESC zalezitosti !
+                    ESCdata=NULL;
+                    ESCi=0;
+                    break;
+            }
+
+
             if (c != '\'')
             {
                 if (c == EOF)
                 {
                     stav = S_END_OF_FILE;
-                    // nejaka chybycka ! 								treba VYRIESIT TUTO CHYBU NEJAK !!!!!
+                    // nejaka chybycka !                                treba VYRIESIT TUTO CHYBU NEJAK !!!!!
                     break;
                 }
 
@@ -471,8 +469,14 @@ tToken get_token(void)
                 }
                 else
                 {
-					if (  (strlen(token.data)) == 3 )
-					{token.data = "";}
+                    if (  token.data == NULL )
+                    {  
+                        //c = '*';
+                        //vloz_znak_do_tokenu(c, &i);
+                        token.data = malloc(sizeof(char)+1);
+                        token.data = "";
+                       // printf(">>%s<<\n", token.data );
+                    }
                     vrat_se_o_znak((char) c); // musime sa vratit  o znak, HURA MAME RETAZEC ULOZIME
                     napln_token(stav);
                     stav = S_END;
@@ -589,14 +593,14 @@ tToken get_token(void)
         }
         default:
         {
-       		if (error) break;
-        	if (c == '\n')
-        	{
-            		radek++;
-            		sloupec = 1;
-        	}
-        	else if (isprint(c))
-            	sloupec++;
+            if (error) break;
+            if (c == '\n')
+            {
+                    radek++;
+                    sloupec = 1;
+            }
+            else if (isprint(c))
+                sloupec++;
         }
         }
     }
