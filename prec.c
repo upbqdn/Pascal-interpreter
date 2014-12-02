@@ -18,6 +18,8 @@
 #define MAX_PT 19
 int left = 111;
 
+tToken actToken; // aktualny token GLOBALNY
+
 
 
 const char precedent_table[MAX_PT][MAX_PT] = {
@@ -74,7 +76,7 @@ int isVyraz()
 {
 	printf("Spoustim precedencni analyzu \n");
 	int chyba = 0;
-	actPrecToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
+	//actToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
 	myPush(&S, 13);
 	int a = 0;
 	int b = 0;
@@ -83,9 +85,9 @@ do
 	//printf("[%d][%d] = %c", 2 , 13, precedent_table[2][13] );
 	//printf("\n###############\n>>>%s<<<\n###############\n", token.data);
 	// POZNAMKA: "E" = 42, "<" = 111, "$" = 13
-	if ( (actPrecToken.stav == S_INTEGER) || (actPrecToken.stav == S_DOUBLE) || (actPrecToken.stav == S_RETEZEC) || (actPrecToken.stav == S_KLIC_TRUE) || (actPrecToken.stav == S_KLIC_FALSE))/* + int , double ... */
+	if ( (actToken.stav == S_INTEGER) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_KLIC_TRUE) || (actToken.stav == S_KLIC_FALSE))/* + int , double ... */
 	{
-		void *spracADDR = spracuj(actPrecToken.stav, actPrecToken.data);
+		void *spracADDR = spracuj(actToken.stav, actToken.data);
 		if (spracADDR == NULL )
 		{
 			// chybiska
@@ -94,22 +96,22 @@ do
 		}
 
 		tStav *TIPSTAV = malloc(sizeof(tStav));
-		*TIPSTAV = actPrecToken.stav;
+		*TIPSTAV = actToken.stav;
 
-		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actPrecToken.data); whattoken(actPrecToken.stav);
+		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actToken.data); whattoken(actToken.stav);
 		NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
 	}
 
-	if (actPrecToken.stav == S_IDENTIFIKATOR)
+	if (actToken.stav == S_IDENTIFIKATOR)
 	{
-		void *spracADDR = spracuj(actPrecToken.stav, actPrecToken.data);
+		void *spracADDR = spracuj(actToken.stav, actToken.data);
 		if (spracADDR == NULL )
 		{
 			// chybiska
 			printf("CHYBISKA.....\n");
 			return 1; // tu nejaky ERR KOD
 		}
-		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actPrecToken.data); whattoken(actPrecToken.stav);
+		printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actToken.data); whattoken(actToken.stav);
 		NaplnInstr( I_PREC_ID, NULL, spracADDR, NULL );
 	}
 	
@@ -117,10 +119,10 @@ do
 	if (myTop(&S) != 42) {a = (myTop(&S));}
 	else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
 	 
-	 int b = magicFunction(actPrecToken.stav);
+	 int b = magicFunction(actToken.stav);
 	
-	printf("\naktualni token : "); whattoken(actPrecToken.stav); 
-	printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
+	printf("\naktualni token : "); whattoken(actToken.stav); 
+	printf("jeho hodnota je: %d \n", magicFunction(actToken.stav)); 
 	printf("na vrcholu zasobniku je : %d \n", a);
 	printf("[%d][%d] = %c", a , b, precedent_table[a][b] );
 	
@@ -132,7 +134,7 @@ do
 			myPush(&S, b);
 			printf("vkladam na zasobnik : %d \n", b);
 			showStack(&S);
-			actPrecToken = get_token();
+			actToken = get_token();
 			printf("ZAVOLAL JSEM SI DALSI TOKEN \n");
 			printf(" ukoncuji pravidlo = \n ******************** \n");
 			break;
@@ -153,7 +155,7 @@ do
 				printf("vkladam na zasobnik : %d \n", b);
 				myPush(&S, b);
 				showStack(&S);
-				actPrecToken = get_token();
+				actToken = get_token();
 				printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
 				printf(" ukoncuji pravidlo < \n ******************** \n");
 				break;
@@ -165,7 +167,7 @@ do
 				printf("vkladam na zasobnik : %d \n", b);
 				myPush(&S, b);
 				showStack(&S);
-				actPrecToken = get_token();
+				actToken = get_token();
 				printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
 				printf(" ukoncuji pravidlo < \n ******************** \n");
 				break;
@@ -194,7 +196,7 @@ do
 				
 				do 
 				{ 
-					//if (magicFunction(actPrecToken.stav) == 13) 
+					//if (magicFunction(actToken.stav) == 13) 
 					//{
 					//	printf("NASTALA SUPER CHYBA!!"); 
 					//	chyba = 1;
@@ -214,7 +216,7 @@ do
 					}
 					else if (myTop(&S) == 2) /* + */
 					{
-						//if (magicFunction(actPrecToken.stav) == 13) 
+						//if (magicFunction(actToken.stav) == 13) 
 						//{chyba = 1; goto chybicka;}
 						 printf("GREEP ********** g e n e r u j i  i n st r u k c i + \n");
 						 NaplnInstr( I_PLUS, NULL, NULL, NULL );
