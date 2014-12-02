@@ -14,6 +14,7 @@
 #include "scanner.h"
 #include "parser.h"
 #include "whattoken.h"
+#include "instrlist.h"
 #include "ial.h"
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA

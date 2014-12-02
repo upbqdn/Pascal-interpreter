@@ -8,23 +8,20 @@
 -----------------------------------------------------
 */
 
-
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include "ial.h"
-#include "ial.c"          
 #include "header.h"
+#include "ial.h"
+#include "htable.h"
+#include "instrlist.h"
 #include "interpreter.h"
+
 
 
 // GLOBALNA TABULKA SYMBOLOV
 // STACK TABULIEK SYMBOLOV
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
+Llist GLOBFRAME[365];
 
-list list_array[HASH_ARRAY_SIZE];
 astack aS;
 astack_init(&aS);
 void* zarazka = malloc(sizeof(char));

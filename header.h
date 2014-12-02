@@ -151,3 +151,10 @@ typedef enum
     I_DELENO, //    12
 
 } tIns;
+
+
+//externe zalezitocsti
+
+extern tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
+extern Llist GLOBFRAME[365]; // globalna tabulka
+extern astack FRAME;

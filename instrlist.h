@@ -55,12 +55,6 @@ typedef struct{
 } tListInstrukcii;
 
 
-/* GLOBALNA INSTRUKCNA PASKA ...*/
-extern tListInstrukcii INSTR_PASKA;
-extern astack FRAME; // GLOBALNY ZASOBNIK FRAME
-extern Llist Llist_array[LOCAL_HASH_ARRAY_SIZE];
-
-
 /* Deklaracia funkcii nad INSTRUKCNOU PASKOU */
 void InitInstrList (tListInstrukcii *I_List);
 void DestroyInstrList (tListInstrukcii *I_List);
