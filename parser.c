@@ -23,6 +23,8 @@ tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
 Llist GLOBFRAME[365]; // globalna tabulka
 astack FRAME;
 
+stack S; //zasobnik
+tToken actToken; // aktualny token
 
 list_element Tab_prvok;
 int priznak;
