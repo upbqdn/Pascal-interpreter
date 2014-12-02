@@ -471,6 +471,8 @@ tToken get_token(void)
                 }
                 else
                 {
+					if (  (strlen(token.data)) == 3 )
+					{token.data = "";}
                     vrat_se_o_znak((char) c); // musime sa vratit  o znak, HURA MAME RETAZEC ULOZIME
                     napln_token(stav);
                     stav = S_END;
@@ -587,18 +589,16 @@ tToken get_token(void)
         }
         default:
         {
-            break;
+       		if (error) break;
+        	if (c == '\n')
+        	{
+            		radek++;
+            		sloupec = 1;
+        	}
+        	else if (isprint(c))
+            	sloupec++;
         }
         }
-        if (error) break;
-        if (c == '\n')
-        {
-            radek++;
-            sloupec = 1;
-        }
-        else if (isprint(c))
-            sloupec++;
-
     }
     return token;
 }
