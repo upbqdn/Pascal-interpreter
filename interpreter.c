@@ -17,29 +17,28 @@
 
 
 
-// GLOBALNA TABULKA SYMBOLOV
-// STACK TABULIEK SYMBOLOV
-
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-Llist GLOBFRAME[365];
+list GLOBFRAME;
 astack FRAME;
 
-astack aS;
-astack_init(&aS);
-void* zarazka = malloc(sizeof(char));
-myaPUSH(&aS, zarazka);
-
-
-// ----------------alokacia pomocnych premennych roznych TIPOV------------//
-void *c_integer = malloc(sizeof(int));
-void *c_double = malloc(sizeof(float));
-void *c_boolean = malloc(sizeof(bool));
-void *c_string = malloc(sizeof(char));
-
+astack aS; // pomocny zasobnik adries pre interpreter
 
 
 int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
+  astack_init(&aS);
+  void* zarazka = malloc(sizeof(char));
+  myaPUSH(&aS, zarazka);
+
+
+  // ----------------alokacia pomocnych premennych roznych TIPOV------------//
+  void *c_integer = malloc(sizeof(int));
+  void *c_double = malloc(sizeof(float));
+  void *c_boolean = malloc(sizeof(bool));
+  void *c_string = malloc(sizeof(char));
+  // niekedy odalokujeme
+
+
  tStav TIP;
  tInstrukcia Instr; // lokalna instrukcia
  InstrStart(&INSTR_PASKA); // aktivovat instrukcnu pasku
@@ -54,7 +53,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
           //============ak pride int,double,boolean,string...===============//
           case I_PREC:
                myaPUSH(&aS, Instr.ADDR_PRVA);
-               TIP=Instr.ADDR_DRUHA; // na tejto adrese musi byt napr. S_INTEGER
+               TIP = Instr.ADDR_DRUHA; // na tejto adrese musi byt napr. S_INTEGER
               
             break;
            
@@ -63,12 +62,12 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             case I_IDENT:
 
 
-                Llist TOPFRAME = myaTop(&FRAME);    // fiko magic // 
+                list TOPFRAME = myaTop(&FRAME);    // fiko magic // 
               
-                Llist_element* prvok = Lhash_adress(TOPFRAME, Instr.ADDR_PRVA);
+                list_element* prvok = hash_adress(TOPFRAME, Instr.ADDR_PRVA);
                 if (prvok == NULL) // hladame v GLOBAL
                 {
-                prvok = Lhash_adress(GLOBFRAME, Instr.ADDR_PRVA);
+                prvok = hash_adress(GLOBFRAME, Instr.ADDR_PRVA);
                 }
 
 
@@ -88,7 +87,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                myaPop(&aS);
                }
 
-               else if (TIP==S_DOUBLE)
+               else if (TIP == S_DOUBLE)
                {  
                float pomoc1 = (*(float*)(myaTop(&aS)));
                myaPop(&aS);
@@ -99,19 +98,20 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                else if (TIP==S_STRING)
                {
-
-                void* pomAddr = myaTop(&aS);
+                void* pomAddr1 = myaTop(&aS);  // co chceme ulozit
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS); // kam to ulozit
                 myaPop(&aS);
 
-                int dlzka = strlen((*(char**)pomAddr);
-              pomAddr = realloc(((sizeof(char))*dlzka)+1);    //......................................................realok
-              if (pomAddr == NULL) // chyba alokacie
-              {
-                  return NULL;
-              }
-              strcpy(  pomAddr, (*(char**)(myaTop(&aS)))  );
-              myaPop(&aS);
-               }
+                int dlzka = strlen((*(char**)pomAddr1);
+                pomAddr2 = realloc(((sizeof(char))*dlzka)+1);    //......................................................realok
+                if (pomAddr2 == NULL) // chyba alokacie
+                {
+                    return NULL;
+                }
+                strcpy( (*(char**)pomAddr2 , (*(char**)pomAddr1  );
+                
+                }
 
                else if ( TIP == S_KLIC_TRUE || S_KLIC_FALSE )
                {  
@@ -178,12 +178,12 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             case I_WRITE_IDE:
       {
                    // treba zistit akeho je tipu //
-              Llist TOPFRAME = myaTop(&FRAME);    // fiko magic // 
+              list TOPFRAME = myaTop(&FRAME);    // fiko magic // 
               
-            Llist_element* prvok = Lhash_adress(TOPFRAME, Instr.ADDR_PRVA);
+            list_element* prvok = hash_adress(TOPFRAME, Instr.ADDR_PRVA);
                 if (prvok == NULL) // hladame v GLOBAL
               {
-              prvok = Lhash_adress(GLOBFRAME, Instr.ADDR_PRVA);
+              prvok = hash_adress(GLOBFRAME, Instr.ADDR_PRVA);
               }
 
 
