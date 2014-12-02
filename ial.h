@@ -28,7 +28,7 @@ typedef struct elementS //struktura, ktora je prvok zoznamu
 	struct elementS *ptr; //ukazatel na dalsi prvok
 	int type; //typ tokenu int...
 	char *id; //data tokenu, meno...
-	void *ref;
+	void *ref; //adresa
 } *list_element;
 
 typedef struct listS //struktura, ktora je zoznam

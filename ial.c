@@ -43,6 +43,10 @@ void hash_init()
  	}
 }
 
+/*
+ *Funkcia na vlozenie do tabulky string id
+ *Parameter: id string
+ */
 void hash_insert_i(char *id)
 {
 	if(hash_search(id) == NOCONTAINS)
@@ -64,8 +68,8 @@ void hash_insert_i(char *id)
 }
 
 /*
- *Funkcia na vkladanie do hashovacej tabulky
- *Parametre: data - ktore vkladame a state - ktory vkladame
+ *Funkcia na vkladanie do hashovacej tabulky podla id, ak sa tam prvok nachadza iba prepiseme type
+ *Parametre: id - ktore vkladame a type - ktory vkladame
  */
 void hash_insert_it(char *id, int type)
 {
@@ -101,6 +105,10 @@ void hash_insert_it(char *id, int type)
  	}
 }
  
+/*
+ *Funkcia na vytvorenie tabulky funkcie a ujlozenie jej adresy do ref
+ *Parameter: id podla ktoreho najdeme kde ulozime adresu 
+ */
 void hash_insert_func(char *id)
 {
 	if(hash_search(id) == NOCONTAINS)
@@ -143,6 +151,11 @@ int hash_search(char *id)
 	return NOCONTAINS;
 }
 
+/*
+ *Funkcia, ktora vrati voidovsku adresu polozky
+ *Parameter: id string
+ *Vracia: void adresu
+ */
 void *hash_adress(char *id)
 {
 	int i = hash(id);
@@ -300,8 +313,8 @@ void vector(char *P, int *Fail)
 	}
 }
 
-
-/*int main()
+/*
+int main()
 {
 	hash_init();
 	//hash_insert_i("aaa");
