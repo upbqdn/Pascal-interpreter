@@ -40,6 +40,8 @@ typedef struct listS //struktura, ktora je zoznam
 typedef list list_array[HASH_ARRAY_SIZE]; //tabulka ktoru budeme vytvarat malocom
 //extern list *GLOB;
 
+extern list *GLOBFRAME; // globalna tabulka
+
 /*
  *Deklaracia funkcii
  */
