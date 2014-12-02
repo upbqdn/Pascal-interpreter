@@ -1,4 +1,4 @@
-/*
+/*                @Project: IFJ14
 -----------------------------------------------------
   @Author: Marek Bielik   xbieli05@stud.fit.vutbr.cz
   @Author: Filip Gulan    xgulan00@stud.fit.vutbr.cz
@@ -9,6 +9,7 @@
 */
 
 #include "header.h"
+#include "astack.h"
 #include "ial.h"
 #include "htable.h"
 #include "instrlist.h"

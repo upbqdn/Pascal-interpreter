@@ -1,4 +1,4 @@
-/*
+/*                @Project: IFJ14
 -----------------------------------------------------
   @Author: Marek Bielik   xbieli05@stud.fit.vutbr.cz
   @Author: Filip Gulan    xgulan00@stud.fit.vutbr.cz
