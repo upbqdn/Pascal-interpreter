@@ -1,5 +1,5 @@
 NAME=main
-OBJFILES=$(NAME).o scanner.o stack.o parser.o whattoken.o
+OBJFILES=$(NAME).o stack.o astack.o ial.o instrlist.o interpreter.o prec.o scanner.o parser.o whattoken.o
 
 CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic -W -g
