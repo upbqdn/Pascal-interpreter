@@ -3,9 +3,9 @@
   @Author: Marek Bielik		xbieli05@stud.fit.vutbr.cz
   @Author: Filip Gulan		xgulan00@stud.fit.vutbr.cz
   @Author: Filip Ježovica	xjezov01@stud.fit.vutbr.cz
-  @Author: Luboš Matouška	xmatus29@stud.fit.vutbr.cz
+  @Author: Luboš Matuška	xmatus29@stud.fit.vutbr.cz
   @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz
------------------------------------------------------          
+-----------------------------------------------------
 */
 
 /* hlavickove soubory */
@@ -15,6 +15,10 @@
 #include "parser.h"
 #include "whattoken.h"
 #include "ial.h"
+
+tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
+
+astack FRAME;
 
 
 list_element Tab_prvok;
@@ -566,6 +570,10 @@ void extractRule(tSem_context* sem_context)
 
 bool parse()
 {
+	InitInstrList(&INSTR_PASKA); // inicializovat PASKU
+	astack_init(&FRAME);
+
+
 	stack_init(&S);
 	myPush(&S, EOF); // zarazka $$$$
 	myPush(&S, LL_INIT);

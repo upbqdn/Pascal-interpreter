@@ -1,10 +1,10 @@
 /*
 -----------------------------------------------------
-  @Author: Marek Bielik		xbieli05@stud.fit.vutbr.cz
-  @Author: Filip Gulan		xgulan00@stud.fit.vutbr.cz
-  @Author: Filip Ježovica	xjezov01@stud.fit.vutbr.cz
-  @Author: Luboš Matuška	xmatus29@stud.fit.vutbr.cz
-  @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz
+  @Author: Marek Bielik   xbieli05@stud.fit.vutbr.cz
+  @Author: Filip Gulan    xgulan00@stud.fit.vutbr.cz
+  @Author: Filip Ježovica xjezov01@stud.fit.vutbr.cz
+  @Author: Luboš Matuška  xmatus29@stud.fit.vutbr.cz
+  @Author: Eduard Rybár   xrybar04@stud.fit.vutbr.cz
 -----------------------------------------------------
 */
 
@@ -14,19 +14,19 @@
 /* STAVY AKCII */
 typedef enum
 {
-  I_KRAT,	//	0
+  I_KRAT, //  0
   I_DELENO,
   I_PLUS,
   I_MINUS,
   I_MENSI,  // 4
-  I_VETSI,	//5
+  I_VETSI,  //5
   I_MENSIROVNO,
   I_VETSIROVNO,
   I_ROVNO,
-  I_NEROVNO,	// 9
+  I_NEROVNO,  // 9
 
-  I_PREC,		//10
-  I_PREC_ID,	//11
+  I_PREC,   //10
+  I_PREC_ID,  //11
   
 } tINSTR;
 
@@ -56,7 +56,9 @@ typedef struct{
 
 
 /* GLOBALNA INSTRUKCNA PASKA ...*/
-extern tListInstrukcii listok;
+extern tListInstrukcii INSTR_PASKA;
+extern astack FRAME; // GLOBALNY ZASOBNIK FRAME
+extern Llist Llist_array[LOCAL_HASH_ARRAY_SIZE];
 
 
 /* Deklaracia funkcii nad INSTRUKCNOU PASKOU */
