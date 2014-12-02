@@ -47,5 +47,6 @@ typedef Llist Llist_array[LOCAL_HASH_ARRAY_SIZE]; //tabulka ktoru budeme vytvara
  void Lhash_insert_it(Llist *, char *, int);
  void Lhash_insert_func(Llist *, char *);
  void *Lhash_adress(Llist *, char *);
+ void *copyLhash(Llist *);
  int Lhash_search(Llist *, char *);
  void Lhash_destroy(Llist *);

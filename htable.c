@@ -169,14 +169,17 @@ void *Lhash_adress(Llist *localTable, char *id)
 
 void *copyLhash(Llist *localTable)
 {
-	Llist_element *newTable = (Llist_element*) (Lhash_init());
+	void *newTable = Lhash_init();
 	for(int i = ORIGIN; i < LOCAL_HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
  	{
  		localTable[i].Act = localTable[i].First;
  		while(localTable[i].Act != NULL) //prejde vsetky elementy zoznamu
  		{
- 			Lhash_insert_it((void*) newTable, localTable[i].Act->id, localTable[i].Act->type);
- 			Lhash_insert_func((void*) newTable, localTable[i].Act->ref);
+ 			Lhash_insert_it(newTable, localTable[i].Act->id, localTable[i].Act->type);
+ 			if(localTable[i].Act->ref != NULL) //ak sa nieco nachadza aj v ref tak nakopirujem tiez to
+ 			{
+ 				Lhash_insert_func(newTable, localTable[i].Act->ref);
+ 			}
  			localTable[i].Act = localTable[i].Act->ptr;
  		}
  	}
@@ -206,15 +209,16 @@ void Lhash_destroy(Llist *localTable)
  	free(localTable); //uvolnime tabulku
 }
 
+/*
 int main()
 {
-	void *localTable = Lhash_init(); //vytvorime tabulku a ulozime si jej adresu 
-	void *local = copyLhash(localTable); //vytvorenie 2 tabulky, pre ukazku
+	void *localTable = Lhash_init(); //vytvorime tabulku a ulozime si jej adresu  //vytvorenie 2 tabulky, pre ukazku
 	Lhash_insert_i(localTable, "aaa"); //vlozime hodnotu do 2 tabulky
-	Lhash_insert_it(localTable, "aaa", 5);
+	//Lhash_insert_it(localTable, "aaa", 5);
 	Lhash_insert_it(localTable, "bbbb", 15);
 	//Lhash_insert_it(local, "aaa", 10);
-	Lhash_insert_it(localTable, "aaa", 50);
+	//Lhash_insert_it(localTable, "aaa", 50);
+	void *local = copyLhash(localTable);
 	//Lhash_insert(localTable, 10); //vlozime hodnotu do 1 tabulky
 	//Lhash_insert(localTable, 8); //vlozime hodnotu 2 do 1 tabulky
 	//int a = hash_search(local, 8); //nic iba ukazka
@@ -222,6 +226,6 @@ int main()
 	printf("%d\n", (*((Llist_element) (Lhash_adress(local, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
 	
 	//Lhash_destroy(local); //zrusime vsetky prvaky aj lokalnu 2 tabulku 
-	Lhash_destroy(localTable); //a teraz 1 tabulku*/
+	Lhash_destroy(localTable); //a teraz 1 tabulku
  	return 0;
-}
+}*/
