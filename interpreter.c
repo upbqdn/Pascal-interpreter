@@ -25,8 +25,8 @@ astack_init(&aS);
 
 // ----------------alokacia pomocnych premennych roznych TIPOV------------//
 int *c_integer = malloc(sizeof(int));
-int *c_double = malloc(sizeof(double));
-int *c_boolean = malloc(sizeof(boolean));
+int *c_double = malloc(sizeof(float));
+int *c_boolean = malloc(sizeof(bool));
 
 
 
@@ -52,7 +52,7 @@ int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, 
            
 
             //============ak pride IDENTIFIKATOR===============//
-            case I_PREC_ID:
+            case I_IDENT:
 
 
                 Llist TOPFRAME = myTop(&FRAME);    // fiko magic // 
@@ -85,9 +85,33 @@ int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, 
 
             break;
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>--ALLOC pripady--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<// 
+            case I_ALLOC_INT:
+                  
+            break;
+
+            case I_ALLOC_DOU:
+
+            break;
+
+            case I_ALLOC_STR:
+
+            break; 
+
+            case I_ALLOC_BOO:
+
+            break;
+
+         
 
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>--WRITE pripady--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<// 
+            case I_WRITE_IDE:
+                   // treba zistit akeho je tipu // 
+                    
+            break;
+
+
             case I_WRITE_INT:
 
             break;
