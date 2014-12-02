@@ -151,6 +151,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                  *(void *)(myaTop(&aS)) = malloc(sizeof(float));
                  myaPop(&aS);
               }
+              myaPop(&aS); // vyhodime zarazku !
               break;
             }
 
@@ -163,6 +164,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                  *(void *)(myaTop(&aS)) = malloc(sizeof(bool));
                  myaPop(&aS);
               }
+              myaPop(&aS); // vyhodime zarazku !
               break;
             }
 
@@ -173,6 +175,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                  *(void *)(myaTop(&aS)) = malloc(sizeof(char));
                  myaPop(&aS);
               }
+              myaPop(&aS); // vyhodime zarazku !
               break;
             } 
 
@@ -189,9 +192,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
               
             list_element* prvok = hash_adress(TOPFRAME, Instr.ADDR_PRVA);
                 if (prvok == NULL) // hladame v GLOBAL
-              {
-              prvok = hash_adress(GLOBFRAME, Instr.ADDR_PRVA);
-              }
+                {
+                  prvok = hash_adress(GLOBFRAME, Instr.ADDR_PRVA);
+                }
 
 
             TIP = prvok.type;
@@ -200,26 +203,26 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
               case S_INTEGER:
                 {
-                  printf("%d", *(int*)prvok.data );
+                  printf("%d", *(int*)prvok.ref );
                   break;
                 }
 
                 case S_DOUBLE:
                  {
-                  printf("%f", *(float*)prvok.data );
+                  printf("%f", *(float*)prvok.ref );
                   break;
                 }
 
                 case S_STRING:
                  {
-                  printf("%s", *(char**)prvok.data );
+                  printf("%s", *(char**)prvok.ref );
                   break;
                 }
 
                 case S_KLIC_FALSE:
                 case S_KLIC_TRUE:
                  {
-                  printf("%d", *(bool*)prvok.data );
+                  printf("%d", *(bool*)prvok.ref );
                   break;
                 }
 
@@ -257,7 +260,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
   //>>>>>>>>>>>>>>>>>>>>>>--nasleduje +,-,*,/--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<// 
             case I_PLUS:
-               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
+               if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
                {
 
                  int a = *(int *)(myaTop(&aS) ;  
@@ -271,7 +274,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                }
 
-               else if (TIP==S_DOUBLE)
+               else if (TIP == S_DOUBLE)
                {
                  float a = *(float *)(myaTop(&aS) ;  
                  myaPop(&aS);
@@ -291,20 +294,28 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                   myaPop(&aS);
 
                   int dlzka = (  (strlen((*(char**)pomAddr1))) +  (strlen((*(char**)pomAddr2)))    );
+                  void* pomAddr3 = malloc(((sizeof(char))*dlzka)+1);
+                  if (pomAddr3 == NULL) // chyba alokacie
+                  {
+                      return NULL;
+                  }
+                  strcpy(  pomAddr3, (*(char**)pomAddr2)  );
+
                 c_string = realloc(((sizeof(char))*dlzka)+1);    //......................................................realok
                 if (c_string == NULL) // chyba alokacie
                 {
                     return NULL;
                 }
-                strcpy(  c_string, (*(char**)pomAddr2)  );
+                strcpy(  c_string, (*(char**)pomAddr3)  );
                 strcat(  c_string, (*(char**)pomAddr1)  );
                 myaPUSH(&aS, c_string);
                }
           
-          break;  
+          break;  // PLUS KONIEC
+
 
           case I_MINUS:
-               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
+               if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
                {
 
                  int a = *(int *)(myaTop(&aS) ;  
@@ -318,7 +329,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                }
 
-               else if (TIP==S_DOUBLE)
+               else if (TIP == S_DOUBLE)
                {
                  float a = *(float *)(myaTop(&aS) ;  
                  myaPop(&aS);
@@ -331,10 +342,12 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                // mozno bollen / string uvidime ...
           
-          break; 
+          break;  // KONIEC MINUS
+
+
 
           case I_KRAT:
-               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
+               if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
                {
 
                  int a = *(int *)(myaTop(&aS) ;  
@@ -348,7 +361,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                }
 
-               else if (TIP==S_DOUBLE)
+               else if (TIP == S_DOUBLE)
                {
                  float a = *(float *)(myaTop(&aS) ;  
                  myaPop(&aS);
@@ -362,8 +375,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
           
           break;   
 
+
             case I_DELENO:
-               if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
+               if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
                {
 
                  int a = *(int *)(myaTop(&aS) ;
@@ -383,7 +397,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                }
 
-               else if (TIP==S_DOUBLE)
+               else if (TIP == S_DOUBLE)
                {
                  float a = *(float *)(myaTop(&aS) ;  
                  if (a == 0)
