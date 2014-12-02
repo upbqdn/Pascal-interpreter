@@ -48,6 +48,8 @@ void extractRule(tSem_context* sem_context)
 			    myPop(&S);
 			    
 			    myPushMul(&S, 4, S_KLIC_VAR, LL_VDEC, S_STREDNIK, LL_NVLIST);
+
+			    NaplnInstr(I_VAR_ZARAZKA, NULL, NULL, NULL);
 			    
 			    // VLIST -> var VDEC ; NVLIST
 			}

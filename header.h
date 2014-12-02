@@ -154,6 +154,7 @@ typedef enum
     I_ALLOC_DOU,
     I_ALLOC_BOO,
     I_ALLOC_STR,
+    I_VAR_ZARAZKA,
 
 
 } tIns;
