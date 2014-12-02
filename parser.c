@@ -306,7 +306,8 @@ void extractRule(tSem_context* sem_context)
 			  	
 			
 			  }
-			  // skontrolovat !!! /////
+			  //*********************doleziteeee !!!!!! **************************************//
+			  // skontrolovat  ja si myslim ze tam nema byt S_KLIC_INTEGER ale S_ITEGER!!! /////
 			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_KLIC_INTEGER) || (actToken.stav == S_KLIC_STRING) || (actToken.stav == S_KLIC_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
 			  {
 					
@@ -360,15 +361,23 @@ void extractRule(tSem_context* sem_context)
                 	 }
 
 		     	  }	
-		     	  else if (actToken.stav == S_KLIC_REAL)
+		     	  else if (actToken.stav == S_DOUBLE)
 		     	  {
+		     	  	if(priznak==42)
+               		 { 	
+                  	   NaplnInstr( I_WRITE_DOU, NULL , NULL, NULL );
+                	 }
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_KLIC_STRING)
+		     	  else if (actToken.stav == S_STRING)
 		     	  {
+		     	    if(priznak==42)
+               		 { 	
+                  	   NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
+                	 }
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_KLIC_STRING, LL_NSPLIST);
@@ -425,20 +434,26 @@ void extractRule(tSem_context* sem_context)
                   	NaplnInstr( I_WRITE_INT, NULL , NULL, NULL );
                 }
 		      }	
-		      else if (actToken.stav == S_KLIC_REAL)
-		     	  {
-
+		      else if (actToken.stav == S_DOUBLE)
+		       {
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_CARKA, S_KLIC_REAL, LL_NSPLIST);
-
-		     	  }	
+                if(priznak==42)
+               		 { 	
+                  	   NaplnInstr( I_WRITE_DOU, NULL , NULL, NULL );
+                	 }
+		        }	
 		      else if (actToken.stav == S_KLIC_STRING)
-		     	  {
+		     	{
 
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_CARKA, S_KLIC_STRING, LL_NSPLIST);
+			  	if(priznak==42)
+               		 { 	
+                  	   NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
+                	 }
 
-		     	  }	
+		     	}	
 		      else if (actToken.stav == S_KLIC_TRUE)
 		     	  {
 

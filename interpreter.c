@@ -44,9 +44,9 @@ int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, 
       	{
 
       		//============ak pride int,double,boolean,string...===============//
-      		case I_PREC:
+      		  case I_PREC:
                myaPUSH(&aS, Instr.ADDR_PRVA);
-               TIP=Inst.ADDR_DRUHA;
+               TIP=Inst.ADDR_DRUHA; // na tejto adrese musi byt napr. S_INTEGER
               
             break;
            
@@ -55,17 +55,18 @@ int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, 
             case I_PREC_ID:
 
 
-                Llist TOPFRAME = myTop(&FRAME); 
-			
-			    Llist_element* prvok = Lhash_adress(TOPFRAME, Instr.ADDR_PRVA);
-                if (prvok == NULL) // nenasli sme v LOKALNE
-				{
-				// hladame v GLOBALTABLE
-				prvok = Lhash_adress(GLOBFRAME, stoken->data);
-				}
-				TIP=prvok.type;
-				myaPUSH(&aS, prvok.data);
-              
+                Llist TOPFRAME = myTop(&FRAME);    // fiko magic // 
+        			
+        			  Llist_element* prvok = Lhash_adress(TOPFRAME, Instr.ADDR_PRVA);
+                if (prvok == NULL) // hladame v GLOBAL
+        				{
+        				prvok = Lhash_adress(GLOBFRAME, stoken->data);
+        				}
+
+
+        				TIP=prvok.type;
+        				myaPUSH(&aS, prvok.data);
+                      
             break;
 
             case I_PRIRAD:
@@ -84,22 +85,27 @@ int inter(tabulku symbolov , instrukcie) // doplnit predavanie         //AKCIA, 
 
             break;
 
-           case I_WRITE_INT:
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>--WRITE pripady--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<// 
+            case I_WRITE_INT:
 
             break;
 
-           case I_WRITE_DOU:
+            case I_WRITE_DOU:
 
             break;
 
-           case I_WRITE_STR:
+            case I_WRITE_STR:
 
             break; 
 
-           case I_WRITE_BOO:
+            case I_WRITE_BOO:
 
             break;
- 
+
+
+  //>>>>>>>>>>>>>>>>>>>>>>--nasleduje +,-,*,/--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<// 
             case I_PLUS:
                if (TIP==S_INTEGER)  // adresa vs cislo toto treba opravit
                {
