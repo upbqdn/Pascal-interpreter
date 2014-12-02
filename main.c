@@ -25,7 +25,7 @@
 
 extern FILE *soubor;
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-list GLOBFRAME; // globalna tabulka
+list *GLOBFRAME; // globalna tabulka
 astack FRAME;
 
 int main()
