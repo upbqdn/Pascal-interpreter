@@ -1,1 +1,1 @@
-int inter()
+int inter();

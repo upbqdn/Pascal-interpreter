@@ -14,7 +14,7 @@
 #include "header.h"
 #include "instrlist.h"
 
-tListInstrukcii listok;  // globalne >> v .h je extern
+tListInstrukcii INSTR_PASKA;  // globalne >> v .h je extern
 
 /* INICIALIZACIA INSTRUKCNEJ PASKY .. vsetko null */
 void InitInstrList (tListInstrukcii *I_List)
@@ -87,7 +87,7 @@ void NaplnInstr(tINSTR AKCIA, void *ADDR_KDE, void *ADDR_PRVA, void *ADDR_DRUHA)
     Ins.ADDR_KDE = ADDR_KDE;
     Ins.ADDR_PRVA = ADDR_PRVA;
     Ins.ADDR_DRUHA = ADDR_DRUHA;
-    InstrInsert(&listok, Ins);
+    InstrInsert(&INSTR_PASKA, Ins);
 
 }
 

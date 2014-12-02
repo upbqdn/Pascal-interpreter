@@ -3,9 +3,9 @@
   @Author: Marek Bielik		xbieli05@stud.fit.vutbr.cz
   @Author: Filip Gulan		xgulan00@stud.fit.vutbr.cz
   @Author: Filip Ježovica	xjezov01@stud.fit.vutbr.cz
-  @Author: Luboš Matouška	xmatus29@stud.fit.vutbr.cz
+  @Author: Luboš Matuška	xmatus29@stud.fit.vutbr.cz
   @Author: Eduard Rybár		xrybar04@stud.fit.vutbr.cz
------------------------------------------------------          
+-----------------------------------------------------
 */
 
 /* hlavickove soubory */
@@ -14,7 +14,12 @@
 #include "scanner.h"
 #include "parser.h"
 #include "whattoken.h"
+#include "instrlist.h"
 #include "ial.h"
+
+tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
+
+astack FRAME;
 
 
 list_element Tab_prvok;
@@ -57,9 +62,30 @@ void extractRule(tSem_context* sem_context)
 			    myPop(&S);
 			    myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
 			   
+<<<<<<< HEAD
           // VDEC -> if : TYPE
           
           sem_context->act_id = actToken.data;  //ulozenie id premennej
+=======
+ //_________________________________________GENER____________________________________________________//               
+            void *spracADDR = spracuj(actToken.stav, actToken.data);
+		if (spracADDR == NULL )
+		{
+			// chybiska
+			printf("CHYBISKA.....\n");
+			return 1; // tu nejaky ERR KOD
+		}
+		printf("GREEP generuji instrukci vloz na zasobnik I_IDENT >>"); whattoken(actToken.stav);
+		NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+
+ //__________________________________________________________________________________________________//
+
+
+
+
+          sem_context->act_id = actToken.data;
+			    // VDEC -> id : TYPE
+>>>>>>> 725fd164518a82410c506f44434c1768e8d5dc3d
 			}
 			break;
 
@@ -95,14 +121,21 @@ void extractRule(tSem_context* sem_context)
 					{
 					myPop(&S);
 					myPush(&S, S_KLIC_INTEGER);
+
+                    NaplnInstr(I_ALLOC_INT, NULL, NULL, NULL);
+
 	  			sem_context->act_type = actToken.stav;
 					}
 					break;
 
 					case S_KLIC_REAL:
 					{
+
 					    myPop(&S);
 					    myPush(&S, S_KLIC_REAL);
+
+					NaplnInstr(I_ALLOC_DOU, NULL, NULL, NULL);
+					    
               sem_context->act_type = actToken.stav;
 					}
 					break;
@@ -111,6 +144,10 @@ void extractRule(tSem_context* sem_context)
 					{
 					    myPop(&S);
 					    myPush(&S, S_KLIC_STRING);
+
+					    NaplnInstr(I_ALLOC_STR, NULL, NULL, NULL);
+
+
 					    sem_context->act_type = actToken.stav;
 					}
 					break;
@@ -119,6 +156,10 @@ void extractRule(tSem_context* sem_context)
 					{
 					    myPop(&S);
 					    myPush(&S, S_KLIC_BOOLEAN);
+
+					    NaplnInstr(I_ALLOC_BOO, NULL, NULL, NULL);
+
+
 					    sem_context->act_type = actToken.stav;
 					}
 					break;
@@ -243,10 +284,18 @@ void extractRule(tSem_context* sem_context)
                         // tuto musi byt... // 
                         // generovanie kodu pre hodenie Identifikatoru na zosobnik v interprete// 
                         // 2. NULL treba zmenit asi na KEY....(!prediskutovat!)  //
-//******************************************************************************//
-                         NaplnInstr( I_PREC_ID, NULL , NULL, NULL ); 
 
-
+//******************************FIKO_funkica_IDENTIFIKATOR****************************************//
+			     		void *spracADDR = spracuj(actToken.stav, actToken.data);
+						if (spracADDR == NULL )
+						{
+							// chybiska
+							printf("CHYBISKA.....\n");
+							return 1; // tu nejaky ERR KOD
+						}
+						printf("GREEP generuji instrukci vloz na zasobnik I_IDENT >>"); whattoken(actToken.stav);
+						NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+//************************************************************************************************//
 
 
 
@@ -313,7 +362,7 @@ void extractRule(tSem_context* sem_context)
 			  }
 			  //*********************doleziteeee !!!!!! **************************************//
 			  // skontrolovat  ja si myslim ze tam nema byt S_KLIC_INTEGER ale S_ITEGER!!! /////
-			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_KLIC_INTEGER) || (actToken.stav == S_KLIC_STRING) || (actToken.stav == S_KLIC_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
+			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || (actToken.stav == S_STRING) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
 			  {
 					
 					myPushMul(&S, 1, LL_E ); 
@@ -348,9 +397,20 @@ void extractRule(tSem_context* sem_context)
 			  		myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
 			  		if(priznak==42)
                		 {
-                       // tuto sa vygeneruje instrukcia pre printovanie  //
-                   	   //  2 . NULL treba zamenit asi ze KEY !!!!!! // 	
-                  	   NaplnInstr( I_WRITE_IDE, NULL , NULL, NULL );
+               		 	// tuto sa vygeneruje instrukcia pre printovanie  //
+                   	   //  2 . NULL treba zamenit asi ze KEY !!!!!! //
+//******************************FIKO_funkica_IDENTIFIKATOR****************************************//
+			     		void *spracADDR = spracuj(actToken.stav, actToken.data);
+						if (spracADDR == NULL )
+						{
+							// chybiska
+							printf("CHYBISKA.....\n");
+							return 1; // tu nejaky ERR KOD
+						}
+						printf("GREEP generuji instrukci vloz na zasobnik I_IDENT >>"); whattoken(actToken.stav);
+						NaplnInstr( I_WRITE_IDE, NULL, spracADDR, NULL );
+//************************************************************************************************//
+                
                 	 }
 			      }
 
@@ -360,9 +420,22 @@ void extractRule(tSem_context* sem_context)
 			  		myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
 			  		if(priznak==42)
                		 {
-                       // tuto sa vygeneruje instrukcia pre printovanie  //
-                   	   //  2 . NULL treba zamenit asi tu fikovu extra funkciu //  	
-                  	   NaplnInstr( I_WRITE_INT, NULL , NULL, NULL );
+ 
+//******************************FIKO_funkica_NE_IDENTIFIKATOR****************************************//               		 	
+               		    void *spracADDR = spracuj(actToken.stav, actToken.data);
+						if (spracADDR == NULL )
+						{
+							// chybiska
+							printf("CHYBISKA.....\n");
+							return 1; // tu nejaky ERR KOD
+						}
+
+						tStav *TIPSTAV = malloc(sizeof(tStav));
+						*TIPSTAV = actToken.stav;
+
+						printf("GREEP generuji instrukci vloz na zasobnik I_PREC >>"); whattoken(actToken.stav);
+						NaplnInstr( I_WRITE_INT, NULL, spracADDR, TIPSTAV );	
+//************************************************************************************************//						
                 	 }
 
 		     	  }	
@@ -508,6 +581,10 @@ void extractRule(tSem_context* sem_context)
 
 bool parse()
 {
+	InitInstrList(&INSTR_PASKA); // inicializovat PASKU
+	astack_init(&FRAME);
+
+
 	stack_init(&S);
 	myPush(&S, EOF); // zarazka $$$$
 	myPush(&S, LL_INIT);
