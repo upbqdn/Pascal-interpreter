@@ -24,10 +24,17 @@
 #include "interpreter.h"
 
 extern FILE *soubor;
+tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
+list GLOBFRAME; // globalna tabulka
+astack FRAME;
 
 int main()
 {
 	soubor = fopen("subor.ifj", "r");
+  GLOBFRAME = hash_init();
+  
+  InitInstrList(&INSTR_PASKA);
+  astack_init(&FRAME);
 
   		bool parsEXT;
   		parsEXT = parse();

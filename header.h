@@ -162,5 +162,5 @@ typedef enum
 //externe zalezitocsti
 
 extern tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-extern Llist GLOBFRAME[365]; // globalna tabulka
+extern list GLOBFRAME[365]; // globalna tabulka
 extern astack FRAME;
