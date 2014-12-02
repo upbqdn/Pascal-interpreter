@@ -50,6 +50,12 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         switch(Instr.AKCIA) 
         {
 
+          case I_VAR_ZARAZKA:
+          {
+            myaPUSH(&aS, zarazka);
+            break;
+          }
+
           //============ak pride int,double,boolean,string...===============//
           case I_PREC:
                myaPUSH(&aS, Instr.ADDR_PRVA);
@@ -96,7 +102,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                myaPop(&aS);
                }
 
-               else if (TIP==S_STRING)
+               else if (TIP == S_STRING)
                {
                 void* pomAddr1 = myaTop(&aS);  // co chceme ulozit
                 myaPop(&aS);
@@ -118,7 +124,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                bool pomoc1 = (*(bool*)(myaTop(&aS)));
                myaPop(&aS);
 
-               (*(bool*)(myaTop(&aS)) = pomoc1 ;
+               *(bool*)(myaTop(&aS)) = pomoc1 ;
                myaPop(&aS);
                }
 
@@ -132,6 +138,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                  *(void *)(myaTop(&aS)) = malloc(sizeof(int));
                  myaPop(&aS);
               }
+              myaPop(&aS); // vyhodime zarazku !
               break;
             }
                   
