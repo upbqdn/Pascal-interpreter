@@ -19,12 +19,12 @@
 #include "instrlist.h"
 #include "ial.h"
 
-tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-Llist GLOBFRAME[365]; // globalna tabulka
+
+Llist GLOBFRAME; // globalna tabulka
 astack FRAME;
 
 stack S; //zasobnik
-tToken actToken; // aktualny token
+tToken actToken; // aktualny token GLOBALNY
 
 list_element Tab_prvok;
 int priznak;

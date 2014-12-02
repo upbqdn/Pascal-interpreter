@@ -31,15 +31,23 @@ astack FRAME;
 int main()
 {
 	soubor = fopen("subor.ifj", "r");
+
   GLOBFRAME = hash_init();
-  
   InitInstrList(&INSTR_PASKA);
   astack_init(&FRAME);
+  myaPUSH(&FRAME, GLOBFRAME);
 
   		bool parsEXT;
-  		parsEXT = parse();
+  		parsEXT = parse();  //t pustime parser+semant+precend
 
       printf("GREAT WORK %d\n", parsEXT);
+
+      if (parsEXT)
+      {
+        inter();
+      }
+      else
+        printf("CHYBICKA PARSERU \n");
 
   	  free(actToken.data);
 
