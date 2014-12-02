@@ -183,6 +183,10 @@ void extractRule(tSem_context* sem_context)
 			{
 			    myPop(&S);
 			    myPushMul(&S, 9, S_KLIC_FUNCTION, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_PLIST, S_PRAVA_ZAVORKA, S_DVOJTECKA, LL_TYPE, S_STREDNIK, LL_FUNC);
+
+          sem_context->context = function_dec;  //prepnutie kontextu na deklaraciu funkcie
+          Id_sign = rem_id;                     //pri spracovani sa id ulozi
+
 			    //  FLIST -> function id ( PLIST ) : TYPE ; FUNC
 			}
 			else // eps prechod
@@ -592,6 +596,8 @@ bool parse()
 	
 	actToken = get_token();
 
+  tId_sign Id_sign;   //priznak zapamatania aktualneho id
+
   tSem_context sem_context;
   sem_context.context = g_var_dec;     //na zaciatku zdrojaku je kontext deklaracii glob. premennych
 
@@ -627,6 +633,11 @@ bool parse()
 				actToken = get_token(); // nacitame novy token
 				printf("KOEC TERMINAL GET TOKEN token je "); whattoken(actToken.stav);
 				printf("KOEC TERMINAL GET TOKEN TOP  je "); whattoken(myTop(&S)) ;
+
+        if (Id_sign == rem_id) {
+          Id_sign = for_id;                      //reset signum 
+          sem_context->act_id = actToken.data;   //save actual id
+        }
 			}
 			else
 			{
