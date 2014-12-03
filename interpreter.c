@@ -129,9 +129,6 @@ printf("????INSTR_IDENT OK\n");
                 void* pomAddr2 = (*(void **)(myaTop(&aS))); // kam to ulozit
                 myaPop(&aS);
 
-
-
-
                 printf("ADDRESA2 je >>%p\n" , pomAddr2  );
                 
                 printf("spravne\n");
@@ -223,6 +220,44 @@ printf("????  INSTR_PRIRAD OK\n");
             break;
         }
 
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--READ--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
+
+        case I_READ:
+        {
+            list *TOPFRAME;
+            TOPFRAME = myaTop(&FRAME);    // fiko magic //
+
+            list_element prvok;
+            prvok = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA));
+
+            if (prvok == NULL) // hladame v GLOBAL
+            {
+                prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
+            }
+
+            switch ((*prvok).type;)
+            {
+                case S_INTEGER:
+                {
+                    scanf("%d", );
+                    break;
+                }
+
+                case S_DOUBLE:
+                {
+                    break;
+                }
+
+                case S_RETEZEC:
+                {
+                    break;
+                }
+
+            }
+            
+            break;
+        }
 
 
 

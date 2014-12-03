@@ -121,7 +121,7 @@ void extractRule()
 
                     NaplnInstr(I_ALLOC_INT, NULL, NULL, NULL);
 
-	  	//		sem_context->act_type = actToken.stav;
+	  	//		sem_context->act_type = S_INTEGER;
 					}
 					break;
 
@@ -133,7 +133,7 @@ void extractRule()
 
 					NaplnInstr(I_ALLOC_DOU, NULL, NULL, NULL);
 					    
-            //  sem_context->act_type = actToken.stav;
+            //  sem_context->act_type = S_DOUBLE;
 					}
 					break;
 
@@ -145,8 +145,7 @@ void extractRule()
 					    NaplnInstr(I_ALLOC_STR, NULL, NULL, NULL);
 
 
-				//	    sem_context->act_type = actToken.stav;
-					}
+				//	    sem_context->act_type = S_RETEZEC;
 					break;
 
 					case S_KLIC_BOOLEAN:
@@ -337,15 +336,16 @@ void extractRule()
 
 			  //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................
 		case  LL_RHS:
-			  if ((actToken.stav == S_IDENTIFIKATOR ))     // && (F_ID == Tab_prvok->tid)  !!!!!!!!!!!!!!!FUNKCIA!!!!!!!!!!!!!!!!!!!!
+			 /* if ((actToken.stav == S_IDENTIFIKATOR ))     // && (F_ID == Tab_prvok->tid)  !!!!!!!!!!!!!!!FUNKCIA!!!!!!!!!!!!!!!!!!!!
 			  {         // skontrolovat ci je su v podmienke aktualne nazvy// 
 
 			  	myPop(&S);
 			  	myPushMul(&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
 			  //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................	
 			
-			  }
-			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
+			  } */
+			  //else	
+			  if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
 			  {
 			  		//vieme ze nemama FUKNCIU, BUDEME PUSTAT PRECEDENCNU---->isVyraz();
 
