@@ -94,7 +94,7 @@ printf("????  INSTR_PREC OK\n");
             
             myaPush(&aS, &(prvok)->ref); 
             printf("POMOCNA>>>>>>>AD222>>%p\n" , myaTop(&aS)  );
-            printf("POMOCNA>>>>>>>AD222>>%p\n" , (prvok)->ref  );
+            printf("POMOCNA>>>>>>>AD222ref>>%p\n" , (prvok)->ref  );
             
 printf("????INSTR_IDENT OK\n");
             break;
@@ -258,18 +258,17 @@ printf("????  INSTR_PRIRAD OK\n");
                 	int dlzkastringu = 0;
                 	while((znak=getchar())!= '\n' )
                 	{
-                		znak=getchar();
-                		&(prvok)->ref=realloc( &(prvok)->ref2 , (sizeof(char)*dlzkastringu+1));
-                		(prvok)->ref[dlzkastringu]=znak;
+                		(prvok)->ref = realloc( (prvok)->ref , (sizeof(char)*dlzkastringu+1));
+                		printf("KOKOT>>>>>>>ADrefxxxx>>%p\n" , (prvok)->ref  );
+                		printf("KOKOT>>>>>>>ADref>>%p\n" , &((prvok)->ref)  );
+                		//  OK  *(char *) &((prvok)->ref)[dlzkastringu] = znak;   takto to ide :D
+                	    *(char *) &((prvok)->ref)[dlzkastringu] = znak;
                 		dlzkastringu++;
-                        
-                		
-
-                      
+ 
                 	}
-                	(prvok)->ref[dlzkastringu]= '\0';
-                	
 
+                	*(char *) &((prvok)->ref)[dlzkastringu+1] = '\0';  // pridame znak ukoncenia retazca
+                	
                     break;
                 }
                 default:
