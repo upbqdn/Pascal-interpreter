@@ -29,7 +29,7 @@ tToken actToken; // aktualny token GLOBALNY
 list_element Tab_prvok;
 int priznak;
 
-void extractRule(tSem_context* sem_context)
+void extractRule()
 {
 	switch(myTop(&S))
 	{
@@ -42,22 +42,19 @@ void extractRule(tSem_context* sem_context)
 			}
 			break;
 
+
 			case LL_VLIST:
 			if (actToken.stav == S_KLIC_VAR)
 			{
 			    myPop(&S);
-			    
 			    myPushMul(&S, 4, S_KLIC_VAR, LL_VDEC, S_STREDNIK, LL_NVLIST);
-
-			    NaplnInstr(I_VAR_ZARAZKA, NULL, NULL, NULL);
 			    
 			    // VLIST -> var VDEC ; NVLIST
 			}
-			else // eps prechod
+			else
 			{
-			
 			    myPop(&S);
-			    // VLIST -> eps
+			    // VLIST -> eps prechod
 			}
 			break;
 
@@ -67,31 +64,27 @@ void extractRule(tSem_context* sem_context)
 			{
 			    myPop(&S);
 			    myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
-			   
-<<<<<<< HEAD
-          // VDEC -> if : TYPE
-          
-          sem_context->act_id = actToken.data;  //ulozenie id premennej
-=======
- //_________________________________________GENER____________________________________________________//               
-            void *spracADDR = spracuj(actToken.stav, actToken.data);
-		if (spracADDR == NULL )
-		{
-			// chybiska
-			printf("CHYBISKA.....\n");
-			return 1; // tu nejaky ERR KOD
-		}
-		printf("GREEP generuji instrukci vloz na zasobnik I_IDENT >>"); whattoken(actToken.stav);
-		NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
-
- //__________________________________________________________________________________________________//
-
-
-
-
-          sem_context->act_id = actToken.data;
 			    // VDEC -> id : TYPE
->>>>>>> 725fd164518a82410c506f44434c1768e8d5dc3d
+			    NaplnInstr(I_VAR_ZARAZKA, NULL, NULL, NULL);
+
+			    // VDEC -> if : TYPE
+			   
+          
+     //     sem_context->act_id = actToken.data;  //ulozenie id premennej              
+	            void *spracADDR = spracuj(actToken.stav, actToken.data);
+				if (spracADDR == NULL )
+				{
+					// chybiska
+					printf("CHYBISKA.....\n");
+					return 1; // tu nejaky ERR KOD
+				}
+
+				printf("GREEP generuji instrukci VAR ID... I_IDENT >>"); whattoken(actToken.stav);
+				NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+
+
+         // sem_context->act_id = actToken.data;
+			    
 			}
 			break;
 
@@ -104,15 +97,13 @@ void extractRule(tSem_context* sem_context)
 			  
 			    //  NVLIST -> VDEC ; NVLIST
           
-          sem_check (sem_context);  //volam analyzu novo deklarovanej premennej
+        //  sem_check (sem_context);  //volam analyzu novo deklarovanej premennej
 			}
 			else // eps prechod
 			{
-			    myPop(&S);
-		
-			    //  NVLIST -> eps
+			    myPop(&S); //  NVLIST -> eps 
 
-          sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
+        //  sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
 			}
 			break;
 
@@ -130,7 +121,7 @@ void extractRule(tSem_context* sem_context)
 
                     NaplnInstr(I_ALLOC_INT, NULL, NULL, NULL);
 
-	  			sem_context->act_type = actToken.stav;
+	  	//		sem_context->act_type = actToken.stav;
 					}
 					break;
 
@@ -142,7 +133,7 @@ void extractRule(tSem_context* sem_context)
 
 					NaplnInstr(I_ALLOC_DOU, NULL, NULL, NULL);
 					    
-              sem_context->act_type = actToken.stav;
+            //  sem_context->act_type = actToken.stav;
 					}
 					break;
 
@@ -154,7 +145,7 @@ void extractRule(tSem_context* sem_context)
 					    NaplnInstr(I_ALLOC_STR, NULL, NULL, NULL);
 
 
-					    sem_context->act_type = actToken.stav;
+				//	    sem_context->act_type = actToken.stav;
 					}
 					break;
 
@@ -166,18 +157,18 @@ void extractRule(tSem_context* sem_context)
 					    NaplnInstr(I_ALLOC_BOO, NULL, NULL, NULL);
 
 
-					    sem_context->act_type = actToken.stav;
+				//	    sem_context->act_type = actToken.stav;
 					}
 					break;
 
 					default:
 					{
-					   // doplnime casom
+					   // doplnime casom ... CHYBISKA exit(2)  CAKAL SOM TYPE...
 					}
 					break;
 				}
-			  }
-				break;   
+				break;
+			  }   
                 
 
 			case LL_FLIST:
@@ -186,18 +177,17 @@ void extractRule(tSem_context* sem_context)
 			    myPop(&S);
 			    myPushMul(&S, 9, S_KLIC_FUNCTION, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_PLIST, S_PRAVA_ZAVORKA, S_DVOJTECKA, LL_TYPE, S_STREDNIK, LL_FUNC);
 
-          sem_context->context = function_dec;  //prepnutie kontextu na deklaraciu funkcie
-          Id_sign = rem_id;                     //pri spracovani sa id ulozi
+        //  sem_context->context = function_dec;  //prepnutie kontextu na deklaraciu funkcie
+         // Id_sign = rem_id;                     //pri spracovani sa id ulozi
 
 			    //  FLIST -> function id ( PLIST ) : TYPE ; FUNC
 			}
-			else // eps prechod
+			else
 			{
-			    myPop(&S);
-			    
-			    //  FLIST -> eps
+			    myPop(&S); //  FLIST -> eps prechod    
 			}
 			break;
+
 
 			case LL_FUNC:
 			if (actToken.stav == S_KLIC_FORWARD)
@@ -222,10 +212,9 @@ void extractRule(tSem_context* sem_context)
 			    myPushMul(&S, 4, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
 			    // PLIST -> id : TYPE NPLIST
 			}
-			else // eps prechod
+			else
 			{
-			    myPop(&S);
-			    // PLIST -> eps
+			    myPop(&S); // PLIST -> eps prechod
 			}
 			break;
 
@@ -237,91 +226,74 @@ void extractRule(tSem_context* sem_context)
 			    myPushMul(&S, 5, S_STREDNIK, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
 			    // NPLIST -> ; id : TYPE NPLIST
 			}
-			else // eps prechod
+			else
 			{
-			    myPop(&S);
-			    // NPLIST -> eps
+			    myPop(&S); // NPLIST -> eps prechod
 			}
 			break;
 
-		
-		//------------------STLIST------------------------// 
-		case  LL_STLIST:
-			  if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
+		 
+			case  LL_STLIST:
+				if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
+				{
+					myPop(&S);
+					myPushMul(&S, 2, LL_STAT, LL_NSTLIST);
+				}
+				else 
+				{
+					myPop(&S);
+				}
+				break;
+
+//-------------------------------NSTLIST------------------------------------------------------
+			case  LL_NSTLIST:
+			  if (actToken.stav == S_STREDNIK)
 			  {
-
-			  	myPop(&S);
-			  	myPushMul(&S, 2, LL_STAT, LL_NSTLIST);
-			
-			  }
-			  else 
-			  {
-              
-			  	myPop(&S);
-
-			  }
-
-			  break;
-
-
-		//--------------------NSTLIST---------------------//
-		case  LL_NSTLIST:
-			  if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
-			  {
-
 			  	myPop(&S);
 			  	myPushMul(&S, 3, S_STREDNIK, LL_STAT, LL_NSTLIST);
-			
 			  }
 			  else 
 			  {
-
-			  	myPop(&S);
-
+			  	myPop(&S); // eps prechod
 			  }
 
 			  break;
 
 
-		//------------------------STAT--------------------//
+//-------------------------------STAT------------------------------------------------------
 		case  LL_STAT:
-			  switch(actToken.stav)
+			  {
+			  	switch(actToken.stav)
 			      {
 				     case S_IDENTIFIKATOR:
-
-				     		myPop(&S);
-			     		myPushMul(&S, 3, S_IDENTIFIKATOR, S_PRIRAZENI, LL_RHS);
-                        // tuto musi byt... // 
-                        // generovanie kodu pre hodenie Identifikatoru na zosobnik v interprete// 
-                        // 2. NULL treba zmenit asi na KEY....(!prediskutovat!)  //
-
-//******************************FIKO_funkica_IDENTIFIKATOR****************************************//
-			     		void *spracADDR = spracuj(actToken.stav, actToken.data);
-						if (spracADDR == NULL )
 						{
-							// chybiska
-							printf("CHYBISKA.....\n");
-							return 1; // tu nejaky ERR KOD
-						}
-						printf("GREEP generuji instrukci vloz na zasobnik I_IDENT >>"); whattoken(actToken.stav);
-						NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
-//************************************************************************************************//
+					     	myPop(&S);
+				     		myPushMul(&S, 3, S_IDENTIFIKATOR, S_PRIRAZENI, LL_RHS);
 
 
+				     		void *spracADDR = spracuj(actToken.stav, actToken.data);
+							if (spracADDR == NULL )
+							{
+								// chybiska
+								printf("CHYBISKA.....\n");
+								return 1; // tu nejaky ERR KOD
+							}
+							printf("GREEP generuji instrukci vloz LL_STAT cize v KODE.. I_IDENT >>"); whattoken(actToken.stav);
+							NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
-				     		break;
+					     	break;
+				     	}
+
 
 				     case S_KLIC_WHILE:
-
+				     	{
 				     		myPop(&S);      // mozna zmena LL_E //
 				     		myPushMul(&S, 4, S_KLIC_WHILE, LL_E, S_KLIC_DO, LL_BSTAT);
+				     		
+				     		// tuto sa musi hned vygenerovat instrukcia skoku // 
 
-                            // tuto sa musi hned vygenerovat instrukcia skoku // 
-
-
-
-
-			     		break;
+				     	break;
+				     	}
 
 				     case S_KLIC_IF:
 
@@ -352,12 +324,12 @@ void extractRule(tSem_context* sem_context)
 				     		break;
 			    
 			         default:   // co tu ? chyba alebo nie ?
-
-
-				    break;
-
-			  }		
-			  break;
+			         {
+			         	break;
+			         }
+			  	}	
+			  	break;
+			}
 
 
 		//--------------------------RHS----------------------//
@@ -365,7 +337,7 @@ void extractRule(tSem_context* sem_context)
 
 			  //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................
 		case  LL_RHS:
-			  if ((actToken.stav == S_IDENTIFIKATOR ))     // && (F_ID == Tab_prvok->tid)
+			  if ((actToken.stav == S_IDENTIFIKATOR ))     // && (F_ID == Tab_prvok->tid)  !!!!!!!!!!!!!!!FUNKCIA!!!!!!!!!!!!!!!!!!!!
 			  {         // skontrolovat ci je su v podmienke aktualne nazvy// 
 
 			  	myPop(&S);
@@ -373,46 +345,43 @@ void extractRule(tSem_context* sem_context)
 			  //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................	
 			
 			  }
-			  //*********************doleziteeee !!!!!! **************************************//
-			  // skontrolovat  ja si myslim ze tam nema byt S_KLIC_INTEGER ale S_ITEGER!!! /////
 			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
 			  {
-					
-					myPushMul(&S, 1, LL_E ); 
-			  		myPop(&S);
-			  }
+			  		//vieme ze nemama FUKNCIU, BUDEME PUSTAT PRECEDENCNU---->isVyraz();
 
+					myPop(&S);
+
+					if ((isVyraz())==0)   // ak podmienka plati vytvorime instrukciu priradenia
+		            { 
+		                 NaplnInstr( I_PRIRAD, NULL , NULL, NULL ); 
+		            }
+			  }
 			  else 
 			  {
-			  	// chybova hlaska
+			  	// chybova hlaska CHYBISKA....
 			  }
 			  break;
 
 
-		//---------------BSTAT---------------//
+//----------------------------------BSTAT----------------------------------
 		case  LL_BSTAT:
 			  {
-
 			  	myPop(&S);
-			  	myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END );
-						 
+			  	myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END );		 
 			  }
 			  break;
 
 
 
-		//--------------SPLIST------------------//
-		case  LL_SPLIST:                                              // rozne stavy mozu byt dplnit else if
+//----------------------------------SPLIST--------------------------------
+		case  LL_SPLIST:
 			  	 if (actToken.stav == S_IDENTIFIKATOR )     
 			      {
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
-			  		if(priznak==42)
+			  		if(priznak == 42)
                		 {
-               		 	// tuto sa vygeneruje instrukcia pre printovanie  //
-                   	   //  2 . NULL treba zamenit asi ze KEY !!!!!! //
-//******************************FIKO_funkica_IDENTIFIKATOR****************************************//
 			     		void *spracADDR = spracuj(actToken.stav, actToken.data);
 						if (spracADDR == NULL )
 						{
@@ -420,21 +389,16 @@ void extractRule(tSem_context* sem_context)
 							printf("CHYBISKA.....\n");
 							return 1; // tu nejaky ERR KOD
 						}
-						printf("GREEP generuji instrukci vloz na zasobnik I_IDENT >>"); whattoken(actToken.stav);
-						NaplnInstr( I_WRITE_IDE, NULL, spracADDR, NULL );
-//************************************************************************************************//
-                
+						NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+						NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
                 	 }
 			      }
-
 		     	  else if (actToken.stav == S_INTEGER)
 		     	  {
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
-			  		if(priznak==42)
-               		 {
- 
-//******************************FIKO_funkica_NE_IDENTIFIKATOR****************************************//               		 	
+			  		if(priznak == 42)
+               		 {               		 	
                		    void *spracADDR = spracuj(actToken.stav, actToken.data);
 						if (spracADDR == NULL )
 						{
@@ -446,27 +410,36 @@ void extractRule(tSem_context* sem_context)
 						tStav *TIPSTAV = malloc(sizeof(tStav));
 						*TIPSTAV = actToken.stav;
 
-						printf("GREEP generuji instrukci vloz na zasobnik I_PREC >>"); whattoken(actToken.stav);
-						NaplnInstr( I_WRITE_INT, NULL, spracADDR, TIPSTAV );	
-//************************************************************************************************//						
+						NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+						NaplnInstr( I_WRITE_INT, NULL, spracADDR, TIPSTAV );						
                 	 }
-
-		     	  }	
+		     	  }
 		     	  else if (actToken.stav == S_DOUBLE)
 		     	  {
-		     	  	if(priznak==42)
-               		 { 	
-                  	   NaplnInstr( I_WRITE_DOU, NULL , NULL, NULL );
+		     	  	if(priznak == 42)
+               		 {
+               		    void *spracADDR = spracuj(actToken.stav, actToken.data);
+						if (spracADDR == NULL )
+						{
+							// chybiska
+							printf("CHYBISKA.....\n");
+							return 1; // tu nejaky ERR KOD
+						}
+
+						tStav *TIPSTAV = malloc(sizeof(tStav));
+						*TIPSTAV = actToken.stav;
+						
+						NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+						NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
                 	 }
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
-
-		     	  }	
+		     	  }
 		     	  else if (actToken.stav == S_RETEZEC)
 		     	  {
-		     	    if(priznak==42)
-               		 { 	
+		     	    if(priznak == 42)
+               		 {
                   	   void *spracADDR = spracuj(actToken.stav, actToken.data);
 							if (spracADDR == NULL )
 							{
@@ -478,134 +451,71 @@ void extractRule(tSem_context* sem_context)
 							tStav *TIPSTAV = malloc(sizeof(tStav));
 							*TIPSTAV = actToken.stav;
 
-
-
-
-
                		 	NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
-               		 	printf("GREEP generuji instrukci WRITE STRING >>"); whattoken(actToken.stav);
-                  	  	NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
+                  	  	NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );                	  	
                 	 }
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
 
-		     	  }	
-		     	  else if (actToken.stav == S_KLIC_TRUE)
+		     	  }
+		     	  else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
 		     	  {
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
 
-		     	  }	
+		     	  }
 		     	  else if (actToken.stav == S_KLIC_FALSE)
 		     	  {
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
 
-		     	  }	
+		     	  }
 			  else
 			  {
-
-			  	myPop(&S);
-			  	priznak=0;
-
+			  	myPop(&S); // ->eps prechod    // SKONTROLOVAT V PRAVIDLACH !!!!!
+			  	priznak = 0;
 			  }
 			  break;   
 
 
-		//  -----------NSPLIST-------------------//
+//----------------------------------NSPLIST------------------------------------------
 		case  LL_NSPLIST:
-			  if (actToken.stav == S_IDENTIFIKATOR )     
-			  {
+		{
+			if (actToken.stav == S_CARKA )     
+			{
 			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_IDENTIFIKATOR, LL_NSPLIST);
-			    if(priznak==42)
-                {
-                   // tuto sa vygeneruje instrukcia pre printovanie  //
-                   //  2 . NULL treba zamenit asi ze KEY !!!!!! // 	
-                   NaplnInstr( I_WRITE_IDE, NULL , NULL, NULL );
-                }
-
-
-
-			  }
-			  else if (actToken.stav == S_INTEGER)
-		      {
-			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_INTEGER, LL_NSPLIST);
-                if(priznak==42)
-               	{
-                    // tuto sa vygeneruje instrukcia pre printovanie  //
-                   	//  2 . NULL treba zamenit asi tu fikovu extra funkciu //  	
-                  	NaplnInstr( I_WRITE_INT, NULL , NULL, NULL );
-                }
-		      }	
-		      else if (actToken.stav == S_DOUBLE)
-		       {
-			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_KLIC_REAL, LL_NSPLIST);
-                if(priznak==42)
-               		 { 	
-                  	   NaplnInstr( I_WRITE_DOU, NULL , NULL, NULL );
-                	 }
-		        }	
-		      else if (actToken.stav == S_KLIC_STRING)
-		     	{
-
-			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_KLIC_STRING, LL_NSPLIST);
-			  	if(priznak==42)
-               		 { 	
-                  	   NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
-                	 }
-
-		     	}	
-		      else if (actToken.stav == S_KLIC_TRUE)
-		     	  {
-
-			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_KLIC_TRUE, LL_NSPLIST);
-
-		     	  }	
-		      else if (actToken.stav == S_KLIC_FALSE)
-		     	  {
-
-			  	myPop(&S);
-			  	myPushMul(&S, 3, S_CARKA, S_KLIC_FALSE, LL_NSPLIST);
-
-		     	  }	
-			  else 
-			  {
-
-			  	myPop(&S);
-                priznak=0;
-			  }
-
-			  break;
-        
+				myPushMul(&S, 2, S_CARKA, LL_SPLIST);
+			}
+			 
+			else
+			{
+			 	myPop(&S);
+	            priznak=0; // ->eps prechod
+	            
+			}
+			break;
+        }
 			   
-	    case LL_E:    
-	         
-            
-             if ((isVyraz())==0)   // ak podmienka plati vytvorime instrukciu priradenia
-             {
-             	 // namiesto 1. NULL musi byt IDENTIFIKATOR  ale v SPRAVNOM tvare !!! //
-             	 // pravdepodobne asi KEY indentifikatoru //  
-                 NaplnInstr( I_PRIRAD, NULL , NULL, NULL ); 
+	    case LL_E:
+	   		{
+	   		 	myPop(&S);
+	   		 
+	   			if ((isVyraz())==0)   // ak podmienka plati vytvorime instrukciu priradenia
+	   		        {  
+	   		        	NaplnInstr( I_PRIRAD, NULL , NULL, NULL );
+	   		        }
 
-             }
-              
-
-        
-          break;
+	   		break;
+	   		}
 
         default:
         {
-        	break;
+        	break; // NEJAKA CHIBISKA....
         }
-			}
+	}
 }
 
 
@@ -618,10 +528,10 @@ bool parse()
 	
 	actToken = get_token();
 
-  tId_sign Id_sign;   //priznak zapamatania aktualneho id
+//  tId_sign Id_sign;   //priznak zapamatania aktualneho id
 
-  tSem_context sem_context;
-  sem_context.context = g_var_dec;     //na zaciatku zdrojaku je kontext deklaracii glob. premennych
+ // tSem_context sem_context;
+ // sem_context.context = g_var_dec;     //na zaciatku zdrojaku je kontext deklaracii glob. premennych
 
 
 	while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
@@ -637,27 +547,28 @@ bool parse()
 	    if (myTop(&S) >= LL_INIT && myTop(&S) <= LL_NSPLIST )  // TERMINAL/NETERMINAL
 		{
 			// NETERMINAL  velke mismenka
-			printf("PUSTAM EXTRACT\n");
-			extractRule(& sem_context); // rozvin pravidla...
-			printf("HOTOVO EXTRACT\n");
+			//printf("PUSTAM EXTRACT\n");
+			extractRule(); // rozvin pravidla...
+			//printf("HOTOVO EXTRACT\n");
 		}
 		else
 		{
 			// TERMINAL male pismenka
 			if (((unsigned int) myTop(&S)) == actToken.stav)
 			{
+				showStack(&S);
 				printf("Pustam TERMINAL  actToken je "); whattoken(actToken.stav);
 				printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho "); whattoken(myTop(&S));
 				myPop(&S);	// odstranime z vrcholu zasobnika
 				//free(actToken.data); // free
 
-        if (actToken.stav == S_IDENTIFIKATOR) {   //ulozenie id funkcie pri deklaracii
-	        if (Id_sign == rem_id) {
-            Id_sign = for_id;                      //reset signum 
-            sem_context->act_fun = actToken.data;   //save actual id of function
-            check_sem (sem_context);
-          }
-        }
+        //if (actToken.stav == S_IDENTIFIKATOR) {   //ulozenie id funkcie pri deklaracii
+	     //   if (Id_sign == rem_id) {
+         //   Id_sign = for_id;                      //reset signum 
+         //   sem_context->act_fun = actToken.data;   //save actual id of function
+         //   check_sem (sem_context);
+         // }
+       // }
 
 			actToken = get_token(); // nacitame novy token
 				printf("KOEC TERMINAL GET TOKEN token je "); whattoken(actToken.stav);
@@ -688,7 +599,7 @@ bool parse()
 	//free(actToken.data); // free
 	
 }
-
+/*
 void sem_check (tSem_context* sem_context) 
 {
   switch (sem_context->context)     
@@ -702,7 +613,7 @@ void sem_check (tSem_context* sem_context)
 
       hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
       break;
-  
+  */
 /*
     case FUNCTION_DEC: {
     
@@ -712,4 +623,4 @@ void sem_check (tSem_context* sem_context)
           
         }
       break;*/
-}
+//}

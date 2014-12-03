@@ -28,6 +28,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     astack_init(&aS);
     void* zarazka = malloc(sizeof(char));
     myaPush(&aS, zarazka);
+    printf("....NAHADZUJEM HLAAAVNUUUUU ZARAYKU\n");
 
 
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
@@ -51,6 +52,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_VAR_ZARAZKA:
         {
+            printf("....NAHADZUJEM  ZARAYKU\n");
             myaPush(&aS, zarazka);
             break;
         }
@@ -58,24 +60,25 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         //============ak pride int,double,boolean,string...===============//
         case I_PREC:
         {
-            printf("NICO ZAUJIMAVE..........................................................\n");
-            printf("AZARAZKA..... %p \n", zarazka );
-            printf("ADRESA NA ZASOBNIKU pred pushom %p \n", myaTop(&aS) );
-            printf("ADRESA PRED ZASOBNIKU %p \n", Instr->ADDR_PRVA );
+            //printf("NICO ZAUJIMAVE..........................................................\n");
+            //printf("AZARAZKA..... %p \n", zarazka );
+            //printf("ADRESA NA ZASOBNIKU pred pushom %p \n", myaTop(&aS) );
+            //printf("ADRESA PRED ZASOBNIKU %p \n", Instr->ADDR_PRVA );
 
-            printf("SKUSKA.....>>%s<< \n", Instr->ADDR_PRVA );
+           // printf("SKUSKA.....>>%s<< \n", Instr->ADDR_PRVA );
 
 
             myaPush(&aS, Instr->ADDR_PRVA);
-            printf("ADRESA NA ZASOBNIKU %p \n", myaTop(&aS) );
+            //printf("ADRESA NA ZASOBNIKU %p \n", myaTop(&aS) );
             TIP = *(tStav *)(Instr->ADDR_DRUHA); // na tejto adrese musi byt napr. S_INTEGER
-
+printf("????  INSTR_PREC OK\n");
             break;
         }
 
         //============ak pride IDENTIFIKATOR===============//
         case I_IDENT:
         {
+
             list *TOPFRAME;
             TOPFRAME = myaTop(&FRAME);    // fiko magic //
 
@@ -87,10 +90,13 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
             }
 
-
             TIP = (*prvok).type;
-            myaPush(&aS, (*prvok).ref);
-
+            
+            myaPush(&aS, &(prvok)->ref); 
+            printf("POMOCNA>>>>>>>AD222>>%p\n" , myaTop(&aS)  );
+            printf("POMOCNA>>>>>>>AD222>>%p\n" , (prvok)->ref  );
+            
+printf("????INSTR_IDENT OK\n");
             break;
         }
 
@@ -115,20 +121,37 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             else if (TIP == S_RETEZEC)
             {
+                printf("spravne\n");
                 void* pomAddr1 = myaTop(&aS);  // co chceme ulozit
+                printf("TOP>>%s\n" , myaTop(&aS) );
+                printf("TOP>>%s\n" , pomAddr1 );
                 myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS); // kam to ulozit
+                void* pomAddr2 = (*(void **)(myaTop(&aS))); // kam to ulozit
                 myaPop(&aS);
 
-                int dlzka = strlen((*(char**)pomAddr1));
-                pomAddr2 = realloc(   c_string  ,    ( ((sizeof(char))*dlzka)+1 )     )     ;     //..realok
 
+
+
+                printf("ADDRESA2 je >>%p\n" , pomAddr2  );
+                
+                printf("spravne\n");
+                int dlzka = strlen(((char**)pomAddr1));
+                printf("spravne %d \n", dlzka);
+                printf("HMMM>>AD2>>%p\n" , pomAddr2  );
+                pomAddr2 =  realloc( pomAddr2   ,    ( ((sizeof(char))*dlzka)+2 )     )     ;     //..realok
+                printf("spravne\n");
                 if (pomAddr2 == NULL) // chyba alokacie
                 {
+                    printf("cele zle\n");
                     return NULL;
                 }
 
-                strcpy( (*(char**)pomAddr2) , (*(char**)pomAddr1)  );
+                
+
+                strcpy( ((char*)pomAddr2) , ((char*)pomAddr1)  );
+                printf("HMMM>>AD2>>%p\n" , pomAddr2  );
+                printf("AD2>>%s\n" , (char*) pomAddr2  );
+                printf("POMOCNIK>>AD2>>%p\n" , pomAddr2  );
 
             }
             else if ( TIP == S_KLIC_TRUE || S_KLIC_FALSE )
@@ -139,20 +162,24 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 (*(bool*)(myaTop(&aS))) = pomoc1 ;
                 myaPop(&aS);
             }
-
+printf("????  INSTR_PRIRAD OK\n");
             break;
         }
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>--ALLOC pripady--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
         case I_ALLOC_INT:
         {
+            
             while(myaTop(&aS) != zarazka)
             {
                 (*(void **)(myaTop(&aS))) = malloc(sizeof(int));
                 myaPop(&aS);
             }
             myaPop(&aS); // vyhodime zarazku !
+
+            printf("????INSTR_ALLOC_INT OK\n");
             break;
+
         }
 
 
@@ -165,6 +192,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
             }
             myaPop(&aS); // vyhodime zarazku !
+            printf("????INSTR_ALLOC_DOU OK\n");
             break;
         }
 
@@ -178,6 +206,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
             }
             myaPop(&aS); // vyhodime zarazku !
+            printf("????INSTR_ALLOC_BOOL OK\n");
             break;
         }
 
@@ -189,6 +218,8 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
             }
             myaPop(&aS); // vyhodime zarazku !
+
+            printf("????INSTR_ALLOC_RETEZEC OK\n");
             break;
         }
 
@@ -201,44 +232,34 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         case I_WRITE_IDE:
         {
             // treba zistit akeho je tipu //
-            list *TOPFRAME;
-            TOPFRAME = myaTop(&FRAME);    // fiko magic //
-
-            list_element prvok;
-            prvok = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA));
-
-            if (prvok == NULL) // hladame v GLOBAL
-            {
-                prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
-            }
-
-
-            TIP = (*prvok).type;
+            
+            printf("????????????????????????????????????????????\n");
 
             switch(TIP)
             {
             case S_INTEGER:
             {
-                printf("%d", *(int*)prvok->ref );
+                printf("%d", *(int*)myaTop(&aS) );
                 break;
             }
 
             case S_DOUBLE:
             {
-                printf("%f", *(float*)prvok->ref );
+                printf("%f", *(float*)myaTop(&aS)  );
                 break;
             }
 
             case S_RETEZEC:
             {
-                printf("%s", *(char**)prvok->ref );
+                printf("idem pisat IDE string\n");
+                printf("%s", *(char**)myaTop(&aS)   );
                 break;
             }
 
             case S_KLIC_FALSE:
             case S_KLIC_TRUE:
             {
-                printf("%d", *(bool*)prvok->ref );
+                printf("%d", *(bool*)myaTop(&aS)  );
                 break;
             }
 
@@ -266,7 +287,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         }
 
         case I_WRITE_STR:
-        {
+        {  
            // printf("ADD %p\n", *(void *) (Instr->ADDR_PRVA) );
             printf("%s",  myaTop(&aS) );
             myPop(&aS);
