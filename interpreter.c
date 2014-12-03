@@ -135,7 +135,7 @@ printf("????INSTR_IDENT OK\n");
                 int dlzka = strlen(((char**)pomAddr1));
                 printf("spravne %d \n", dlzka);
                 printf("HMMM>>AD2>>%p\n" , pomAddr2  );
-                pomAddr2 =  realloc( pomAddr2   ,    ( ((sizeof(char))*dlzka)+2 )     )     ;     //..realok
+                pomAddr2 =  realloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
                 printf("spravne\n");
                 if (pomAddr2 == NULL) // chyba alokacie
                 {
@@ -256,20 +256,20 @@ printf("????  INSTR_PRIRAD OK\n");
                 {
                 	char znak;
                 	int dlzkastringu = 0;
-                	while((znak != EOF) || (znak != '\n' ))
+                	while((znak=getchar())!= '\n' )
                 	{
                 		znak=getchar();
-                		
-
-
-
+                		&(prvok)->ref=realloc( &(prvok)->ref2 , (sizeof(char)*dlzkastringu+1));
+                		(prvok)->ref[dlzkastringu]=znak;
                 		dlzkastringu++;
-                		&(prvok)->ref==realloc( &(prvok)->ref2 , (sizeof(char)*dlzkastringu+2));
                         
                 		
 
                       
                 	}
+                	(prvok)->ref[dlzkastringu]= '\0';
+                	
+
                     break;
                 }
                 default:
