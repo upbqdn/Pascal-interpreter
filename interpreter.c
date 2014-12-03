@@ -240,7 +240,8 @@ printf("????  INSTR_PRIRAD OK\n");
             {
                 case S_INTEGER:
                 {
-                    scanf("%d", );
+                    scanf("%d", &(prvok)->ref );
+
                     break;
                 }
 
@@ -251,6 +252,11 @@ printf("????  INSTR_PRIRAD OK\n");
 
                 case S_RETEZEC:
                 {
+                    break;
+                }
+                default:
+                {
+                    //chybka
                     break;
                 }
 
