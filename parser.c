@@ -305,7 +305,7 @@ void extractRule()
 
 				     		myPop(&S);
 				     		myPushMul(&S, 4, S_KLIC_READLN, S_LEVA_ZAVORKA, S_IDENTIFIKATOR, S_PRAVA_ZAVORKA);
-
+                            priznak=read;
 
 				     		break;
 
@@ -319,7 +319,7 @@ void extractRule()
 				     		/***********nastavim tu priznak aby som vedel ze ked pridem do***********
 				     		 ***********SPLISTU mam generovat hned printf a nie nieco z RHS *********
 				     		*/ 
-				     		priznak=42; 
+				     		priznak=write; 
 				     		
 				     		break;
 			    
@@ -380,7 +380,7 @@ void extractRule()
 
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
-			  		if(priznak == 42)
+			  		if(priznak == write)
                		 {
 			     		void *spracADDR = spracuj(actToken.stav, actToken.data);
 						if (spracADDR == NULL )
@@ -397,7 +397,7 @@ void extractRule()
 		     	  {
 			  		myPop(&S);
 			  		myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
-			  		if(priznak == 42)
+			  		if(priznak == write)
                		 {               		 	
                		    void *spracADDR = spracuj(actToken.stav, actToken.data);
 						if (spracADDR == NULL )
@@ -411,12 +411,12 @@ void extractRule()
 						*TIPSTAV = actToken.stav;
 
 						NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
-						NaplnInstr( I_WRITE_INT, NULL, spracADDR, TIPSTAV );						
+						NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );						
                 	 }
 		     	  }
 		     	  else if (actToken.stav == S_DOUBLE)
 		     	  {
-		     	  	if(priznak == 42)
+		     	  	if(priznak == write)
                		 {
                		    void *spracADDR = spracuj(actToken.stav, actToken.data);
 						if (spracADDR == NULL )
@@ -438,7 +438,7 @@ void extractRule()
 		     	  }
 		     	  else if (actToken.stav == S_RETEZEC)
 		     	  {
-		     	    if(priznak == 42)
+		     	    if(priznak == write)
                		 {
                   	   void *spracADDR = spracuj(actToken.stav, actToken.data);
 							if (spracADDR == NULL )
@@ -476,7 +476,7 @@ void extractRule()
 			  else
 			  {
 			  	myPop(&S); // ->eps prechod    // SKONTROLOVAT V PRAVIDLACH !!!!!
-			  	priznak = 0;
+			  	priznak = nic;
 			  }
 			  break;   
 
@@ -493,7 +493,7 @@ void extractRule()
 			else
 			{
 			 	myPop(&S);
-	            priznak=0; // ->eps prechod
+	            priznak=nic; // ->eps prechod
 	            
 			}
 			break;
@@ -559,6 +559,31 @@ bool parse()
 				showStack(&S);
 				printf("Pustam TERMINAL  actToken je "); whattoken(actToken.stav);
 				printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho "); whattoken(myTop(&S));
+
+//-------------------------------GENER-READ---------------------------------------------------------------//				
+				if ((actToken.stav==S_IDENTIFIKATOR)&&(priznak==read)) // ak ideme citat a pride nam CO ideme citat
+				{
+
+					priznak=nacitaj; // nastavi sa priznak pretoze nemozme generovat instrukciu bez pravej zatvorky
+				}
+
+				if ((actToken.stav==S_PRAVA_ZAVORKA)&&(priznak==nacitaj)) // prisla prava zatvorka mozme konecne nacitat
+				{
+
+					void *spracADDR = spracuj(actToken.stav, actToken.data);
+						if (spracADDR == NULL )
+						{
+							// chybiska
+							printf("CHYBISKA.....\n");
+							return 1; // tu nejaky ERR KOD
+						}
+						NaplnInstr( I_READ, NULL, spracADDR, NULL );
+						priznak=nic;
+
+				}
+//--------------------------------------------------------------------------------------------------------//
+
+
 				myPop(&S);	// odstranime z vrcholu zasobnika
 				//free(actToken.data); // free
 
