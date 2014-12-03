@@ -31,7 +31,12 @@ void vloz_znak_do_tokenu(int znak, int *i)
         token.data[(*i)] = znak;
         (*i)++;
     }
-    else error = interni_chyba_interpretu; /* interni chyba prekladace */
+    else 
+    {
+		error = interni_chyba_interpretu; /* interni chyba prekladace */
+         fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
+         exit(99);
+	 }
 }
 
 void vrat_se_o_znak(int znak)
@@ -499,7 +504,12 @@ tToken get_token(void)
                     ESCdata[(ESCi)] = c;   // ulozime cislo
                     (ESCi)++;
                 }
-                else error = interni_chyba_interpretu; /* interni chyba prekladace */
+                else {
+					error = interni_chyba_interpretu; /* interni chyba prekladace */
+					fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
+					exit(99);
+					
+				}
 
             }
             else // uz nemame cislo ...
@@ -583,6 +593,10 @@ tToken get_token(void)
             error = chyba_v_programu_v_ramci_lexikalni_analyzy;
             //vrat_se_o_znak((char) c);
             konec = true;
+            token.radek = radek;
+            token.sloupec = sloupec;
+            fprintf(stderr, "LEXIKALNI CHYBA : %d na souradnici[%d, %d] MERLINE UKLID SI! \n", error, radek+1, sloupec);
+            exit(1);
             break;
         }
         case S_END:
@@ -594,15 +608,22 @@ tToken get_token(void)
         default:
         {
             if (error) break;
-            if (c == '\n')
+//            if (c == '\n')
+  //          {
+    //                radek++;
+      //              sloupec = 1;
+        //    }
+          //  else if (isprint(c))
+            //    sloupec++;
+        }
+        }
+                            if (c == '\n')
             {
                     radek++;
-                    sloupec = 1;
+                    sloupec = 0;
             }
             else if (isprint(c))
                 sloupec++;
-        }
-        }
     }
     return token;
 }
