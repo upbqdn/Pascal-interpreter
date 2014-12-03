@@ -14,6 +14,8 @@
 stack S; //zasobnik
 tToken actToken; // aktualny token
 
+#define DEFINED (0)
+
 typedef enum {
   G_VAR_DEC,
   FUNCTION_DEC

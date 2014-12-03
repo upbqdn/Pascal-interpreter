@@ -36,9 +36,11 @@ int main()
 
   GLOBFRAME = hash_init();
 
+/*  uz nie je treba
   hash_insert_it(GLOBFRAME, "a", S_INTEGER);
   hash_insert_it(GLOBFRAME, "b", S_INTEGER);
   hash_insert_it(GLOBFRAME, "c", S_RETEZEC);
+*/
 
 
   printf("PREDTYM SOM GLOB SU:::>>>%p<<<<:::\n" , GLOBFRAME);

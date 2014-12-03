@@ -31,7 +31,7 @@ int priznak;
 
 tId_sign Id_sign;   //priznak zapamatania aktualneho id
 
-void extractRule()
+void extractRule(tSem_context* sem_context)
 {
     switch(myTop(&S))
     {
@@ -620,7 +620,7 @@ bool parse()
                   {
                     Id_sign = for_id;                      //reset signum
                     sem_context.act_fun = actToken.data;   //save actual id of function
-                    check_sem (sem_context);
+                    sem_check (&sem_context);
                   }
                 }
 
@@ -675,8 +675,8 @@ void sem_check (tSem_context* sem_context)
 
     case FUNCTION_DEC: 
 
-      if ( hash_search (GLOBFRAME, sem_context->act_fun) == CONTAINS &&
-           check_forward (sem_context->act_fun) != DEFINED )
+      //if ( hash_search (GLOBFRAME, sem_context->act_fun) == CONTAINS &&
+        //   check_forward (sem_context->act_fun) != DEFINED )
         {
           
         }
