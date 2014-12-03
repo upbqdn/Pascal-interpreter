@@ -29,6 +29,8 @@ tToken actToken; // aktualny token GLOBALNY
 list_element Tab_prvok;
 int priznak;
 
+tId_sign Id_sign;   //priznak zapamatania aktualneho id
+
 void extractRule()
 {
     switch(myTop(&S))
@@ -68,15 +70,13 @@ void extractRule()
     {
         if (actToken.stav == S_IDENTIFIKATOR)
         {
+            //VDEC -> id : TYPE
+            
             myPop(&S);
             myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
-            // VDEC -> id : TYPE
+            
             NaplnInstr(I_VAR_ZARAZKA, NULL, NULL, NULL);
 
-            // VDEC -> if : TYPE
-
-
-            //     sem_context->act_id = actToken.data;  //ulozenie id premennej
             void *spracADDR = spracuj(actToken.stav, actToken.data);
             if (spracADDR == NULL )
             {
@@ -90,8 +90,7 @@ void extractRule()
             NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
 
-            // sem_context->act_id = actToken.data;
-
+            sem_context->act_id = actToken.data;  //ulozenie id premennej
         }
         break;
     }
@@ -107,13 +106,13 @@ void extractRule()
 
             //  NVLIST -> VDEC ; NVLIST
 
-            //  sem_check (sem_context);  //volam analyzu novo deklarovanej premennej
+             sem_check (sem_context);  //volam analyzu novo deklarovanej premennej
         }
         else // eps prechod
         {
             myPop(&S); //  NVLIST -> eps
 
-            //  sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
+            sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
         }
 
         break;
@@ -133,7 +132,7 @@ void extractRule()
 
             NaplnInstr(I_ALLOC_INT, NULL, NULL, NULL);
 
-            //		sem_context->act_type = S_INTEGER;
+        		sem_context->act_type = S_INTEGER;
             break;
         }
 
@@ -145,7 +144,7 @@ void extractRule()
 
             NaplnInstr(I_ALLOC_DOU, NULL, NULL, NULL);
 
-            //  sem_context->act_type = S_DOUBLE;
+            sem_context->act_type = S_DOUBLE;
             break;
         }
 
@@ -156,8 +155,7 @@ void extractRule()
 
             NaplnInstr(I_ALLOC_STR, NULL, NULL, NULL);
 
-
-            //	    sem_context->act_type = S_RETEZEC;
+            sem_context->act_type = S_RETEZEC;
 
             break;
         }
@@ -169,8 +167,7 @@ void extractRule()
 
             NaplnInstr(I_ALLOC_BOO, NULL, NULL, NULL);
 
-
-            //	    sem_context->act_type = actToken.stav;
+            sem_context->act_type = actToken.stav;
             break;
         }
 
@@ -192,8 +189,8 @@ void extractRule()
             myPop(&S);
             myPushMul(&S, 9, S_KLIC_FUNCTION, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_PLIST, S_PRAVA_ZAVORKA, S_DVOJTECKA, LL_TYPE, S_STREDNIK, LL_FUNC);
 
-            //  sem_context->context = function_dec;  //prepnutie kontextu na deklaraciu funkcie
-            // Id_sign = rem_id;                     //pri spracovani sa id ulozi
+            sem_context->context = FUNCTION_DEC;  //prepnutie kontextu na deklaraciu funkcie
+            Id_sign = rem_id;                     //pri spracovani sa id ulozi
 
             //  FLIST -> function id ( PLIST ) : TYPE ; FUNC
         }
@@ -564,10 +561,9 @@ bool parse()
 
     actToken = get_token();
 
-//  tId_sign Id_sign;   //priznak zapamatania aktualneho id
 
-// tSem_context sem_context;
-// sem_context.context = g_var_dec;     //na zaciatku zdrojaku je kontext deklaracii glob. premennych
+    tSem_context sem_context;
+    sem_context.context = G_VAR_DEC;    //na zaciatku zdrojaku je kontext deklaracii glob. premennych
 
 
     while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
@@ -584,7 +580,7 @@ bool parse()
         {
             // NETERMINAL  velke mismenka
             //printf("PUSTAM EXTRACT\n");
-            extractRule(); // rozvin pravidla...
+            extractRule (&sem_context); // rozvin pravidla...
             //printf("HOTOVO EXTRACT\n");
         }
         else
@@ -618,13 +614,15 @@ bool parse()
                 myPop(&S);	// odstranime z vrcholu zasobnika
                 //free(actToken.data); // free
 
-                //if (actToken.stav == S_IDENTIFIKATOR) {   //ulozenie id funkcie pri deklaracii
-                //   if (Id_sign == rem_id) {
-                //   Id_sign = for_id;                      //reset signum
-                //   sem_context->act_fun = actToken.data;   //save actual id of function
-                //   check_sem (sem_context);
-                // }
-                // }
+                if (actToken.stav == S_IDENTIFIKATOR) 
+                {                                       //ulozenie id funkcie pri deklaracii
+                  if (Id_sign == rem_id) 
+                  {
+                    Id_sign = for_id;                      //reset signum
+                    sem_context.act_fun = actToken.data;   //save actual id of function
+                    check_sem (sem_context);
+                  }
+                }
 
                 actToken = get_token(); // nacitame novy token
                 printf("KOEC TERMINAL GET TOKEN token je ");
@@ -660,10 +658,10 @@ bool parse()
 }
 
 
-/*
+
 void sem_check (tSem_context* sem_context)
 {
-  switch (sem_context->context)
+  switch (sem_context->context) {
 
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
 
@@ -674,14 +672,14 @@ void sem_check (tSem_context* sem_context)
 
       hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
       break;
-  */
-/*
-    case FUNCTION_DEC: {
+
+    case FUNCTION_DEC: 
 
       if ( hash_search (GLOBFRAME, sem_context->act_fun) == CONTAINS &&
            check_forward (sem_context->act_fun) != DEFINED )
         {
-
+          
         }
-      break;*/
-//}
+      break;
+  }
+}

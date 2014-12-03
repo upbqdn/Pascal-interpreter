@@ -33,5 +33,5 @@ typedef enum {
 } tId_sign;
 
 bool parse();
-void extractRule();
-//void sem_check (tSem_context* sem_context);
+void extractRule(tSem_context* sem_context);
+void sem_check (tSem_context* sem_context);
