@@ -27,23 +27,27 @@ tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
 list *GLOBFRAME; // globalna tabulka
 astack FRAME;
 
+
+
+
 int main()
 {
-	soubor = fopen("subor.ifj", "r");
+  soubor = fopen("subor.ifj", "r");
 
   GLOBFRAME = hash_init();
-  
-  // hash_insert_it(GLOBFRAME, "a", S_INTEGER);
-  // hash_insert_it(GLOBFRAME, "b", S_INTEGER);
-  // hash_insert_it(GLOBFRAME, "c", S_RETEZEC);
-  
-  
+
+  hash_insert_it(GLOBFRAME, "a", S_INTEGER);
+  hash_insert_it(GLOBFRAME, "b", S_INTEGER);
+  hash_insert_it(GLOBFRAME, "c", S_RETEZEC);
+
+
+  printf("PREDTYM SOM GLOB SU:::>>>%p<<<<:::\n" , GLOBFRAME);
   InitInstrList(&INSTR_PASKA);
   astack_init(&FRAME);
-  myaPUSH(&FRAME, GLOBFRAME);
+  myaPush(&FRAME, GLOBFRAME);
 
-  		bool parsEXT;
-  		parsEXT = parse();  //t pustime parser+semant+precend
+      bool parsEXT;
+      parsEXT = parse();  //t pustime parser+semant+precend
 
       printf("GREAT WORK %d\n", parsEXT);
 
@@ -54,14 +58,13 @@ int main()
       else
         printf("CHYBICKA PARSERU \n");
 
+      free(actToken.data);
 
+      hash_destroy(GLOBFRAME);
+      destroyaStack(&FRAME);
+      DestroyInstrList(&INSTR_PASKA);
 
-	//vecicky co treba nakonci spravit
-  	  free(actToken.data);
-  	  hash_destroy(GLOBFRAME);
-  	  destroyaStack(&FRAME);
-  	  DestroyInstrList(&INSTR_PASKA);
-  	  fclose(soubor);
+      fclose(soubor);
 
-	return 0;
+  return 0;
 }
