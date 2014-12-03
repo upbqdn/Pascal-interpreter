@@ -23,7 +23,7 @@
 /* chyby a chybove kody */
 typedef enum ERROR
 {
-  vsechno_ok,							// 0
+  vsechno_ok = 0,							// 0
   chyba_v_programu_v_ramci_lexikalni_analyzy,			// 1
   chyba_v_programu_v_ramci_syntakticke_analyzy,		// 2
   semanticka_chyba_pri_deklaraci,					// 3
@@ -33,7 +33,7 @@ typedef enum ERROR
   behova_chyba_pri_praci_s_neinicializovanou_promennou,	// 7
   behova_chyba_deleni_nulou,					// 8
   ostatni_behove_chyby,					// 9
-  interni_chyba_interpretu,					// 99
+  interni_chyba_interpretu = 99,					// 99
 } tERROR;
 
 
