@@ -75,7 +75,7 @@ void extractRule()
 				if (spracADDR == NULL )
 				{
 					// chybiska
-					printf("CHYBISKA.....\n");
+					printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
 					return 1; // tu nejaky ERR KOD
 				}
 
@@ -122,8 +122,8 @@ void extractRule()
                     NaplnInstr(I_ALLOC_INT, NULL, NULL, NULL);
 
 	  	//		sem_context->act_type = S_INTEGER;
+                    break;
 					}
-					break;
 
 					case S_KLIC_REAL:
 					{
@@ -134,8 +134,8 @@ void extractRule()
 					NaplnInstr(I_ALLOC_DOU, NULL, NULL, NULL);
 					    
             //  sem_context->act_type = S_DOUBLE;
-					}
 					break;
+					}
 
 					case S_KLIC_STRING:
 					{
@@ -146,7 +146,9 @@ void extractRule()
 
 
 				//	    sem_context->act_type = S_RETEZEC;
+
 					break;
+					}
 
 					case S_KLIC_BOOLEAN:
 					{
@@ -157,17 +159,18 @@ void extractRule()
 
 
 				//	    sem_context->act_type = actToken.stav;
-					}
 					break;
+					}
+					
 
 					default:
 					{
 					   // doplnime casom ... CHYBISKA exit(2)  CAKAL SOM TYPE...
+						break;
 					}
-					break;
 				}
 				break;
-			  }   
+			  }
                 
 
 			case LL_FLIST:
@@ -274,7 +277,7 @@ void extractRule()
 							if (spracADDR == NULL )
 							{
 								// chybiska
-								printf("CHYBISKA.....\n");
+								printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
 								return 1; // tu nejaky ERR KOD
 							}
 							printf("GREEP generuji instrukci vloz LL_STAT cize v KODE.. I_IDENT >>"); whattoken(actToken.stav);
@@ -386,7 +389,7 @@ void extractRule()
 						if (spracADDR == NULL )
 						{
 							// chybiska
-							printf("CHYBISKA.....\n");
+							printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
 							return 1; // tu nejaky ERR KOD
 						}
 						NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
@@ -403,7 +406,7 @@ void extractRule()
 						if (spracADDR == NULL )
 						{
 							// chybiska
-							printf("CHYBISKA.....\n");
+							printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
 							return 1; // tu nejaky ERR KOD
 						}
 
@@ -422,7 +425,7 @@ void extractRule()
 						if (spracADDR == NULL )
 						{
 							// chybiska
-							printf("CHYBISKA.....\n");
+							printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
 							return 1; // tu nejaky ERR KOD
 						}
 
@@ -444,7 +447,7 @@ void extractRule()
 							if (spracADDR == NULL )
 							{
 								// chybiska
-								printf("CHYBISKA.....\n");
+								printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
 								return 1; // tu nejaky ERR KOD
 							}
 
@@ -519,6 +522,7 @@ void extractRule()
 }
 
 
+
 bool parse()
 {
     bool ERRO = true; 
@@ -556,30 +560,23 @@ bool parse()
 			// TERMINAL male pismenka
 			if (((unsigned int) myTop(&S)) == actToken.stav)
 			{
-				showStack(&S);
+				//showStack(&S);
 				printf("Pustam TERMINAL  actToken je "); whattoken(actToken.stav);
 				printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho "); whattoken(myTop(&S));
 
 //-------------------------------GENER-READ---------------------------------------------------------------//				
-				if ((actToken.stav==S_IDENTIFIKATOR)&&(priznak==read)) // ak ideme citat a pride nam CO ideme citat
-				{
-
-					priznak=nacitaj; // nastavi sa priznak pretoze nemozme generovat instrukciu bez pravej zatvorky
-				}
-
-				if ((actToken.stav==S_PRAVA_ZAVORKA)&&(priznak==nacitaj)) // prisla prava zatvorka mozme konecne nacitat
+				if ((actToken.stav == S_IDENTIFIKATOR) && (priznak == read)) // ak ideme citat a pride nam CO ideme citat
 				{
 
 					void *spracADDR = spracuj(actToken.stav, actToken.data);
 						if (spracADDR == NULL )
 						{
 							// chybiska
-							printf("CHYBISKA.....\n");
+							printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
 							return 1; // tu nejaky ERR KOD
 						}
 						NaplnInstr( I_READ, NULL, spracADDR, NULL );
 						priznak=nic;
-
 				}
 //--------------------------------------------------------------------------------------------------------//
 
@@ -622,8 +619,9 @@ bool parse()
 	else
 		return false;
 	//free(actToken.data); // free
-	
 }
+
+
 /*
 void sem_check (tSem_context* sem_context) 
 {

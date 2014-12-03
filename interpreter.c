@@ -236,7 +236,7 @@ printf("????  INSTR_PRIRAD OK\n");
                 prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
             }
 
-            switch ((*prvok).type;)
+            switch ((*prvok).type)
             {
                 case S_INTEGER:
                 {

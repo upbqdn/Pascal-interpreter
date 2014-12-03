@@ -129,5 +129,9 @@ typedef enum
     S_BOOLEAN, /* */
     S_DOLAR, /* pomocny stav pro precedencni analyzu */
 
+    write,
+    read,
+    nic,
+
 } tStav;
 
