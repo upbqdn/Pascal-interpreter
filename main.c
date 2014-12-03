@@ -32,6 +32,12 @@ int main()
 	soubor = fopen("subor.ifj", "r");
 
   GLOBFRAME = hash_init();
+  
+  // hash_insert_it(GLOBFRAME, "a", S_INTEGER);
+  // hash_insert_it(GLOBFRAME, "b", S_INTEGER);
+  // hash_insert_it(GLOBFRAME, "c", S_RETEZEC);
+  
+  
   InitInstrList(&INSTR_PASKA);
   astack_init(&FRAME);
   myaPUSH(&FRAME, GLOBFRAME);
@@ -48,9 +54,14 @@ int main()
       else
         printf("CHYBICKA PARSERU \n");
 
-  	  free(actToken.data);
 
-      fclose(soubor);
+
+	//vecicky co treba nakonci spravit
+  	  free(actToken.data);
+  	  hash_destroy(GLOBFRAME);
+  	  destroyaStack(&FRAME);
+  	  DestroyInstrList(&INSTR_PASKA);
+  	  fclose(soubor);
 
 	return 0;
 }
