@@ -1,25 +1,15 @@
-var a:integer; x:real; z:boolean; vb:string;
-function hovno (a:integer) : integer ;
-begin
-end;
+var 
+	
+  	c:string;
+	
 
-function hovnoo (a:integer) : integer ; forward;
-
-
-
-function nic (a:integer; b:string; c:integer; d:boolean; k:real) : integer ;
-var karol:string; jebo:integer;
 begin
 
-end;
 
-begin 
+readln(c);
+write(c)
+
+
 
 
 end.
-
-
-{  FLIST -> function id ( PLIST ) : TYPE ; FUNC      
-   
-
-   PLIST -> id : TYPE NPLIST }
