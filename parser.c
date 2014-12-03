@@ -10,7 +10,7 @@
 
 /* hlavickove soubory */
 #include "header.h"
-#include "htable.h"
+
 #include "stack.h"
 #include "astack.h"
 #include "scanner.h"
@@ -18,7 +18,7 @@
 #include "whattoken.h"
 #include "instrlist.h"
 #include "ial.h"
-
+#include "prec.h"
 
 list *GLOBFRAME; // globalna tabulka
 astack FRAME;
@@ -375,7 +375,7 @@ void extractRule(tSem_context* sem_context)
 			  }
 			  //*********************doleziteeee !!!!!! **************************************//
 			  // skontrolovat  ja si myslim ze tam nema byt S_KLIC_INTEGER ale S_ITEGER!!! /////
-			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || (actToken.stav == S_STRING) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
+			  else if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
 			  {
 					
 					myPushMul(&S, 1, LL_E ); 
@@ -463,15 +463,32 @@ void extractRule(tSem_context* sem_context)
 			  		myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
 
 		     	  }	
-		     	  else if (actToken.stav == S_STRING)
+		     	  else if (actToken.stav == S_RETEZEC)
 		     	  {
 		     	    if(priznak==42)
                		 { 	
-                  	   NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
+                  	   void *spracADDR = spracuj(actToken.stav, actToken.data);
+							if (spracADDR == NULL )
+							{
+								// chybiska
+								printf("CHYBISKA.....\n");
+								return 1; // tu nejaky ERR KOD
+							}
+
+							tStav *TIPSTAV = malloc(sizeof(tStav));
+							*TIPSTAV = actToken.stav;
+
+
+
+
+
+               		 	NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+               		 	printf("GREEP generuji instrukci WRITE STRING >>"); whattoken(actToken.stav);
+                  	  	NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
                 	 }
 
 			  		myPop(&S);
-			  		myPushMul(&S, 2, S_KLIC_STRING, LL_NSPLIST);
+			  		myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
 
 		     	  }	
 		     	  else if (actToken.stav == S_KLIC_TRUE)
@@ -594,7 +611,7 @@ void extractRule(tSem_context* sem_context)
 
 bool parse()
 {
-
+    bool ERRO = true; 
 	stack_init(&S);
 	myPush(&S, EOF); // zarazka $$$$
 	myPush(&S, LL_INIT);
@@ -648,6 +665,7 @@ bool parse()
 			}
 			else
 			{
+				ERRO = false;
 				printf("mas to zle ja som cakal  >> "); whattoken(myTop(&S));
 				printf("mas to zle NAPISAL SI    >> "); whattoken( actToken.stav);
 				printf("mas to zle riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
@@ -659,12 +677,16 @@ bool parse()
 
 		if (myTop(&S) != EOF && actToken.stav == S_END_OF_FILE)
 		{
+			ERRO = false;
 			printf("ChyBA na zasobniku nieco zostalo a my sme na konci suboru\n"); 
 		}
 	}
-   
+    if(ERRO)
+		return true;
+	else
+		return false;
 	//free(actToken.data); // free
-	return true;
+	
 }
 
 void sem_check (tSem_context* sem_context) 
