@@ -35,7 +35,7 @@ int hash(char *my_string)
 void *hash_init()
 {
 	list *localTable = malloc(sizeof(list) * HASH_ARRAY_SIZE); //naalokujeme miesto pre hash tabulku
- 	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
+ 	for(unsigned int i = ORIGIN; i < ((unsigned int)(HASH_ARRAY_SIZE)); i++) //pre kazdy zoznam v tabulke
  	{
  		localTable[i].Act = NULL;
  		localTable[i].First = NULL;
@@ -64,6 +64,27 @@ void hash_insert_i(list *localTable, char *id)
  			help_var->ptr = localTable[i].First;
  			localTable[i].First = help_var;
  		}
+	}
+}
+
+void hash_insert_sign(list *localTable, char *id, int sign)
+{
+	if(hash_search(localTable, id) == NOCONTAINS)
+	{
+		
+	}
+	else
+	{
+		int i = hash(id);
+		localTable[i].Act = localTable[i].First;
+		while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+		{
+			if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+			{
+				localTable[i].Act->def_sign = sign;	
+			}
+			localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+		}
 	}
 }
 
@@ -150,6 +171,39 @@ int hash_search(list *localTable, char *id)
 	}
 	return NOCONTAINS;
 }
+
+
+int hashReturnType(list *localTable, char *id)
+{
+	int i = hash(id);
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+	{
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+		{
+			return localTable[i].Act->type;
+		}
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+	}
+	return NAN;
+}
+
+int hashIsSign(list *localTable, char *id)
+{
+	int i = hash(id);
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+	{
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+		{
+			return localTable[i].Act->def_sign;
+		}
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+	}
+	return NAN;
+}
+
+
 
 /*
  *Funkcia, ktora vrati voidovsku adresu polozky
@@ -347,7 +401,10 @@ int main()
 	GLOB = hash_init(); //vytvorime tabulku a ulozime si jej adresu  //vytvorenie 2 tabulky, pre ukazku
 	hash_insert_i(GLOB, "aaa"); //vlozime hodnotu do 2 tabulky
 	hash_insert_it(GLOB, "aaa", 5);
+	printf("%d\n", hashReturnType(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
 	printf("%d\n", (*((list_element) (hash_adress(GLOB, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
+	hash_insert_sign(GLOB, "aaa", 5555);
+	printf("%d\n", hashIsSign(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
 	
 	//TO JE IBA PRE MNA!
 	//hash_insert_it(localTable, "bbbb", 15);
