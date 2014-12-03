@@ -247,11 +247,29 @@ printf("????  INSTR_PRIRAD OK\n");
 
                 case S_DOUBLE:
                 {
+                	scanf("%f", &(prvok)->ref );
+
                     break;
                 }
 
                 case S_RETEZEC:
                 {
+                	char znak;
+                	int dlzkastringu = 0;
+                	while((znak != EOF) || (znak != '\n' ))
+                	{
+                		znak=getchar();
+                		
+
+
+
+                		dlzkastringu++;
+                		&(prvok)->ref==realloc( &(prvok)->ref2 , (sizeof(char)*dlzkastringu+2));
+                        
+                		
+
+                      
+                	}
                     break;
                 }
                 default:
