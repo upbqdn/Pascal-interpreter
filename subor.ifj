@@ -1,17 +1,18 @@
 var 
 	
-  	a:integer;
-  	c:string;
+  
+  
+  	a:string;
+
 	
 
 begin
 
-a:=8;
-readln(c);
 
 
+ readln(a);
 
-write(c)
+write(a)
 
 
 
