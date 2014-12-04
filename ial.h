@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 //#include <stdarg.h>
 
 /*
@@ -29,6 +30,7 @@ typedef struct elementS //struktura, ktora je prvok zoznamu
 	int type; //typ tokenu int...
 	char *id; //data tokenu, meno...
 	void *ref; //adresa
+	int def_sign;
 } *list_element;
 
 typedef struct listS //struktura, ktora je zoznam
@@ -58,3 +60,6 @@ extern list *GLOBFRAME; // globalna tabulka
  void sort(char *, int, int);
  int find(char *, char *);
  void vector(char *, int *);
+ int hash_is_sign(list *, char *);
+ int hash_return_type(list *, char *);
+ void hash_set_sign(list *, char *, int);

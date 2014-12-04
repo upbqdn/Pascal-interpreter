@@ -50,13 +50,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         switch(Instr->AKCIA)
         {
 
-        case I_VAR_ZARAZKA:
-        {
-            printf("....NAHADZUJEM  ZARAYKU\n");
-            myaPush(&aS, zarazka);
-            break;
-        }
-
         //============ak pride int,double,boolean,string...===============//
         case I_PREC:
         {
@@ -166,13 +159,10 @@ printf("????  INSTR_PRIRAD OK\n");
 //>>>>>>>>>>>>>>>>>>>>>>>>>>--ALLOC pripady--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
         case I_ALLOC_INT:
         {
-            
-            while(myaTop(&aS) != zarazka)
-            {
+
                 (*(void **)(myaTop(&aS))) = malloc(sizeof(int));
                 myaPop(&aS);
-            }
-            myaPop(&aS); // vyhodime zarazku !
+            
 
             printf("????INSTR_ALLOC_INT OK\n");
             break;
@@ -183,12 +173,10 @@ printf("????  INSTR_PRIRAD OK\n");
 
         case I_ALLOC_DOU:
         {
-            while(myaTop(&aS) != zarazka)
-            {
+
                 (*(void **)(myaTop(&aS))) = malloc(sizeof(float));
                 myaPop(&aS);
-            }
-            myaPop(&aS); // vyhodime zarazku !
+
             printf("????INSTR_ALLOC_DOU OK\n");
             break;
         }
@@ -197,24 +185,20 @@ printf("????  INSTR_PRIRAD OK\n");
 
         case I_ALLOC_BOO:
         {
-            while(myaTop(&aS) != zarazka)
-            {
+
                 (*(void **)(myaTop(&aS))) = malloc(sizeof(bool));
                 myaPop(&aS);
-            }
-            myaPop(&aS); // vyhodime zarazku !
+
             printf("????INSTR_ALLOC_BOOL OK\n");
             break;
         }
 
         case I_ALLOC_STR:
         {
-            while(myaTop(&aS) != zarazka)
-            {
+
                 (*(void **)(myaTop(&aS))) = malloc(sizeof(char));
                 myaPop(&aS);
-            }
-            myaPop(&aS); // vyhodime zarazku !
+
 
             printf("????INSTR_ALLOC_RETEZEC OK\n");
             break;

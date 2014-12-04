@@ -1,13 +1,18 @@
 var 
 	
-  	c:string;
+  
+  
+  	a:string;
+
 	
 
 begin
 
 
-readln(c);
-write(c)
+
+ readln(a);
+
+write(a)
 
 
 

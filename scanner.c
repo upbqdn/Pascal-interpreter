@@ -432,7 +432,7 @@ tToken get_token(void)
         case S_RETEZEC:
         {
           // pozor mozno tu tento IF nebude  >> bud '#65'  alebo ''#65''
-            if (token.data == NULL && c == '#') // jedna sa o samostatnu ESCAPE SEKV
+          /*  if (token.data == NULL && c == '#') // jedna sa o samostatnu ESCAPE SEKV
             {
                     stav = S_ESCAPE_SEKVENCE;
                     // inicializujeme ESC zalezitosti !
@@ -440,6 +440,7 @@ tToken get_token(void)
                     ESCi=0;
                     break;
             }
+            */
 
 
             if (c != '\'')

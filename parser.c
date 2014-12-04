@@ -29,7 +29,9 @@ tToken actToken; // aktualny token GLOBALNY
 list_element Tab_prvok;
 int priznak;
 
-tId_sign Id_sign;   //priznak zapamatania aktualneho id
+tId_sign Id_sign = for_id;   //priznak zapamatania aktualneho id
+
+bool SOMVARLIST = false;
 
 void extractRule(tSem_context* sem_context)
 {
@@ -51,6 +53,7 @@ void extractRule(tSem_context* sem_context)
     {
         if (actToken.stav == S_KLIC_VAR)
         {
+            SOMVARLIST = true; // som vo  varliste 
             myPop(&S);
             myPushMul(&S, 4, S_KLIC_VAR, LL_VDEC, S_STREDNIK, LL_NVLIST);
 
@@ -58,6 +61,7 @@ void extractRule(tSem_context* sem_context)
         }
         else
         {
+            bool SOMVARLIST = false; // niesom VARLIST
             myPop(&S);
             // VLIST -> eps prechod
         }
@@ -75,7 +79,6 @@ void extractRule(tSem_context* sem_context)
             myPop(&S);
             myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
             
-            NaplnInstr(I_VAR_ZARAZKA, NULL, NULL, NULL);
 
             void *spracADDR = spracuj(actToken.stav, actToken.data);
             if (spracADDR == NULL )
@@ -91,6 +94,7 @@ void extractRule(tSem_context* sem_context)
 
 
             sem_context->act_id = actToken.data;  //ulozenie id premennej
+            printf(">>DATA>>%s<<\n", actToken.data );
         }
         break;
     }
@@ -111,6 +115,8 @@ void extractRule(tSem_context* sem_context)
         else // eps prechod
         {
             myPop(&S); //  NVLIST -> eps
+
+            SOMVARLIST = false; // uz nebudeme vo varliste 
 
             sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
         }
@@ -619,7 +625,7 @@ bool parse()
                 myPop(&S);	// odstranime z vrcholu zasobnika
                 //free(actToken.data); // free
 
-                if (actToken.stav == S_IDENTIFIKATOR) 
+                if ( actToken.stav == S_IDENTIFIKATOR ) 
                 {                                       //ulozenie id funkcie pri deklaracii
                   if (Id_sign == rem_id) 
                   {
@@ -666,8 +672,8 @@ bool parse()
 
 void sem_check (tSem_context* sem_context)
 {
-  switch (sem_context->context) {
 
+<<<<<<< HEAD
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
       if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) { //error if var exists
         sem_context->err = semanticka_chyba_pri_deklaraci;
@@ -676,6 +682,25 @@ void sem_check (tSem_context* sem_context)
 
       hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
     break;
+=======
+  switch (sem_context->context) 
+  {
+
+
+    case G_VAR_DEC:  
+        {        //kontext deklaracii glob. premennych
+       
+             if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) 
+             { //error if var exists
+               sem_context->err = semanticka_chyba_pri_deklaraci;
+               return;
+             }
+             
+             hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
+             
+             break;
+        }
+>>>>>>> e836c80d68ced8f0843a8dba2c6231b2c6969564
 
 
     case FUNCTION_DEC:          //kontext deklaracii funkcii

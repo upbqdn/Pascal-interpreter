@@ -19,7 +19,7 @@ int hash(char *my_string)
 {
 	int hash_key = ORIGIN; //v tomto bude ulozen vysledok hashovacej funkcie
 	int help_var = ORIGIN; //pomocna premenna na prevod z char na int
-	for(int i = ORIGIN; i < strlen(my_string); i++) //cyklus na vsekty chary v stringu
+	for(unsigned int i = ORIGIN; i < strlen(my_string); i++) //cyklus na vsekty chary v stringu
  	{
  		help_var = my_string[i];
  		hash_key = hash_key + help_var;
@@ -35,7 +35,7 @@ int hash(char *my_string)
 void *hash_init()
 {
 	list *localTable = malloc(sizeof(list) * HASH_ARRAY_SIZE); //naalokujeme miesto pre hash tabulku
- 	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
+ 	for(int i = ORIGIN; i < (HASH_ARRAY_SIZE); i++) //pre kazdy zoznam v tabulke
  	{
  		localTable[i].Act = NULL;
  		localTable[i].First = NULL;
@@ -64,6 +64,31 @@ void hash_insert_i(list *localTable, char *id)
  			help_var->ptr = localTable[i].First;
  			localTable[i].First = help_var;
  		}
+	}
+}
+
+/*
+ *Funkcia, ktora vrati vlozi hodnotu def sign
+ *Parametre: tabulka, v ktorej nastavujeme, kluc polozky, ktoru nastavujeme a sign aky cheme nastavit
+ */
+void hash_set_sign(list *localTable, char *id, int sign)
+{
+	if(hash_search(localTable, id) == NOCONTAINS)
+	{
+		
+	}
+	else
+	{
+		int i = hash(id);
+		localTable[i].Act = localTable[i].First;
+		while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+		{
+			if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+			{
+				localTable[i].Act->def_sign = sign;	
+			}
+			localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+		}
 	}
 }
 
@@ -149,6 +174,46 @@ int hash_search(list *localTable, char *id)
 		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 	}
 	return NOCONTAINS;
+}
+
+/*
+ *Funkcia, ktora vrati podla podla kluca typ polozky
+ *Parametre: prehladavana tabulka, a kluc
+ *Vracia: ak najde vracia jeho typ, ak nenajde vracia NAN
+ */
+int hash_return_type(list *localTable, char *id)
+{
+	int i = hash(id);
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+	{
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+		{
+			return localTable[i].Act->type;
+		}
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+	}
+	return NAN;
+}
+
+/*
+ *Funkcia, ktora vracia podla tabulky a kluca def sign polozky
+ *Parametre: prehladavana tabulka, a kluc
+ *Vracia: ak najde vracia jeho def sign, ak nenajde vracia NAN
+ */
+int hash_is_sign(list *localTable, char *id)
+{
+	int i = hash(id);
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+	{
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+		{
+			return localTable[i].Act->def_sign;
+		}
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+	}
+	return NAN;
 }
 
 /*
@@ -347,8 +412,15 @@ int main()
 	GLOB = hash_init(); //vytvorime tabulku a ulozime si jej adresu  //vytvorenie 2 tabulky, pre ukazku
 	hash_insert_i(GLOB, "aaa"); //vlozime hodnotu do 2 tabulky
 	hash_insert_it(GLOB, "aaa", 5);
+	printf("%d\n", hash_return_type(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
 	printf("%d\n", (*((list_element) (hash_adress(GLOB, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
-	
+	hash_set_sign(GLOB, "aaa", 5555);
+	printf("%d\n", hash_is_sign(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
+	hash_insert_func(GLOB, "aaa");
+	list *lokalna;
+	lokalna = (*((list_element) (hash_adress(GLOB, "aaa")))).ref;
+	hash_insert_it(lokalna, "ab", 515);
+	printf("%d\n", (*((list_element) (hash_adress(lokalna, "ab")))).type);
 	//TO JE IBA PRE MNA!
 	//hash_insert_it(localTable, "bbbb", 15);
 	//Lhash_insert_it(local, "aaa", 10);

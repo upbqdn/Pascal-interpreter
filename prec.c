@@ -74,7 +74,7 @@ int isVyraz()
 {
 	printf("Spoustim precedencni analyzu \n");
 	int chyba = 0;
-	//actPrecToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
+	//actToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
 	myPush(&S, 13);
 	int a = 0;
 	int b = 0;
@@ -83,9 +83,9 @@ do
 	//printf("[%d][%d] = %c", 2 , 13, precedent_table[2][13] );
 	//printf("\n###############\n>>>%s<<<\n###############\n", token.data);
 	// POZNAMKA: "E" = 42, "<" = 111, "$" = 13
-	if ( (actPrecToken.stav == S_INTEGER) || (actPrecToken.stav == S_DOUBLE) || (actPrecToken.stav == S_RETEZEC) || (actPrecToken.stav == S_KLIC_TRUE) || (actPrecToken.stav == S_KLIC_FALSE))/* + int , double ... */
+	if ( (actToken.stav == S_INTEGER) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_KLIC_TRUE) || (actToken.stav == S_KLIC_FALSE))/* + int , double ... */
 	{
-		void *spracADDR = spracuj(actPrecToken.stav, actPrecToken.data);
+		void *spracADDR = spracuj(actToken.stav, actToken.data);
 		if (spracADDR == NULL )
 		{
 			// chybiska
@@ -94,22 +94,22 @@ do
 		}
 
 		tStav *TIPSTAV = malloc(sizeof(tStav));
-		*TIPSTAV = actPrecToken.stav;
+		*TIPSTAV = actToken.stav;
 
-		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actPrecToken.data); if (vypis) whattoken(actPrecToken.stav);
+		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actToken.data); if (vypis) whattoken(actToken.stav);
 		NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
 	}
 
-	if (actPrecToken.stav == S_IDENTIFIKATOR)
+	if (actToken.stav == S_IDENTIFIKATOR)
 	{
-		void *spracADDR = spracuj(actPrecToken.stav, actPrecToken.data);
+		void *spracADDR = spracuj(actToken.stav, actToken.data);
 		if (spracADDR == NULL )
 		{
 			// chybiska
 			if (vypis) printf("CHYBISKA.....\n");
 			return 1; // tu nejaky ERR KOD
 		}
-		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actPrecToken.data); if (vypis) whattoken(actPrecToken.stav);
+		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actToken.data); if (vypis) whattoken(actToken.stav);
 		NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 	}
 	
@@ -117,10 +117,10 @@ do
 	if (myTop(&S) != 42) {a = (myTop(&S));}
 	else { myPop(&S); a = myTop(&S); myPush(&S, 42); }
 	 
-	 int b = magicFunction(actPrecToken.stav);
+	 int b = magicFunction(actToken.stav);
 	
-	if (vypis) printf("\naktualni token : "); if (vypis) whattoken(actPrecToken.stav); 
-	if (vypis) printf("jeho hodnota je: %d \n", magicFunction(actPrecToken.stav)); 
+	if (vypis) printf("\naktualni token : "); if (vypis) whattoken(actToken.stav); 
+	if (vypis) printf("jeho hodnota je: %d \n", magicFunction(actToken.stav)); 
 	if (vypis) printf("na vrcholu zasobniku je : %d \n", a);
 	if (vypis) printf("[%d][%d] = %c", a , b, precedent_table[a][b] );
 	
@@ -132,7 +132,7 @@ do
 			myPush(&S, b);
 			if (vypis) printf("vkladam na zasobnik : %d \n", b);
 			if (vypis) showStack(&S);
-			actPrecToken = get_token();
+			actToken = get_token();
 			if (vypis) printf("ZAVOLAL JSEM SI DALSI TOKEN \n");
 			if (vypis) printf(" ukoncuji pravidlo = \n ******************** \n");
 			break;
@@ -153,7 +153,7 @@ do
 				if (vypis) printf("vkladam na zasobnik : %d \n", b);
 				myPush(&S, b);
 				if (vypis) showStack(&S);
-				actPrecToken = get_token();
+				actToken = get_token();
 				if (vypis) printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
 				if (vypis) printf(" ukoncuji pravidlo < \n ******************** \n");
 				break;
@@ -165,7 +165,7 @@ do
 				if (vypis) printf("vkladam na zasobnik : %d \n", b);
 				myPush(&S, b);
 				if (vypis) showStack(&S);
-				actPrecToken = get_token();
+				actToken = get_token();
 				if (vypis) printf("ZAVOLAL JSEM SI DALSI TOKEN\n");
 				if (vypis) printf(" ukoncuji pravidlo < \n ******************** \n");
 				break;
@@ -297,7 +297,7 @@ adios:
 if (chyba == 1) 
 {
 	printf("NE, tohle neni vyraz! \n"); 
-	fprintf(stderr, "SYNTAKTICKA CHYBA : 2 na radku c. %d MERLINE UKLID SI! \n",actPrecToken.radek ); 
+	fprintf(stderr, "SYNTAKTICKA CHYBA : 2 na radku c. %d MERLINE UKLID SI! \n",actToken.radek ); 
 	exit(2); /* mozna pozdeji osetreno jinak */
 }
 if (chyba == 0) {printf("OK, tohle je vyraz \n");}
