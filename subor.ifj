@@ -1,20 +1,18 @@
 var 
-	
-  
-  
-  	a:string;
 
-	
+  a:integer;
+
+  function f () : integer;
+    begin
+
+    end;
 
 begin
 
+  readln(a);
+  a := f () ; {precedencna analyza sa nespusti}
 
-
- readln(a);
-
-write(a)
-
-
-
+  a := a +3;  {precedencna anlalyza works like a charm}
+  write(a)
 
 end.

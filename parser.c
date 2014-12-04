@@ -370,23 +370,23 @@ void extractRule(tSem_context* sem_context)
         break;
     }
 
-
     //--------------------------RHS----------------------//
 
-
-    //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................
     case  LL_RHS:
     {
-        /* if ((actToken.stav == S_IDENTIFIKATOR ))     // && (F_ID == Tab_prvok->tid)  !!!!!!!!!!!!!!!FUNKCIA!!!!!!!!!!!!!!!!!!!!
-        			  {         // skontrolovat ci je su v podmienke aktualne nazvy//
+       if ( actToken.stav == S_IDENTIFIKATOR && 
+            hash_return_type (GLOBFRAME, actToken.data) == F_ID)
+        	{         // skontrolovat ci je su v podmienke aktualne nazvy//
 
-        			  	myPop(&S);
-        			  	myPushMul(&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
-        			  //.............................................................POZOOOOOOOOOOOOOOOOOOOOOOOOOOOR...........................................................
+    		  	myPop (&S);
+      	  	myPushMul (&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
 
-        			  } */
-        //else
-        if ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ? ????
+        	 }
+
+       else if
+         ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || 
+          (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE) ||
+          (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ?
         {
             //vieme ze nemama FUKNCIU, BUDEME PUSTAT PRECEDENCNU---->isVyraz();
 
@@ -397,6 +397,7 @@ void extractRule(tSem_context* sem_context)
                 NaplnInstr( I_PRIRAD, NULL , NULL, NULL );
             }
         }
+
         else
         {
             // chybova hlaska CHYBISKA....
@@ -684,11 +685,11 @@ void sem_check (tSem_context* sem_context)
     break;
 
     case FUNCTION_DEC:          //kontext deklaracii funkcii
-      //if ( hash_search (GLOBFRAME, sem_context->act_fun) == CONTAINS &&
-        //   check_forward (sem_context->act_fun) != DEFINED )
+      if ( hash_search (GLOBFRAME, sem_context->act_fun) == NOCONTAINS )
         { 
-          hash_insert_i (GLOBFRAME, sem_context->act_id);     //vlozenie id funkcie
-          hash_insert_func (GLOBFRAME, sem_context->act_id);  //vytvorenie LTS funkcie
+          hash_insert_i (GLOBFRAME, sem_context->act_fun);     //vlozenie id funkcie
+          hash_insert_func (GLOBFRAME, sem_context->act_fun);  //vytvorenie LTS funkcie
+          hash_insert_it (GLOBFRAME, sem_context->act_fun, F_ID);  //id funkcie je typu F_ID
         }
     break;
   }
