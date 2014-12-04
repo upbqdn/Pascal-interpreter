@@ -1,12 +1,16 @@
 var 
 	
+  	a:integer;
   	c:string;
 	
 
 begin
 
-
+a:=8;
 readln(c);
+
+
+
 write(c)
 
 
