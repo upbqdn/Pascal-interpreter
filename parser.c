@@ -29,7 +29,7 @@ tToken actToken; // aktualny token GLOBALNY
 list_element Tab_prvok;
 int priznak;
 
-tId_sign Id_sign;   //priznak zapamatania aktualneho id
+tId_sign Id_sign = for_id;   //priznak zapamatania aktualneho id
 
 bool SOMVARLIST = false;
 
@@ -620,7 +620,7 @@ bool parse()
                 myPop(&S);	// odstranime z vrcholu zasobnika
                 //free(actToken.data); // free
 
-                if ( (SOMVARLIST == false) && (actToken.stav == S_IDENTIFIKATOR) ) 
+                if ( actToken.stav == S_IDENTIFIKATOR ) 
                 {                                       //ulozenie id funkcie pri deklaracii
                   if (Id_sign == rem_id) 
                   {
