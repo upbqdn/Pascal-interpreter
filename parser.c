@@ -227,7 +227,12 @@ void extractRule(tSem_context* sem_context)
         {
             myPop(&S);
             myPushMul(&S, 4, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
+            
+            sem_context->act_id = actToken.data;      //ulozenie id parametra
+            sem_context->context = FUNC_ARG_DEC;      //kontext deklaracii argumentov funkcie
+
             // PLIST -> id : TYPE NPLIST
+
         }
         else
         {
@@ -664,22 +669,22 @@ void sem_check (tSem_context* sem_context)
   switch (sem_context->context) {
 
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
-
       if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) { //error if var exists
         sem_context->err = semanticka_chyba_pri_deklaraci;
         return;
       }
 
       hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
-      break;
+    break;
 
-    case FUNCTION_DEC: 
 
+    case FUNCTION_DEC:          //kontext deklaracii funkcii
       //if ( hash_search (GLOBFRAME, sem_context->act_fun) == CONTAINS &&
         //   check_forward (sem_context->act_fun) != DEFINED )
-        {
-          
+        { 
+          hash_insert_i (GLOBFRAME, sem_context->act_id);     //vlozenie id funkcie
+          hash_insert_func (GLOBFRAME, sem_context->act_id);  //vytvorenie LTS funkcie
         }
-      break;
+    break;
   }
 }

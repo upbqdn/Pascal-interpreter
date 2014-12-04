@@ -17,8 +17,9 @@ tToken actToken; // aktualny token
 #define DEFINED (0)
 
 typedef enum {
-  G_VAR_DEC,
-  FUNCTION_DEC
+  G_VAR_DEC,        //kontext deklaracii glob. premennych
+  FUNCTION_DEC,     //kontext deklaracii funkcii
+  FUNC_ARG_DEC      //kontext deklaracii argumentov funkcie
 } tContext;
 
 typedef struct {
