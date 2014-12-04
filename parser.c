@@ -672,8 +672,8 @@ bool parse()
 
 void sem_check (tSem_context* sem_context)
 {
-
-<<<<<<< HEAD
+  switch (sem_context->context) 
+  {
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
       if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) { //error if var exists
         sem_context->err = semanticka_chyba_pri_deklaraci;
@@ -682,26 +682,6 @@ void sem_check (tSem_context* sem_context)
 
       hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
     break;
-=======
-  switch (sem_context->context) 
-  {
-
-
-    case G_VAR_DEC:  
-        {        //kontext deklaracii glob. premennych
-       
-             if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) 
-             { //error if var exists
-               sem_context->err = semanticka_chyba_pri_deklaraci;
-               return;
-             }
-             
-             hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
-             
-             break;
-        }
->>>>>>> e836c80d68ced8f0843a8dba2c6231b2c6969564
-
 
     case FUNCTION_DEC:          //kontext deklaracii funkcii
       //if ( hash_search (GLOBFRAME, sem_context->act_fun) == CONTAINS &&
