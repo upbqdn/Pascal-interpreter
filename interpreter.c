@@ -47,7 +47,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
     void *c_integer = malloc(sizeof(int));
     void *c_double = malloc(sizeof(float));
-    // void *c_boolean = malloc(sizeof(bool));
+    void *c_bool = malloc(sizeof(bool));
     void *c_string = malloc(sizeof(char));
     // niekedy odalokujeme
 
