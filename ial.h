@@ -63,3 +63,4 @@ extern list *GLOBFRAME; // globalna tabulka
  int hash_is_sign(list *, char *);
  int hash_return_type(list *, char *);
  void hash_set_sign(list *, char *, int);
+ char *copy(char *string, int i, int n);
