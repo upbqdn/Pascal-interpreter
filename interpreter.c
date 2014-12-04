@@ -37,6 +37,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
    // void *c_boolean = malloc(sizeof(bool));
     void *c_string = malloc(sizeof(char));
     // niekedy odalokujeme
+    void *c_bool = malloc(sizeof(bool));
 
 
     tStav TIP;
@@ -484,8 +485,219 @@ printf("????  INSTR_PRIRAD OK\n");
 
             break;
         }
+//--------------------------------------------------------------------------------
+// NUTNO ZKONTROLOVAT        
+        case I_ROVNO:
+        {
+			if (TIP == S_INTEGER) /*int = int*/
+			{                
+				int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a == b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+			}
+			if (TIP == S_DOUBLE) /* real = real */
+			{
+				float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a == b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);	
+			}
+			if (TIP == S_RETEZEC) /* string = string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if (strcmp (pomAddr1, pomAddr2)) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+		}
+		
+        case I_NEROVNO:
+        {
+			if (TIP == S_INTEGER) /*int <> int*/
+			{                
+				int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a != b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+			}
+			if (TIP == S_DOUBLE) /* real <> real */
+			{
+				float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a != b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);	
+			}
+			if (TIP == S_RETEZEC) /* string <> string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if (!(strcmp (pomAddr1, pomAddr2))) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+		}
+		
+		case I_VETSI:
+        {
+			if (TIP == S_INTEGER) /*int > int*/
+			{                
+				int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a > b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+			}
+			if (TIP == S_DOUBLE) /* real > real */
+			{
+				float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a > b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);	
+			}
+			if (TIP == S_RETEZEC) /* string > string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) > 0) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+		}
+		
+		case I_MENSI:
+        {
+			if (TIP == S_INTEGER) /*int < int*/
+			{                
+				int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a < b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+			}
+			if (TIP == S_DOUBLE) /* real < real */
+			{
+				float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a < b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);	
+			}
+			if (TIP == S_RETEZEC) /* string < string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) < 0) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+		}
+		
+		case I_VETSIROVNO:
+        {
+			if (TIP == S_INTEGER) /*int >= int*/
+			{                
+				int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a >= b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+			}
+			if (TIP == S_DOUBLE) /* real >= real */
+			{
+				float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a >= b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);	
+			}
+			if (TIP == S_RETEZEC) /* string >= string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) >= 0) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+		}
+		
+		case I_MENSIROVNO:
+        {
+			if (TIP == S_INTEGER) /*int <= int*/
+			{                
+				int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a <= b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+			}
+			if (TIP == S_DOUBLE) /* real <= real */
+			{
+				float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a <= b) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);	
+			}
+			if (TIP == S_RETEZEC) /* string <= string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) <= 0) {*(bool*)c_bool = true;}
+                else {*(bool*)c_bool = false;}
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+		}
 
-
+//---------------------------------------------------------------------------------
         default:
             break;
 
