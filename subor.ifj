@@ -1,18 +1,11 @@
-var 
 
-  a:integer;
+function makewar (a:integer; c:string) : integer; forward;
 
-  function f () : integer;
-    begin
+function makelove (a:real) : string;
+  begin
 
-    end;
+  end;
 
 begin
-
-  readln(a);
-  a := f () ; {precedencna analyza sa nespusti}
-
-  a := a +3;  {precedencna anlalyza works like a charm}
-  write(a)
 
 end.

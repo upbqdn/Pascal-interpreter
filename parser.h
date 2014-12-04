@@ -19,7 +19,8 @@ tToken actToken; // aktualny token
 typedef enum {
   G_VAR_DEC,        //kontext deklaracii glob. premennych
   FUNCTION_DEC,     //kontext deklaracii funkcii
-  FUNC_ARG_DEC      //kontext deklaracii argumentov funkcie
+  FUNC_ARG_DEC,      //kontext deklaracii argumentov funkcie
+  FUNC_TYPE_DEC     //kontext deklaracie navratoveho typu funkcie
 } tContext;
 
 typedef struct {
@@ -32,7 +33,10 @@ typedef struct {
 
 typedef enum {
   rem_id,
-  for_id
+  for_id,
+  rem_pid,
+  for_pid,
+  for_all
 } tId_sign;
 
 bool parse();

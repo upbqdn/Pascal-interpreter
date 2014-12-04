@@ -29,9 +29,7 @@ tToken actToken; // aktualny token GLOBALNY
 list_element Tab_prvok;
 int priznak;
 
-tId_sign Id_sign = for_id;   //priznak zapamatania aktualneho id
-
-bool SOMVARLIST = false;
+tId_sign Id_sign = for_all;   //priznak zapamatania aktualneho id
 
 void extractRule(tSem_context* sem_context)
 {
@@ -53,7 +51,6 @@ void extractRule(tSem_context* sem_context)
     {
         if (actToken.stav == S_KLIC_VAR)
         {
-            SOMVARLIST = true; // som vo  varliste 
             myPop(&S);
             myPushMul(&S, 4, S_KLIC_VAR, LL_VDEC, S_STREDNIK, LL_NVLIST);
 
@@ -61,7 +58,6 @@ void extractRule(tSem_context* sem_context)
         }
         else
         {
-            bool SOMVARLIST = false; // niesom VARLIST
             myPop(&S);
             // VLIST -> eps prechod
         }
@@ -115,8 +111,6 @@ void extractRule(tSem_context* sem_context)
         else // eps prechod
         {
             myPop(&S); //  NVLIST -> eps
-
-            SOMVARLIST = false; // uz nebudeme vo varliste 
 
             sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
         }
@@ -214,12 +208,20 @@ void extractRule(tSem_context* sem_context)
         {
             myPop(&S);
             myPushMul(&S, 3, S_KLIC_FORWARD, S_STREDNIK, LL_FLIST);
+         
+            sem_context->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
+            sem_check (sem_context);  //ulozi sa typ funkcie
+            
             // FUNC -> forward ; FLIST
         }
         else
         {
             myPop(&S);
             myPushMul(&S, 6, LL_VLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, S_STREDNIK, LL_FLIST );
+            
+            sem_context->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
+            sem_check (sem_context);  //ulozi sa typ funkcie 
+
             // FUNC -> VLIST begin STLIST end ; FLIST
         }
 
@@ -255,11 +257,18 @@ void extractRule(tSem_context* sem_context)
         {
             myPop(&S);
             myPushMul(&S, 5, S_STREDNIK, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
+            
+           sem_check (sem_context);   //kontrola parametra
+
+           Id_sign = rem_pid;  // id dalsieho parametra sa zapamata
+
             // NPLIST -> ; id : TYPE NPLIST
         }
         else
         {
             myPop(&S); // NPLIST -> eps prechod
+
+            sem_check (sem_context);  // kontrola parametra
         }
         break;
     }
@@ -634,8 +643,15 @@ bool parse()
                     sem_context.act_fun = actToken.data;   //save actual id of function
                     sem_check (&sem_context);
                   }
+
+                  if (Id_sign == rem_pid)
+                  {
+                    Id_sign = for_pid;
+                    sem_context.act_id = actToken.data;
+                  }
                 }
 
+                
                 actToken = get_token(); // nacitame novy token
                 printf("KOEC TERMINAL GET TOKEN token je ");
                 whattoken(actToken.stav);
@@ -670,6 +686,9 @@ bool parse()
 }
 
 
+list* get_local (char* id) {  //vrati referenciu na lokalnu tabulku podla zadaneho id funkcie
+  return ((list_element) hash_adress(GLOBFRAME, id))->ref;
+}
 
 void sem_check (tSem_context* sem_context)
 {
@@ -692,5 +711,24 @@ void sem_check (tSem_context* sem_context)
           hash_insert_it (GLOBFRAME, sem_context->act_fun, F_ID);  //id funkcie je typu F_ID
         }
     break;
+  
+
+    case FUNC_ARG_DEC:        //kontext deklaracie argumentov funkcie
+      //chyba ak parameter uz existuje
+      if (hash_search (get_local (sem_context->act_fun), sem_context->act_id) == CONTAINS) {
+        sem_context->err = semanticka_chyba_pri_deklaraci;
+        return;
+      }
+
+      //ulozenie id a jeho typu do LTS funkcie
+      hash_insert_it (get_local (sem_context->act_fun), sem_context->act_id, sem_context->act_type);
+    break;
+
+
+    case FUNC_TYPE_DEC:     //kontext deklaracie typu navratovej hodnoty funkcie
+      //ulozenie typu do LTS
+      hash_insert_it (get_local(sem_context->act_fun), sem_context->act_fun, sem_context->act_type);
+    break;
+      
   }
 }
