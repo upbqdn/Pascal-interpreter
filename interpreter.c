@@ -16,11 +16,24 @@
 
 
 
+typedef enum MOZNOSTI
+{
+    IDENT_IDENT = 0,
+    IDENT_PREC,
+    PREC_IDENT,
+    PREC_PREC,
+
+} tMoznosti;
+
+
+
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
 list *GLOBFRAME;
 astack FRAME;
 
 astack aS; // pomocny zasobnik adries pre interpreter
+
+tMoznosti EXTRA = IDENT_IDENT;
 
 
 int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
@@ -28,16 +41,15 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     astack_init(&aS);
     void* zarazka = malloc(sizeof(char));
     myaPush(&aS, zarazka);
-    printf("....NAHADZUJEM HLAAAVNUUUUU ZARAYKU\n");
+    printf("....NAHADZUJEM HLAAAVNUUUUU ZARAZKU\n");
 
 
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
     void *c_integer = malloc(sizeof(int));
     void *c_double = malloc(sizeof(float));
-   // void *c_boolean = malloc(sizeof(bool));
+    // void *c_boolean = malloc(sizeof(bool));
     void *c_string = malloc(sizeof(char));
     // niekedy odalokujeme
-    void *c_bool = malloc(sizeof(bool));
 
 
     tStav TIP;
@@ -51,30 +63,39 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         switch(Instr->AKCIA)
         {
 
-        //============ak pride int,double,boolean,string...===============//
+//-----------------------------ak pride int,double,boolean,string..-----------------------------------//
         case I_PREC:
         {
-            //printf("NICO ZAUJIMAVE..........................................................\n");
-            //printf("AZARAZKA..... %p \n", zarazka );
-            //printf("ADRESA NA ZASOBNIKU pred pushom %p \n", myaTop(&aS) );
-            //printf("ADRESA PRED ZASOBNIKU %p \n", Instr->ADDR_PRVA );
-
-           // printf("SKUSKA.....>>%s<< \n", Instr->ADDR_PRVA );
+            // aby sme vedeli ako je to adresovane .. ci to ide z tabulky symbolov alebo priamo
+            if (EXTRA == IDENT_PREC)
+            {
+                EXTRA = PREC_PREC;
+            }
+            else
+            {
+                EXTRA = IDENT_PREC;
+            }
 
 
             myaPush(&aS, Instr->ADDR_PRVA);
-            //printf("ADRESA NA ZASOBNIKU %p \n", myaTop(&aS) );
+
             TIP = *(tStav *)(Instr->ADDR_DRUHA); // na tejto adrese musi byt napr. S_INTEGER
-printf("????  INSTR_PREC OK\n");
+
             break;
         }
 
-        //============ak pride IDENTIFIKATOR===============//
+//------------------------------------ak pride IDENTIFIKATOR------------------------------------------//
         case I_IDENT:
         {
+            // aby sme vedeli ako je to adresovane .. ci to ide z tabulky symbolov alebo priamo
+            if (EXTRA == IDENT_PREC)
+            {
+                EXTRA = PREC_IDENT;
+            }
+
 
             list *TOPFRAME;
-            TOPFRAME = myaTop(&FRAME);    // fiko magic //
+            TOPFRAME = myaTop(&FRAME);    // pozrieme sa na najvrchnejsi FRAME //
 
             list_element prvok;
             prvok = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA));
@@ -85,20 +106,18 @@ printf("????  INSTR_PREC OK\n");
             }
 
             TIP = (*prvok).type;
-            
-            myaPush(&aS, &(prvok)->ref); 
-            printf("POMOCNA>>>>>>>AD222>>%p\n" , myaTop(&aS)  );
-            printf("POMOCNA>>>>>>>AD222ref>>%p\n" , (prvok)->ref  );
-            
-printf("????INSTR_IDENT OK\n");
+
+            myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
             break;
         }
 
+
+//----------------------------PRIRADENIE----------------------------------------------------------------//
         case I_PRIRAD:
         {
             if (TIP == S_INTEGER)
             {
-                // namiesto ??? sa musi vyriesit to aby sa dalo z KEY pristupit priamo na HODNOTU
                 int pomoc1 = (*(int*)(myaTop(&aS)));
                 myaPop(&aS);
 
@@ -115,34 +134,39 @@ printf("????INSTR_IDENT OK\n");
             }
             else if (TIP == S_RETEZEC)
             {
-                printf("spravne\n");
-                void* pomAddr1 = myaTop(&aS);  // co chceme ulozit
-                printf("TOP>>%s\n" , myaTop(&aS) );
-                printf("TOP>>%s\n" , pomAddr1 );
-                myaPop(&aS);
-                void* pomAddr2 = (*(void **)(myaTop(&aS))); // kam to ulozit
-                myaPop(&aS);
 
-                printf("ADDRESA2 je >>%p\n" , pomAddr2  );
-                
-                printf("spravne\n");
-                int dlzka = strlen(((char**)pomAddr1));
-                printf("spravne %d \n", dlzka);
-                printf("HMMM>>AD2>>%p\n" , pomAddr2  );
-                pomAddr2 =  realloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
-                printf("spravne\n");
-                if (pomAddr2 == NULL) // chyba alokacie
+
+                void* pomAddr1; // to co vytiahneme zo zasobnika ako NAJVRCHNEJSIE
+                // ci bolo ADRESOVANE z tabulky symbolov alebo priamo
+                if( (EXTRA == IDENT_PREC) || (EXTRA == PREC_PREC) )
                 {
-                    printf("cele zle\n");
-                    return NULL;
+                    pomAddr1 = myaTop(&aS);  // PREC (PRIAMO)
+
+                }
+                else
+                {
+                    pomAddr1 = (*(void **)(myaTop(&aS)));  // IDENTIFIKATOR (CEZ TABULKU SYMBOLOV)
+
                 }
 
-                
 
-                strcpy( ((char*)pomAddr2) , ((char*)pomAddr1)  );
-                printf("HMMM>>AD2>>%p\n" , pomAddr2  );
-                printf("AD2>>%s\n" , (char*) pomAddr2  );
-                printf("POMOCNIK>>AD2>>%p\n" , pomAddr2  );
+                myaPop(&aS); // mozme zahodit z zasobniku
+
+                // berieme zo zasobniku dalsiu ADRESU - KDE  to ulozit (adresacia cez TABULKU SYMBOLOV)
+                void* pomAddr2 = (*(void **)(myaTop(&aS)));
+                int dlzka = strlen(((char**)pomAddr1));
+
+
+                void *pom = realloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
+                void **kk = (myaTop(&aS));
+                *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
+
+                strcpy( ((char*) pom) , ((char*)pomAddr1)  );
+
+                myaPop(&aS); // pop 2 adresa
+
+                // ci bolo ADRESOVANE z tabulky symbolov alebo priamo
+                EXTRA = IDENT_IDENT;
 
             }
             else if ( TIP == S_KLIC_TRUE || S_KLIC_FALSE )
@@ -153,32 +177,28 @@ printf("????INSTR_IDENT OK\n");
                 (*(bool*)(myaTop(&aS))) = pomoc1 ;
                 myaPop(&aS);
             }
-printf("????  INSTR_PRIRAD OK\n");
+
             break;
         }
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>--ALLOC pripady--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
+
+
+//-----------------------------------------------ALLOC pripady-----------------------------------------//
         case I_ALLOC_INT:
         {
+            (*(void **)(myaTop(&aS))) = malloc(sizeof(int));
+            myaPop(&aS);
 
-                (*(void **)(myaTop(&aS))) = malloc(sizeof(int));
-                myaPop(&aS);
-            
-
-            printf("????INSTR_ALLOC_INT OK\n");
             break;
-
         }
-
 
 
         case I_ALLOC_DOU:
         {
 
-                (*(void **)(myaTop(&aS))) = malloc(sizeof(float));
-                myaPop(&aS);
+            (*(void **)(myaTop(&aS))) = malloc(sizeof(float));
+            myaPop(&aS);
 
-            printf("????INSTR_ALLOC_DOU OK\n");
             break;
         }
 
@@ -187,31 +207,28 @@ printf("????  INSTR_PRIRAD OK\n");
         case I_ALLOC_BOO:
         {
 
-                (*(void **)(myaTop(&aS))) = malloc(sizeof(bool));
-                myaPop(&aS);
+            (*(void **)(myaTop(&aS))) = malloc(sizeof(bool));
+            myaPop(&aS);
 
-            printf("????INSTR_ALLOC_BOOL OK\n");
             break;
         }
 
         case I_ALLOC_STR:
         {
 
-                (*(void **)(myaTop(&aS))) = malloc(sizeof(char));
-                myaPop(&aS);
+            (*(void **)(myaTop(&aS))) = malloc(sizeof(char));
+            myaPop(&aS);
 
-
-            printf("????INSTR_ALLOC_RETEZEC OK\n");
             break;
         }
 
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--READ--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
+//-----------------------------------------------READ-----------------------------------------------//
 
         case I_READ:
         {
             list *TOPFRAME;
-            TOPFRAME = myaTop(&FRAME);    // fiko magic //
+            TOPFRAME = myaTop(&FRAME);
 
             list_element prvok;
             prvok = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA));
@@ -223,47 +240,46 @@ printf("????  INSTR_PRIRAD OK\n");
 
             switch ((*prvok).type)
             {
-                case S_INTEGER:
-                {
-                    scanf("%d", &(prvok)->ref );
+            case S_INTEGER:
+            {
+                scanf("%d", &(prvok)->ref );
 
-                    break;
+                break;
+            }
+
+            case S_DOUBLE:
+            {
+                scanf("%f", &(prvok)->ref );
+
+                break;
+            }
+
+            case S_RETEZEC:
+            {
+                char znak;
+                int dlzkastringu = 0;
+                while((znak=getchar())!= '\n' )
+                {
+                    (prvok)->ref = realloc( (prvok)->ref , (sizeof(char)*dlzkastringu+2));
+
+                    //  OK  *(char *) &((prvok)->ref)[dlzkastringu] = znak;  magia takto to ide :D
+                    *(char *) &((prvok)->ref)[dlzkastringu] = znak;
+                    dlzkastringu++;
+
                 }
 
-                case S_DOUBLE:
-                {
-                	scanf("%f", &(prvok)->ref );
+                *(char *) &((prvok)->ref)[dlzkastringu+1] = '\0';  // pridame znak ukoncenia retazca
 
-                    break;
-                }
-
-                case S_RETEZEC:
-                {
-                	char znak;
-                	int dlzkastringu = 0;
-                	while((znak=getchar())!= '\n' )
-                	{
-                		(prvok)->ref = realloc( (prvok)->ref , (sizeof(char)*dlzkastringu+1));
-                		printf("KOKOT>>>>>>>ADrefxxxx>>%p\n" , (prvok)->ref  );
-                		printf("KOKOT>>>>>>>ADref>>%p\n" , &((prvok)->ref)  );
-                		//  OK  *(char *) &((prvok)->ref)[dlzkastringu] = znak;   takto to ide :D
-                	    *(char *) &((prvok)->ref)[dlzkastringu] = znak;
-                		dlzkastringu++;
- 
-                	}
-
-                	*(char *) &((prvok)->ref)[dlzkastringu+1] = '\0';  // pridame znak ukoncenia retazca
-                	
-                    break;
-                }
-                default:
-                {
-                    //chybka
-                    break;
-                }
+                break;
+            }
+            default:
+            {
+                //chybka
+                break;
+            }
 
             }
-            
+
             break;
         }
 
@@ -271,13 +287,10 @@ printf("????  INSTR_PRIRAD OK\n");
 
 
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>--WRITE pripady--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
+//------------------------------------------------WRITE pripady-------------------------------------------//
         case I_WRITE_IDE:
         {
             // treba zistit akeho je tipu //
-            
-            printf("????????????????????????????????????????????\n");
-
             switch(TIP)
             {
             case S_INTEGER:
@@ -294,8 +307,10 @@ printf("????  INSTR_PRIRAD OK\n");
 
             case S_RETEZEC:
             {
-                printf("idem pisat IDE string\n");
-                printf("%s", *(char**)myaTop(&aS)   );
+
+                void* pomADKA = (*(void **)(myaTop(&aS)));
+                printf("%s",  (char*) pomADKA );
+
                 break;
             }
 
@@ -307,7 +322,9 @@ printf("????  INSTR_PRIRAD OK\n");
             }
 
             default:
+            {
                 break;
+            }
 
             }
 
@@ -315,10 +332,12 @@ printf("????  INSTR_PRIRAD OK\n");
         }
 
 
+
         case I_WRITE_INT:
         {
             printf("%d", myaTop(&aS) );
             myPop(&aS);
+
             break;
         }
 
@@ -326,14 +345,15 @@ printf("????  INSTR_PRIRAD OK\n");
         {
             printf("%f", myaTop(&aS) );
             myPop(&aS);
+
             break;
         }
 
         case I_WRITE_STR:
-        {  
-           // printf("ADD %p\n", *(void *) (Instr->ADDR_PRVA) );
-            printf("%s",  myaTop(&aS) );
+        {
+            printf("%s", (char*) myaTop(&aS) );
             myPop(&aS);
+
             break;
         }
 
@@ -341,11 +361,12 @@ printf("????  INSTR_PRIRAD OK\n");
         {
             printf("%d", myaTop(&aS) );
             myPop(&aS);
+
             break;
         }
 
 
-        //>>>>>>>>>>>>>>>>>>>>>>--nasleduje +,-,*,/--<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<//
+//-------------------------------------nasleduje +,-,*,--------------------------------------------//
         case I_PLUS:
         {
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
@@ -371,32 +392,66 @@ printf("????  INSTR_PRIRAD OK\n");
             }
             else if (TIP == S_RETEZEC)
             {
-                void* pomAddr1 = myaTop(&aS);
-                myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
-                myaPop(&aS);
+                void* pomAddr1;
+                void* pomAddr2;
 
-                int dlzka = (  (strlen((*(char**)pomAddr1))) +  (strlen((*(char**)pomAddr2)))    );
+                if(EXTRA == PREC_PREC )  // 2x PRIAMO adresacia  PRECENDECNA
+                {
+                    pomAddr1 = myaTop(&aS);
+                    myaPop(&aS);
+                    pomAddr2 = myaTop(&aS);
+                    myaPop(&aS);
+                }
+                else if (EXTRA == IDENT_IDENT) // 2x IDENTIFIKATOR
+                {
+                    pomAddr1 = (*(void **)(myaTop(&aS))) ;
+                    myaPop(&aS);
+                    pomAddr2 = (*(void **)(myaTop(&aS))) ;
+                    myaPop(&aS);
+                }
+                else if (EXTRA == PREC_IDENT)  // PRECENDECNA +  IDENTIFIKATOR
+                {
+                    pomAddr1 = (*(void **)(myaTop(&aS))) ;
+                    myaPop(&aS);
+                    pomAddr2 = myaTop(&aS);
+                    myaPop(&aS);
+                }
+                else if (EXTRA == IDENT_PREC) // IDENTIFIKATOR + PRECENDECKA
+                {
+                    pomAddr1 = myaTop(&aS);
+                    myaPop(&aS);
+                    pomAddr2 = (*(void **)(myaTop(&aS)));
+                    myaPop(&aS);
+                }
+
+                //int dlzka = (  (strlen((*(char**)pomAddr1))) +  (strlen((*(char**)pomAddr2)))    );
+                int dlzka = strlen( pomAddr2 ) + strlen( pomAddr1 );
+
                 void* pomAddr3 = malloc(((sizeof(char))*dlzka)+1);
                 if (pomAddr3 == NULL) // chyba alokacie
                 {
                     return NULL;
                 }
-                strcpy(  pomAddr3, (*(char**)pomAddr2)  );
 
-                c_string = realloc(   c_string  ,    ( ((sizeof(char))*dlzka)+1 )     )     ;    //......................................................realok
+                strcpy(  pomAddr3, ((char**)pomAddr2)  );
+
+                c_string = realloc(   c_string  , ( ((sizeof(char))*dlzka)+2 ) );
                 if (c_string == NULL) // chyba alokacie
                 {
                     return NULL;
                 }
-                strcpy(  c_string, (*(char**)pomAddr3)  );
-                strcat(  c_string, (*(char**)pomAddr1)  );
+                strcpy(  c_string, ((char**)pomAddr3)  );
+                strcat(  c_string, ((char**)pomAddr1)  );
                 myaPush(&aS, c_string);
             }
+
+            EXTRA = IDENT_PREC;
 
             break;  // PLUS KONIEC
         }
 
+
+//-------------------------------------------------MINUS-----------------------------------------------//
         case I_MINUS:
         {
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
@@ -422,6 +477,7 @@ printf("????  INSTR_PRIRAD OK\n");
         }
 
 
+//---------------------------------------------KRAT-------------------------------------------------------//
         case I_KRAT:
         {
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
@@ -447,6 +503,8 @@ printf("????  INSTR_PRIRAD OK\n");
             break;
         }
 
+
+//---------------------------------------------------DELENO----------------------------------------------//
         case I_DELENO:
         {
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
@@ -485,221 +543,338 @@ printf("????  INSTR_PRIRAD OK\n");
 
             break;
         }
-//--------------------------------------------------------------------------------
-// NUTNO ZKONTROLOVAT        
+
+
+
+        //----------------------------------DOPLNIL MATUSKA - TREBA SKONTROLOVAT----------------------------//
+// NUTNO ZKONTROLOVAT
         case I_ROVNO:
         {
-			if (TIP == S_INTEGER) /*int = int*/
-			{                
-				int a = *(int *)(myaTop(&aS)) ;
+            if (TIP == S_INTEGER) /*int = int*/
+            {
+                int a = *(int *)(myaTop(&aS)) ;
                 myaPop(&aS);
                 int b = *(int *)(myaTop(&aS)) ;
                 myaPop(&aS);
-                if (a == b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
+                if (a == b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
                 myaPush(&aS, c_bool);
-			}
-			if (TIP == S_DOUBLE) /* real = real */
-			{
-				float a = *(float *)(myaTop(&aS)) ;
+            }
+            if (TIP == S_DOUBLE) /* real = real */
+            {
+                float a = *(float *)(myaTop(&aS)) ;
                 myaPop(&aS);
                 float b = *(float *)(myaTop(&aS)) ;
                 myaPop(&aS);
-                if (a == b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);	
-			}
-			if (TIP == S_RETEZEC) /* string = string */
+                if (a == b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_RETEZEC) /* string = string */
             {
                 void* pomAddr1 = myaTop(&aS);
                 myaPop(&aS);
                 void* pomAddr2 = myaTop(&aS);
                 myaPop(&aS);
-                if (strcmp (pomAddr1, pomAddr2)) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
+                if (strcmp (pomAddr1, pomAddr2))
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
                 myaPush(&aS, c_bool);
             }// bude nasledovat porovnani dvou hodnot typu boolean
             break;
-		}
-		
+        }
+
         case I_NEROVNO:
         {
-			if (TIP == S_INTEGER) /*int <> int*/
-			{                
-				int a = *(int *)(myaTop(&aS)) ;
+            if (TIP == S_INTEGER) /*int <> int*/
+            {
+                int a = *(int *)(myaTop(&aS)) ;
                 myaPop(&aS);
                 int b = *(int *)(myaTop(&aS)) ;
                 myaPop(&aS);
-                if (a != b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
+                if (a != b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
                 myaPush(&aS, c_bool);
-			}
-			if (TIP == S_DOUBLE) /* real <> real */
-			{
-				float a = *(float *)(myaTop(&aS)) ;
+            }
+            if (TIP == S_DOUBLE) /* real <> real */
+            {
+                float a = *(float *)(myaTop(&aS)) ;
                 myaPop(&aS);
                 float b = *(float *)(myaTop(&aS)) ;
                 myaPop(&aS);
-                if (a != b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);	
-			}
-			if (TIP == S_RETEZEC) /* string <> string */
+                if (a != b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_RETEZEC) /* string <> string */
             {
                 void* pomAddr1 = myaTop(&aS);
                 myaPop(&aS);
                 void* pomAddr2 = myaTop(&aS);
                 myaPop(&aS);
-                if (!(strcmp (pomAddr1, pomAddr2))) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
+                if (!(strcmp (pomAddr1, pomAddr2)))
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
                 myaPush(&aS, c_bool);
             }// bude nasledovat porovnani dvou hodnot typu boolean
             break;
-		}
-		
-		case I_VETSI:
-        {
-			if (TIP == S_INTEGER) /*int > int*/
-			{                
-				int a = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a > b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-			}
-			if (TIP == S_DOUBLE) /* real > real */
-			{
-				float a = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a > b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);	
-			}
-			if (TIP == S_RETEZEC) /* string > string */
-            {
-                void* pomAddr1 = myaTop(&aS);
-                myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
-                myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) > 0) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
-            break;
-		}
-		
-		case I_MENSI:
-        {
-			if (TIP == S_INTEGER) /*int < int*/
-			{                
-				int a = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a < b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-			}
-			if (TIP == S_DOUBLE) /* real < real */
-			{
-				float a = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a < b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);	
-			}
-			if (TIP == S_RETEZEC) /* string < string */
-            {
-                void* pomAddr1 = myaTop(&aS);
-                myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
-                myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) < 0) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
-            break;
-		}
-		
-		case I_VETSIROVNO:
-        {
-			if (TIP == S_INTEGER) /*int >= int*/
-			{                
-				int a = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a >= b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-			}
-			if (TIP == S_DOUBLE) /* real >= real */
-			{
-				float a = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a >= b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);	
-			}
-			if (TIP == S_RETEZEC) /* string >= string */
-            {
-                void* pomAddr1 = myaTop(&aS);
-                myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
-                myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) >= 0) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
-            break;
-		}
-		
-		case I_MENSIROVNO:
-        {
-			if (TIP == S_INTEGER) /*int <= int*/
-			{                
-				int a = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a <= b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-			}
-			if (TIP == S_DOUBLE) /* real <= real */
-			{
-				float a = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
-                if (a <= b) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);	
-			}
-			if (TIP == S_RETEZEC) /* string <= string */
-            {
-                void* pomAddr1 = myaTop(&aS);
-                myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
-                myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) <= 0) {*(bool*)c_bool = true;}
-                else {*(bool*)c_bool = false;}
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
-            break;
-		}
+        }
 
-//---------------------------------------------------------------------------------
-        default:
+        case I_VETSI:
+        {
+            if (TIP == S_INTEGER) /*int > int*/
+            {
+                int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a > b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_DOUBLE) /* real > real */
+            {
+                float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a > b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_RETEZEC) /* string > string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) > 0)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
             break;
+        }
+
+        case I_MENSI:
+        {
+            if (TIP == S_INTEGER) /*int < int*/
+            {
+                int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a < b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_DOUBLE) /* real < real */
+            {
+                float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a < b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_RETEZEC) /* string < string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) < 0)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+        }
+
+        case I_VETSIROVNO:
+        {
+            if (TIP == S_INTEGER) /*int >= int*/
+            {
+                int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a >= b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_DOUBLE) /* real >= real */
+            {
+                float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a >= b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_RETEZEC) /* string >= string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) >= 0)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+        }
+
+        case I_MENSIROVNO:
+        {
+            if (TIP == S_INTEGER) /*int <= int*/
+            {
+                int a = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                int b = *(int *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a <= b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_DOUBLE) /* real <= real */
+            {
+                float a = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                float b = *(float *)(myaTop(&aS)) ;
+                myaPop(&aS);
+                if (a <= b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }
+            if (TIP == S_RETEZEC) /* string <= string */
+            {
+                void* pomAddr1 = myaTop(&aS);
+                myaPop(&aS);
+                void* pomAddr2 = myaTop(&aS);
+                myaPop(&aS);
+                if ((strcmp (pomAddr1, pomAddr2)) <= 0)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                myaPush(&aS, c_bool);
+            }// bude nasledovat porovnani dvou hodnot typu boolean
+            break;
+        }
+
+//-----------------------------------------DOPLNIL MATUSKA----------------------------------------
+
+
+
+        default:
+        {
+            break;
+        }
+
 
         }
 
