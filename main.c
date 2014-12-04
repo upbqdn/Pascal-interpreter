@@ -30,9 +30,18 @@ astack FRAME;
 
 
 
-int main()
+int main(int argc, char *argv[])
 {
-  soubor = fopen("subor.ifj", "r");
+  if(argc != 2)
+  {
+    //fprintf(stderr, "");
+    return 99;
+  }
+  if((soubor = fopen(argv[1], "r")) == NULL)
+  {
+    //fprintf(stderr, "");
+    return 99;
+  }
 
   GLOBFRAME = hash_init();
 
@@ -66,7 +75,11 @@ int main()
       destroyaStack(&FRAME);
       DestroyInstrList(&INSTR_PASKA);
 
-      fclose(soubor);
+      if((fclose(soubor)) == EOF)
+      {
+        //fprintf(stderr, "");
+        //return 99;
+      }
 
   return 0;
 }
