@@ -661,17 +661,23 @@ bool parse()
 
 void sem_check (tSem_context* sem_context)
 {
-  switch (sem_context->context) {
 
-    case G_VAR_DEC:              //kontext deklaracii glob. premennych
+  switch (sem_context->context) 
+  {
 
-      if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) { //error if var exists
-        sem_context->err = semanticka_chyba_pri_deklaraci;
-        return;
-      }
-
-      hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
-      break;
+    case G_VAR_DEC:  
+        {        //kontext deklaracii glob. premennych
+       
+             if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) 
+             { //error if var exists
+               sem_context->err = semanticka_chyba_pri_deklaraci;
+               return;
+             }
+             
+             hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
+             
+             break;
+        }
 
     case FUNCTION_DEC: 
 
