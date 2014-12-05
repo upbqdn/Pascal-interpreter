@@ -27,11 +27,6 @@ void vloz_znak_do_tokenu(int znak, int *i)
 {
     if (( token.data = (char *) realloc(token.data, (*i) + 2)))
     {
-		//printf("FREE token: %s\n", token.data);
-		//printf("FREE token : %d \n", &token.data);
-		int a = &token.data;
-		//printf("FREE a : %d \n\n", a);
-		void addToBin(a); /* pro uklid */
         token.data[(*i) + 1] = '\0';
         token.data[(*i)] = znak;
         (*i)++;
