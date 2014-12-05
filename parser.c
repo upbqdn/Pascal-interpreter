@@ -562,6 +562,7 @@ bool parse()
         {
             //CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor
            // printf("CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n");
+        	exit(2); // syntakticka chyba
         }
 
 
@@ -624,6 +625,7 @@ bool parse()
             }
             else
             {
+            	exit(2); // syntakticka chyba
                 ERRO = false;
                // printf("mas to zle ja som cakal  >> ");
                // whattoken(myTop(&S));
@@ -638,6 +640,7 @@ bool parse()
 
         if (myTop(&S) != EOF && actToken.stav == S_END_OF_FILE)
         {
+        	exit(2); // syntakticka chyba
             ERRO = false;
             //printf("ChyBA na zasobniku nieco zostalo a my sme na konci suboru\n");
         }
