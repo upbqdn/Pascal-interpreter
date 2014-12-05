@@ -14,6 +14,7 @@
 #include "stack.h"
 #include "prec.h"
 #include "instrlist.h"
+#include "garbage.h"
 
 #define MAX_PT 19
 int left = 111;
@@ -297,7 +298,8 @@ adios:
 if (chyba == 1) 
 {
 	printf("NE, tohle neni vyraz! \n"); 
-	fprintf(stderr, "SYNTAKTICKA CHYBA : 2 na radku c. %d MERLINE UKLID SI! \n",actToken.radek ); 
+	fprintf(stderr, "SYNTAKTICKA CHYBA : 2 na radku c. %d \n",actToken.radek ); 
+	void trashDestroy(); /* uklizime */
 	exit(2); /* mozna pozdeji osetreno jinak */
 }
 if (chyba == 0) {printf("OK, tohle je vyraz \n");}
