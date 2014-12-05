@@ -14,7 +14,7 @@
 /* hlavickovy subor */
 #include "header.h"
 #include "scanner.h"
-
+#include "garbage.h"
 /*FUNKCIE*/
 
 /* klicova slova */
@@ -25,8 +25,13 @@ const char *klicova_slova[POCET_KLICOVYCH_SLOV] =
 
 void vloz_znak_do_tokenu(int znak, int *i)
 {
-    if ((token.data = (char *) realloc(token.data, (*i) + 2)))
+    if (( token.data = (char *) realloc(token.data, (*i) + 2)))
     {
+		//printf("FREE token: %s\n", token.data);
+		//printf("FREE token : %d \n", &token.data);
+		int a = &token.data;
+		//printf("FREE a : %d \n\n", a);
+		void addToBin(a); /* pro uklid */
         token.data[(*i) + 1] = '\0';
         token.data[(*i)] = znak;
         (*i)++;
@@ -35,6 +40,7 @@ void vloz_znak_do_tokenu(int znak, int *i)
     {
 		error = interni_chyba_interpretu; /* interni chyba prekladace */
          fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
+         void trashDestroy();
          exit(99);
 	 }
 }
@@ -508,6 +514,7 @@ tToken get_token(void)
                 else {
 					error = interni_chyba_interpretu; /* interni chyba prekladace */
 					fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
+					void trashDestroy();
 					exit(99);
 					
 				}
@@ -596,7 +603,8 @@ tToken get_token(void)
             konec = true;
             token.radek = radek;
             token.sloupec = sloupec;
-            fprintf(stderr, "LEXIKALNI CHYBA : %d na souradnici[%d, %d] MERLINE UKLID SI! \n", error, radek+1, sloupec);
+            fprintf(stderr, "LEXIKALNI CHYBA : %d na souradnici[%d, %d] \n", error, radek+1, sloupec);
+            void trashDestroy(); /* uklizim */
             exit(1);
             break;
         }
