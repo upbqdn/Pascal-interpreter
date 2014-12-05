@@ -68,7 +68,7 @@ void hash_insert_i(list *localTable, char *id)
 }
 
 /*
- *Funkcia, ktora vrati vlozi hodnotu def sign
+ *Funkcia, ktora vlozi hodnotu def sign
  *Parametre: tabulka, v ktorej nastavujeme, kluc polozky, ktoru nastavujeme a sign aky cheme nastavit
  */
 void hash_set_sign(list *localTable, char *id, int sign)
@@ -213,7 +213,7 @@ int hash_is_sign(list *localTable, char *id)
 		}
 		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 	}
-	return NAN;
+	return UNDECLARED;
 }
 
 /*
