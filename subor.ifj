@@ -1,7 +1,20 @@
+var
+  a:string;
 
 function makewar (a:integer; c:string) : integer; forward;
 
-function makelove (a:real) : string;
+function makelove (a:real; a:string) : string;
+  var
+    a:integer;
+
+  begin
+
+  end;
+
+function foo (bar:real) : string;
+  var 
+    bar:string;
+
   begin
 
   end;

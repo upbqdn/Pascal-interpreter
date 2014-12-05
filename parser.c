@@ -90,7 +90,6 @@ void extractRule(tSem_context* sem_context)
 
 
             sem_context->act_id = actToken.data;  //ulozenie id premennej
-            printf(">>DATA>>%s<<\n", actToken.data );
         }
         break;
     }
@@ -221,6 +220,8 @@ void extractRule(tSem_context* sem_context)
             
             sem_context->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
             sem_check (sem_context);  //ulozi sa typ funkcie 
+
+            sem_context->context = L_VAR_DEC;
 
             // FUNC -> VLIST begin STLIST end ; FLIST
         }
@@ -696,12 +697,13 @@ void sem_check (tSem_context* sem_context)
   {
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
       if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) { //error if var exists
-        sem_context->err = semanticka_chyba_pri_deklaraci;
-        return;
+        fprintf (stderr, "semanticka chyba pri deklaraci globalnej premennej \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id);
+        exit (semanticka_chyba_pri_deklaraci);
       }
 
       hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
     break;
+
 
     case FUNCTION_DEC:          //kontext deklaracii funkcii
       if ( hash_search (GLOBFRAME, sem_context->act_fun) == NOCONTAINS )
@@ -716,8 +718,8 @@ void sem_check (tSem_context* sem_context)
     case FUNC_ARG_DEC:        //kontext deklaracie argumentov funkcie
       //chyba ak parameter uz existuje
       if (hash_search (get_local (sem_context->act_fun), sem_context->act_id) == CONTAINS) {
-        sem_context->err = semanticka_chyba_pri_deklaraci;
-        return;
+        fprintf (stderr, "semanticka chyba pri deklaraci argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id, sem_context->act_fun);
+        exit (semanticka_chyba_pri_deklaraci);
       }
 
       //ulozenie id a jeho typu do LTS funkcie
@@ -729,6 +731,17 @@ void sem_check (tSem_context* sem_context)
       //ulozenie typu do LTS
       hash_insert_it (get_local(sem_context->act_fun), sem_context->act_fun, sem_context->act_type);
     break;
+     
+
+    case L_VAR_DEC:      //kontext deklaracie lokalnych premennych
+      //chyba, ak premenna alebo argument alebo navratova hodnota funkcie existuje
+      if ( hash_search (get_local (sem_context->act_fun), sem_context->act_id) == CONTAINS) {
+        fprintf (stderr, "semanticka chyba pri deklaraci lokalnej premennej \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id, sem_context->act_fun );
+        exit (semanticka_chyba_pri_deklaraci);
+      }
       
+      //ulozenie premennej do LTS
+      hash_insert_it (get_local (sem_context->act_fun), sem_context->act_id, sem_context->act_type);
+    break;
   }
 }

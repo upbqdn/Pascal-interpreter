@@ -17,14 +17,21 @@ tToken actToken; // aktualny token
 #define DEFINED (0)
 
 typedef enum {
+  GLOBAL,
+  LOCAL
+} tScope;
+
+typedef enum {
   G_VAR_DEC,        //kontext deklaracii glob. premennych
-  FUNCTION_DEC,     //kontext deklaracii funkcii
+  L_VAR_DEC,
+  FUNCTION_DEC,     //kontext deklaracii funkci
   FUNC_ARG_DEC,      //kontext deklaracii argumentov funkcie
   FUNC_TYPE_DEC     //kontext deklaracie navratoveho typu funkcie
 } tContext;
 
 typedef struct {
   tERROR err;
+  tScope scope;
   tContext context;
   tStav act_type;
   char *act_id;
