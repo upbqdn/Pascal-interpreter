@@ -92,6 +92,27 @@ void hash_set_sign(list *localTable, char *id, int sign)
 	}
 }
 
+void set_arg_num(list *localTable, char *id, int arg_num)
+{
+	if(hash_search(localTable, id) == NOCONTAINS)
+	{
+		
+	}
+	else
+	{
+		int i = hash(id);
+		localTable[i].Act = localTable[i].First;
+		while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+		{
+			if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+			{
+				localTable[i].Act->arg_num = arg_num;	
+			}
+			localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+		}
+	}
+}
+
 /*
  *Funkcia na vkladanie do hashovacej tabulky podla id, ak sa tam prvok nachadza iba prepiseme type
  *Parametre: tabulka, id - ktore vkladame a type - ktory vkladame
@@ -210,6 +231,21 @@ int hash_is_sign(list *localTable, char *id)
 		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
 		{
 			return localTable[i].Act->def_sign;
+		}
+		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
+	}
+	return NAN;
+}
+
+int get_arg_num(list *localTable, char *id)
+{
+	int i = hash(id);
+	localTable[i].Act = localTable[i].First;
+	while(localTable[i].Act != NULL) //prejde vsetky prvky zoznamu
+	{
+		if(strcmp(localTable[i].Act->id, id) == 0) //porovna retazce
+		{
+			return localTable[i].Act->arg_num;
 		}
 		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 	}
@@ -432,8 +468,8 @@ int main()
 	hash_insert_it(GLOB, "aaa", 5);
 	printf("%d\n", hash_return_type(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
 	printf("%d\n", (*((list_element) (hash_adress(GLOB, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
-	hash_set_sign(GLOB, "aaa", 5555);
-	printf("%d\n", hash_is_sign(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
+	set_arg_num(GLOB, "aaa", 5555);
+	printf("%d\n", get_arg_num(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
 	hash_insert_func(GLOB, "aaa");
 	list *lokalna;
 	lokalna = (*((list_element) (hash_adress(GLOB, "aaa")))).ref;

@@ -32,6 +32,7 @@ typedef struct elementS //struktura, ktora je prvok zoznamu
 	void *ref; //adresa
 	int def_sign;
 	void *start;
+	unsigned int arg_num;
 } *list_element;
 
 typedef struct listS //struktura, ktora je zoznam
@@ -65,3 +66,5 @@ extern list *GLOBFRAME; // globalna tabulka
  int hash_return_type(list *, char *);
  void hash_set_sign(list *, char *, int);
  char *copy(char *string, int i, int n);
+ void set_arg_num(list *, char *, int);
+ int get_arg_num(list *, char *);
