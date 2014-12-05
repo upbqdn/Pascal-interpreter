@@ -31,6 +31,7 @@ typedef struct elementS //struktura, ktora je prvok zoznamu
 	char *id; //data tokenu, meno...
 	void *ref; //adresa
 	int def_sign;
+	void *start;
 } *list_element;
 
 typedef struct listS //struktura, ktora je zoznam
@@ -63,4 +64,3 @@ extern list *GLOBFRAME; // globalna tabulka
  int hash_is_sign(list *, char *);
  int hash_return_type(list *, char *);
  void hash_set_sign(list *, char *, int);
- char *copy(char *string, int i, int n);
