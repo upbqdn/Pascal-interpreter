@@ -40,46 +40,31 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
     astack_init(&aS);
 
-    if( (void* zarazka = malloc(sizeof(char)))  == NULL)
-    {
-    	// chyba alokacie
-        trashDestroy();
-       	exit(99);
-    }
+    void* zarazka = malloc(sizeof(char));
+   
 
     myaPush(&aS, zarazka);
     //printf("....NAHADZUJEM HLAAAVNUUUUU ZARAZKU\n");
 
 
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
-    if(  (void *c_integer = malloc(sizeof(int)))  == NULL )
-    {
-    	// chyba alokacie
-        trashDestroy();
-       	exit(99);
-    }
+    void *c_integer = malloc(sizeof(int));
+    
+    
 
-    if(  (void *c_double = malloc(sizeof(float))) == NULL)
-    {
-    	// chyba alokacie
-        trashDestroy();
-       	exit(99);
-    }
+    void *c_double = malloc(sizeof(float));
+    
+    	
+    
 
-    if(  (void *c_bool = malloc(sizeof(bool))) == NULL)
-    {
-    	// chyba alokacie
-        trashDestroy();
-       	exit(99);
-    }
+    void *c_bool = malloc(sizeof(bool));
+    
 
-    if(  (void *c_string = malloc(sizeof(char))) == NULL)
-    {
-    	// chyba alokacie
-        trashDestroy();
-       	exit(99);
+    void *c_string = malloc(sizeof(char));
+    
+    	
 
-    }
+    
     // niekedy odalokujeme
 
 
