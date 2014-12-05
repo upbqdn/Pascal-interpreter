@@ -234,7 +234,7 @@ int hash_is_sign(list *localTable, char *id)
 		}
 		localTable[i].Act = localTable[i].Act->ptr; //posunieme sa o prvok dalej
 	}
-	return NAN;
+	return UNDECLARED;
 }
 
 int get_arg_num(list *localTable, char *id)
