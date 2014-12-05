@@ -20,6 +20,9 @@
 #define CONTAINS (0) //obsahuje prvok/retazec...
 #define NOCONTAINS (1) //neobsahuje prvok/retazec
 #define NOSUBSTRING (-1) //neobsahuje podretazec
+#define UNDECLARED (0) //priznak nedefinovanej funkcie
+#define FORWARDED (1) //priznak deklarovanej funkcie
+#define DEFINED (2)  //priznak definovanej funkcie
 
 /*
  *Deklaracia struktur a premennych
