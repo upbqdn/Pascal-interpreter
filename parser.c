@@ -707,7 +707,7 @@ void sem_check (tSem_context* sem_context)
         if ( hash_search (get_local (sem_context->act_fun), sem_context->act_id) == NOCONTAINS ||
            ( hash_return_type (get_local (sem_context->act_fun), sem_context->act_id)) != sem_context->act_type ) 
           {
-            fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exi(3), dealokuje OS\n", sem_context->act_id, sem_context->act_fun);
+            fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id, sem_context->act_fun);
             exit(semanticka_chyba_pri_deklaraci);
           }
       }
