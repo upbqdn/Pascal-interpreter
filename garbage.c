@@ -3,6 +3,7 @@
  */
 
 #include "garbage.h"
+#include "header.h"
 
 trash TrashX;
 
@@ -38,7 +39,7 @@ void addToBin(void *adresa)
 	}
 }
 
-void myFree(void *adresa)
+void myfree(void *adresa)
 {
 	TrashX.Act = TrashX.First;
 	while(TrashX.Act != NULL)
@@ -103,6 +104,68 @@ void myFree(void *adresa)
 	}
 }
 
+void emptyMem(void *adresa)
+{
+	TrashX.Act = TrashX.First;
+	while(TrashX.Act != NULL)
+	{
+		if(TrashX.Act->adresa == adresa)
+		{
+			if(TrashX.Act == TrashX.First) //zoznam je aktivny a aktivny neni posledny
+			{
+				trash_element pomocny = TrashX.First; //dame si prvy do pomocnej nech ho mozme uvolnit neskor
+				if(TrashX.First == TrashX.Last) //ak bol prvy zaroven posledny tak nastavime aktivitu a posledny tiez na nul
+				{
+					TrashX.First = NULL;
+					TrashX.Last = NULL;
+					TrashX.Act = NULL;
+				}
+				else
+				{
+					if(TrashX.First == TrashX.Act) //ak bol prvy aktivny, zrusime aktivitu tiez
+					{
+						TrashX.Act = NULL;
+					}
+					TrashX.First = pomocny->rptr; //prvym sa stava prvok napravo od prveho
+					TrashX.First->lptr = NULL; //novy prvy prvok bude ukzovat nalavo na null
+				}
+				free(pomocny);
+				return;
+			}
+			if(TrashX.Act == TrashX.Last) //zoznam je aktivny a aktivny neni posledny
+			{
+				trash_element pomocny = TrashX.Last;
+				if(TrashX.First == TrashX.Last) //ak bol prvy zaroven posledny tak nastavime aktivitu a posledny tiez na nul
+				{
+					TrashX.First = NULL;
+					TrashX.Last = NULL;
+					TrashX.Act = NULL;
+				}
+				else
+				{
+					if(TrashX.Last == TrashX.Act) //ak bol posledny aktivny, zrusime aktivitu tiez
+					{
+						TrashX.Act = NULL;
+					}
+					TrashX.Last = pomocny->lptr; //posledny sa stava prvok nalavo od posleneho 
+					TrashX.Last->rptr = NULL; //novy posledny bude napravo ukazovat na null
+				}
+				free(pomocny);
+				return;
+			}
+			else
+			{
+				trash_element pomocny = TrashX.Act;
+				TrashX.Act->lptr->rptr = TrashX.Act->rptr;
+				TrashX.Act->rptr->lptr = TrashX.Act->lptr;
+				free(pomocny);
+				return;
+			}
+		}
+		TrashX.Act = TrashX.Act->rptr;
+	}
+}
+
 void trashDestroy()
 {
  	while(TrashX.First != NULL) //prejde vsetky prvky zoznamu
@@ -120,6 +183,7 @@ void trashDestroy()
 		free(pomocny->adresa);
 		free(pomocny);
 	}
+	fclose(soubor);
 }
 
 /*

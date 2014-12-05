@@ -22,7 +22,7 @@
 #include "prec.h"
 #include "interpreter.h"
 
-extern FILE *soubor;
+FILE *soubor;
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
 list *GLOBFRAME; // globalna tabulka
 astack FRAME;
@@ -69,17 +69,12 @@ int main(int argc, char *argv[])
       else
         printf("CHYBICKA PARSERU \n");
 
-      free(actToken.data);
+      myfree(actToken.data);
 
       hash_destroy(GLOBFRAME);
       destroyaStack(&FRAME);
       DestroyInstrList(&INSTR_PASKA);
 
-      if((fclose(soubor)) == EOF)
-      {
-        //fprintf(stderr, "");
-        //return 99;
-      }
-
+	trashDestroy();
   return 0;
 }
