@@ -39,16 +39,47 @@ tMoznosti EXTRA = IDENT_IDENT;
 int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
     astack_init(&aS);
-    void* zarazka = malloc(sizeof(char));
+
+    if( (void* zarazka = malloc(sizeof(char)))  == NULL)
+    {
+    	// chyba alokacie
+        trashDestroy();
+       	exit(99);
+    }
+
     myaPush(&aS, zarazka);
-    printf("....NAHADZUJEM HLAAAVNUUUUU ZARAZKU\n");
+    //printf("....NAHADZUJEM HLAAAVNUUUUU ZARAZKU\n");
 
 
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
-    void *c_integer = malloc(sizeof(int));
-    void *c_double = malloc(sizeof(float));
-    void *c_bool = malloc(sizeof(bool));
-    void *c_string = malloc(sizeof(char));
+    if(  (void *c_integer = malloc(sizeof(int)))  == NULL )
+    {
+    	// chyba alokacie
+        trashDestroy();
+       	exit(99);
+    }
+
+    if(  (void *c_double = malloc(sizeof(float))) == NULL)
+    {
+    	// chyba alokacie
+        trashDestroy();
+       	exit(99);
+    }
+
+    if(  (void *c_bool = malloc(sizeof(bool))) == NULL)
+    {
+    	// chyba alokacie
+        trashDestroy();
+       	exit(99);
+    }
+
+    if(  (void *c_string = malloc(sizeof(char))) == NULL)
+    {
+    	// chyba alokacie
+        trashDestroy();
+       	exit(99);
+
+    }
     // niekedy odalokujeme
 
 
@@ -186,7 +217,14 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //-----------------------------------------------ALLOC pripady-----------------------------------------//
         case I_ALLOC_INT:
         {
-            (*(void **)(myaTop(&aS))) = malloc(sizeof(int));
+            if(  ((*(void **)(myaTop(&aS))) = malloc(sizeof(int))) == NULL)
+            {
+            	// chyba alokacie
+        		trashDestroy();
+       			exit(99);
+            }
+
+
             myaPop(&aS);
 
             break;
@@ -196,7 +234,13 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         case I_ALLOC_DOU:
         {
 
-            (*(void **)(myaTop(&aS))) = malloc(sizeof(float));
+            if(  ((*(void **)(myaTop(&aS))) = malloc(sizeof(float))) == NULL)
+            {
+            	// chyba alokacie
+        		trashDestroy();
+       			exit(99);
+            }
+
             myaPop(&aS);
 
             break;
@@ -207,7 +251,13 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         case I_ALLOC_BOO:
         {
 
-            (*(void **)(myaTop(&aS))) = malloc(sizeof(bool));
+           if( ((*(void **)(myaTop(&aS))) = malloc(sizeof(bool))) == NULL)
+           {
+           		// chyba alokacie
+        		trashDestroy();
+       			exit(99);
+           }
+
             myaPop(&aS);
 
             break;
@@ -216,7 +266,13 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         case I_ALLOC_STR:
         {
 
-            (*(void **)(myaTop(&aS))) = malloc(sizeof(char));
+            if( ((*(void **)(myaTop(&aS))) = malloc(sizeof(char))) == NULL)
+            {
+            	// chyba alokacie
+        		trashDestroy();
+       			exit(99);
+            }
+
             myaPop(&aS);
 
             break;
@@ -430,7 +486,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 void* pomAddr3 = malloc(((sizeof(char))*dlzka)+1);
                 if (pomAddr3 == NULL) // chyba alokacie
                 {
-                    return NULL;
+                    // chyba alokacie
+        			trashDestroy();
+       				exit(99);
                 }
 
                 strcpy(  pomAddr3, ((char**)pomAddr2)  );
@@ -438,7 +496,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 c_string = realloc(   c_string  , ( ((sizeof(char))*dlzka)+2 ) );
                 if (c_string == NULL) // chyba alokacie
                 {
-                    return NULL;
+                    // chyba alokacie
+        			trashDestroy();
+       				exit(99);
                 }
                 strcpy(  c_string, ((char**)pomAddr3)  );
                 strcat(  c_string, ((char**)pomAddr1)  );

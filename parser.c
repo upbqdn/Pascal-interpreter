@@ -77,15 +77,9 @@ void extractRule(tSem_context* sem_context)
             
 
             void *spracADDR = spracuj(actToken.stav, actToken.data);
-            if (spracADDR == NULL )
-            {
-                // chybiska
-                printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
-                return 1; // tu nejaky ERR KOD
-            }
 
-            printf("GREEP generuji instrukci VAR ID... I_IDENT >>");
-            whattoken(actToken.stav);
+            //printf("GREEP generuji instrukci VAR ID... I_IDENT >>");
+            //whattoken(actToken.stav);
             NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
 
@@ -327,14 +321,9 @@ void extractRule(tSem_context* sem_context)
 
 
             void *spracADDR = spracuj(actToken.stav, actToken.data);
-            if (spracADDR == NULL )
-            {
-                // chybiska
-                printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
-                return 1; // tu nejaky ERR KOD
-            }
-            printf("GREEP generuji instrukci vloz LL_STAT cize v KODE.. I_IDENT >>");
-            whattoken(actToken.stav);
+
+           // printf("GREEP generuji instrukci vloz LL_STAT cize v KODE.. I_IDENT >>");
+            //whattoken(actToken.stav);
             NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
             break;
@@ -445,12 +434,7 @@ void extractRule(tSem_context* sem_context)
             if(priznak == write)
             {
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
-                if (spracADDR == NULL )
-                {
-                    // chybiska
-                    printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
-                    return 1; // tu nejaky ERR KOD
-                }
+
                 NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
                 NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
             }
@@ -462,12 +446,7 @@ void extractRule(tSem_context* sem_context)
             if(priznak == write)
             {
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
-                if (spracADDR == NULL )
-                {
-                    // chybiska
-                    printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
-                    return 1; // tu nejaky ERR KOD
-                }
+
 
                 tStav *TIPSTAV = malloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
@@ -481,12 +460,6 @@ void extractRule(tSem_context* sem_context)
             if(priznak == write)
             {
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
-                if (spracADDR == NULL )
-                {
-                    // chybiska
-                    printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
-                    return 1; // tu nejaky ERR KOD
-                }
 
                 tStav *TIPSTAV = malloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
@@ -503,12 +476,6 @@ void extractRule(tSem_context* sem_context)
             if(priznak == write)
             {
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
-                if (spracADDR == NULL )
-                {
-                    // chybiska
-                    printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
-                    return 1; // tu nejaky ERR KOD
-                }
 
                 tStav *TIPSTAV = malloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
@@ -602,7 +569,7 @@ bool parse()
         if (myTop(&S) == EOF && actToken.stav != S_END_OF_FILE)
         {
             //CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor
-            printf("CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n");
+           // printf("CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n");
         }
 
 
@@ -619,10 +586,10 @@ bool parse()
             if (((unsigned int) myTop(&S)) == actToken.stav)
             {
                 //showStack(&S);
-                printf("Pustam TERMINAL  actToken je ");
-                whattoken(actToken.stav);
-                printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho ");
-                whattoken(myTop(&S));
+               // printf("Pustam TERMINAL  actToken je ");
+                //whattoken(actToken.stav);
+                //printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho ");
+                //whattoken(myTop(&S));
 
 //-------------------------------GENER-READ---------------------------------------------------------------//
                 if ((actToken.stav == S_IDENTIFIKATOR) && (priznak == read)) // ak ideme citat a pride nam CO ideme citat
@@ -630,11 +597,7 @@ bool parse()
 
                     void *spracADDR = spracuj(actToken.stav, actToken.data);
                     if (spracADDR == NULL )
-                    {
-                        // chybiska
-                        printf("CHYBISKA Z ALOKACIE PRI spracADDR\n");
-                        return 1; // tu nejaky ERR KOD
-                    }
+
                     NaplnInstr( I_READ, NULL, spracADDR, NULL );
                     priznak=nic;
                 }
@@ -662,19 +625,19 @@ bool parse()
 
                 
                 actToken = get_token(); // nacitame novy token
-                printf("KOEC TERMINAL GET TOKEN token je ");
-                whattoken(actToken.stav);
-                printf("KOEC TERMINAL GET TOKEN TOP  je ");
-                whattoken(myTop(&S)) ;
+               // printf("KOEC TERMINAL GET TOKEN token je ");
+                //whattoken(actToken.stav);
+                //printf("KOEC TERMINAL GET TOKEN TOP  je ");
+               // whattoken(myTop(&S)) ;
             }
             else
             {
                 ERRO = false;
-                printf("mas to zle ja som cakal  >> ");
-                whattoken(myTop(&S));
-                printf("mas to zle NAPISAL SI    >> ");
-                whattoken( actToken.stav);
-                printf("mas to zle riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
+               // printf("mas to zle ja som cakal  >> ");
+               // whattoken(myTop(&S));
+                //printf("mas to zle NAPISAL SI    >> ");
+               // whattoken( actToken.stav);
+               // printf("mas to zle riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
                 myPop(&S);	// odstranime z vrcholu zasobnika
                 //free(actToken.data); // free
                 actToken = get_token(); // nacitame novy token
@@ -684,7 +647,7 @@ bool parse()
         if (myTop(&S) != EOF && actToken.stav == S_END_OF_FILE)
         {
             ERRO = false;
-            printf("ChyBA na zasobniku nieco zostalo a my sme na konci suboru\n");
+            //printf("ChyBA na zasobniku nieco zostalo a my sme na konci suboru\n");
         }
     }
     if(ERRO)

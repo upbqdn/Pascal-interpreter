@@ -40,6 +40,7 @@ extern trash TrashX;
  */
 void trashInit();
 void addToBin(void *);
-void myFree(void *);
+void myfree(void *);
 void trashDestroy();
+void emptyMem(void *);
  

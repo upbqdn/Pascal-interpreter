@@ -20,6 +20,8 @@
 #include <string.h>
 #include <stdarg.h>
 
+extern FILE *soubor;
+
 /* chyby a chybove kody */
 typedef enum ERROR
 {

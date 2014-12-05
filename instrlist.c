@@ -49,6 +49,8 @@ void InstrInsert (tListInstrukcii *I_List, tInstrukcia DataOfInstr)
     if ((PomUk = malloc(sizeof(struct tPrvokListu))) == NULL) // keby nastane chyba alokacie..
     {
         // chyba alokacie !!
+        void trashDestroy();
+        exit(99);
     }
     else // alokacia sa podarila mozme vkladat data
     {
@@ -162,7 +164,9 @@ void *spracuj(tStav TIPSTAV, char* data)
             void *pomocnicek = malloc(sizeof(int));
             if (pomocnicek == NULL) // chyba alokacie
             {
-                return NULL;
+            	// chyba alokacie
+                void trashDestroy();
+        		exit(99);
             }
             *(int *) pomocnicek = atoi(data);
             return pomocnicek;
@@ -173,7 +177,9 @@ void *spracuj(tStav TIPSTAV, char* data)
             void *pomocnicek = malloc(sizeof(float));
             if (pomocnicek == NULL) // chyba alokacie
             {
-                return NULL;
+                // chyba alokacie
+                void trashDestroy();
+        		exit(99);
             }
             *(float *) pomocnicek = atof(data);
             return pomocnicek;
@@ -191,7 +197,9 @@ void *spracuj(tStav TIPSTAV, char* data)
             void *pomocnicek = malloc(((sizeof(char))*dlzka)+1);
             if (pomocnicek == NULL) // chyba alokacie
             {
-                return NULL;
+                // chyba alokacie
+                void trashDestroy();
+        		exit(99);
             }
             strcpy( pomocnicek, data);
             return pomocnicek;
@@ -202,7 +210,9 @@ void *spracuj(tStav TIPSTAV, char* data)
             void *pomocnicek = malloc(sizeof(bool));
             if (pomocnicek == NULL) // chyba alokacie
             {
-                return NULL;
+                // chyba alokacie
+                void trashDestroy();
+        		exit(99);
             }
             *(bool *) pomocnicek = true;
             return pomocnicek;
@@ -212,7 +222,9 @@ void *spracuj(tStav TIPSTAV, char* data)
             void *pomocnicek = malloc(sizeof(bool));
             if (pomocnicek == NULL) // chyba alokacie
             {
-                return NULL;
+                // chyba alokacie
+                void trashDestroy();
+        		exit(99);
             }
             *(bool *) pomocnicek = false;
             return pomocnicek;
@@ -220,7 +232,9 @@ void *spracuj(tStav TIPSTAV, char* data)
 
 
         default:
-        return NULL; // chybiska ..
+        {
+        	
+        }
     }
     
 }
