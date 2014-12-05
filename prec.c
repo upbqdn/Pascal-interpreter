@@ -73,7 +73,7 @@ switch (a)
 }
 int isVyraz()
 {
-	printf("Spoustim precedencni analyzu \n");
+	//printf("Spoustim precedencni analyzu \n");
 	int chyba = 0;
 	//actToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
 	myPush(&S, 13);
@@ -297,12 +297,12 @@ while (!((a == 13 ) && (b == 13))); /* naprosto nefugujici podminka jen pro form
 adios:
 if (chyba == 1) 
 {
-	printf("NE, tohle neni vyraz! \n"); 
+	//printf("NE, tohle neni vyraz! \n"); 
 	fprintf(stderr, "SYNTAKTICKA CHYBA : 2 na radku c. %d \n",actToken.radek ); 
 	void trashDestroy(); /* uklizime */
 	exit(2); /* mozna pozdeji osetreno jinak */
 }
-if (chyba == 0) {printf("OK, tohle je vyraz \n");}
+//if (chyba == 0) {printf("OK, tohle je vyraz \n");}
 if (vypis) printf("Odstranuji umele vytvorenou zarazku a vracim zasobnik do puvodniho stavu\n");
 //myPop(&S);
 myPop(&S);
