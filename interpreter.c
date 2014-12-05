@@ -589,7 +589,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 if (a == 0)
                 {
                     //DELENIE NULOV
-                    return 0; // zle zle zle fuj fuj
+                    exit(8); // zle zle zle fuj fuj
                 }
 
                 myaPop(&aS);
@@ -605,7 +605,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 if (a == 0)
                 {
                     //DELENIE NULOV
-                    return 0; // zle zle zle fuj fuj
+                    exit(8); // zle zle zle fuj fuj
                 }
 
                 myaPop(&aS);
