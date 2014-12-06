@@ -202,7 +202,7 @@ int hash_search(list *localTable, char *id)
  *Parametre: prehladavana tabulka, a kluc
  *Vracia: ak najde vracia jeho typ, ak nenajde vracia NAN
  */
-int hash_return_type(list *localTable, char *id)
+unsigned hash_return_type(list *localTable, char *id)
 {
 	int i = hash(id);
 	localTable[i].Act = localTable[i].First;

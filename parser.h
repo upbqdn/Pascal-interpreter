@@ -22,22 +22,21 @@ typedef enum {
 
 typedef enum {
   G_VAR_DEC,        //kontext deklaracii glob. premennych
-  L_VAR_DEC,
+  L_VAR_DEC,        //kontext deklaracie lok. premennych
   FUNCTION_DEC,     //kontext deklaracii funkci
   FUNC_ARG_DEC,      //kontext deklaracii argumentov funkcie
   FUNC_TYPE_DEC     //kontext deklaracie navratoveho typu funkcie
 } tContext;
 
-typedef struct {
-  tERROR err;
+typedef struct {   //struktura nesie aktualny semanticky kontext a jeho atributy
   tScope scope;
-  tContext context;
-  tStav act_type;
-  char *act_id;
-  char *act_fun;
+  tContext context;  //aktualny kontext
+  tStav act_type;    //typ aktualneho id
+  char *act_id;      //aktualne id premennej
+  char *act_fun;     //aktualne id funkcie
 } tSem_context;
-
-typedef enum {
+   
+typedef enum {   //priznaky pre ulozenie aktualneho tokenu ako id
   rem_id,
   for_id,
   rem_pid,
@@ -47,4 +46,4 @@ typedef enum {
 
 bool parse();
 void extractRule(tSem_context* sem_context);
-void sem_check (tSem_context* sem_context);
+void sem_check (tSem_context* sem_context);   //funkcia vykonava semanticke akcie

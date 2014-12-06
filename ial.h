@@ -66,7 +66,7 @@ extern list *GLOBFRAME; // globalna tabulka
  int find(char *, char *);
  void vector(char *, int *);
  int hash_is_sign(list *, char *);
- int hash_return_type(list *, char *);
+ unsigned hash_return_type(list *, char *);
  void hash_set_sign(list *, char *, int);
  char *copy(char *string, int i, int n);
  void set_arg_num(list *, char *, int);

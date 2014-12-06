@@ -30,8 +30,9 @@ list_element Tab_prvok;
 int priznak;
 
 tId_sign Id_sign = for_all;   //priznak zapamatania aktualneho id
+int arg_num = 0;         //pocet argumentov funkcie inicializovany na 0
 
-void extractRule(tSem_context* sem_context)
+void extractRule(tSem_context* s_con)
 {
     switch(myTop(&S))
     {
@@ -83,7 +84,7 @@ void extractRule(tSem_context* sem_context)
             NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
 
-            sem_context->act_id = actToken.data;  //ulozenie id premennej
+            s_con->act_id = actToken.data;  //ulozenie id premennej
         }
         break;
     }
@@ -99,13 +100,13 @@ void extractRule(tSem_context* sem_context)
 
             //  NVLIST -> VDEC ; NVLIST
 
-             sem_check (sem_context);  //volam analyzu novo deklarovanej premennej
+             sem_check (s_con);  //volam analyzu novo deklarovanej premennej
         }
         else // eps prechod
         {
             myPop(&S); //  NVLIST -> eps
 
-            sem_check (sem_context);   //volam analyzu novo deklarovanej premennej
+            sem_check (s_con);   //volam analyzu novo deklarovanej premennej
         }
 
         break;
@@ -125,7 +126,7 @@ void extractRule(tSem_context* sem_context)
 
             NaplnInstr(I_ALLOC_INT, NULL, NULL, NULL);
 
-        		sem_context->act_type = S_INTEGER;
+        		s_con->act_type = S_INTEGER;
             break;
         }
 
@@ -137,7 +138,7 @@ void extractRule(tSem_context* sem_context)
 
             NaplnInstr(I_ALLOC_DOU, NULL, NULL, NULL);
 
-            sem_context->act_type = S_DOUBLE;
+            s_con->act_type = S_DOUBLE;
             break;
         }
 
@@ -148,7 +149,7 @@ void extractRule(tSem_context* sem_context)
 
             NaplnInstr(I_ALLOC_STR, NULL, NULL, NULL);
 
-            sem_context->act_type = S_RETEZEC;
+            s_con->act_type = S_RETEZEC;
 
             break;
         }
@@ -160,7 +161,7 @@ void extractRule(tSem_context* sem_context)
 
             NaplnInstr(I_ALLOC_BOO, NULL, NULL, NULL);
 
-            sem_context->act_type = actToken.stav;
+            s_con->act_type = actToken.stav;
             break;
         }
 
@@ -182,7 +183,7 @@ void extractRule(tSem_context* sem_context)
             myPop(&S);
             myPushMul(&S, 9, S_KLIC_FUNCTION, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_PLIST, S_PRAVA_ZAVORKA, S_DVOJTECKA, LL_TYPE, S_STREDNIK, LL_FUNC);
 
-            sem_context->context = FUNCTION_DEC;  //prepnutie kontextu na deklaraciu funkcie
+            s_con->context = FUNCTION_DEC;  //prepnutie kontextu na deklaraciu funkcie
             Id_sign = rem_id;                     //pri spracovani sa id ulozi
 
             //  FLIST -> function id ( PLIST ) : TYPE ; FUNC
@@ -203,13 +204,13 @@ void extractRule(tSem_context* sem_context)
             myPushMul(&S, 3, S_KLIC_FORWARD, S_STREDNIK, LL_FLIST);
          
 
-            sem_context->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
-            sem_check (sem_context);  //ulozi sa typ funkcie
+            s_con->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
+            sem_check (s_con);  //ulozi sa typ funkcie
             
-            if (hash_is_sign (GLOBFRAME, sem_context->act_fun) != DEFINED)
-              hash_set_sign (GLOBFRAME, sem_context->act_fun, FORWARDED);
+            if (hash_is_sign (GLOBFRAME, s_con->act_fun) != DEFINED)
+              hash_set_sign (GLOBFRAME, s_con->act_fun, FORWARDED);
             else {
-              fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_fun);
+              fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
               exit (semanticka_chyba_pri_deklaraci);
             }
 
@@ -220,10 +221,11 @@ void extractRule(tSem_context* sem_context)
             myPop(&S);
             myPushMul(&S, 6, LL_VLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, S_STREDNIK, LL_FLIST );
             
-            sem_context->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
-            sem_check (sem_context);  //ulozi sa typ funkcie 
+            
+            s_con->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
+            sem_check (s_con);  //ulozi sa typ funkcie, v pripade definicie sa skontroluje 
 
-            sem_context->context = L_VAR_DEC;
+            s_con->context = L_VAR_DEC;  //nasleduje kontext deklaracie lok. premennych
 
             // FUNC -> VLIST begin STLIST end ; FLIST
         }
@@ -239,8 +241,8 @@ void extractRule(tSem_context* sem_context)
             myPop(&S);
             myPushMul(&S, 4, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
             
-            sem_context->act_id = actToken.data;      //ulozenie id parametra
-            sem_context->context = FUNC_ARG_DEC;      //kontext deklaracii argumentov funkcie
+            s_con->act_id = actToken.data;      //ulozenie id parametra
+            s_con->context = FUNC_ARG_DEC;      //kontext deklaracii argumentov funkcie
 
             // PLIST -> id : TYPE NPLIST
 
@@ -261,7 +263,7 @@ void extractRule(tSem_context* sem_context)
             myPop(&S);
             myPushMul(&S, 5, S_STREDNIK, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
             
-           sem_check (sem_context);   //kontrola parametra
+           sem_check (s_con);   //kontrola parametra
 
            Id_sign = rem_pid;  // id dalsieho parametra sa zapamata
 
@@ -271,7 +273,7 @@ void extractRule(tSem_context* sem_context)
         {
             myPop(&S); // NPLIST -> eps prechod
 
-            sem_check (sem_context);  // kontrola parametra
+            sem_check (s_con);  // kontrola parametra
         }
         break;
     }
@@ -559,8 +561,8 @@ bool parse()
     actToken = get_token();
 
 
-    tSem_context sem_context;
-    sem_context.context = G_VAR_DEC;    //na zaciatku zdrojaku je kontext deklaracii glob. premennych
+    tSem_context s_con;
+    s_con.context = G_VAR_DEC;    //na zaciatku zdrojaku je kontext deklaracii glob. premennych
 
 
     while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
@@ -578,7 +580,7 @@ bool parse()
         {
             // NETERMINAL  velke mismenka
             //printf("PUSTAM EXTRACT\n");
-            extractRule (&sem_context); // rozvin pravidla...
+            extractRule (&s_con); // rozvin pravidla...
             //printf("HOTOVO EXTRACT\n");
         }
         else
@@ -613,14 +615,14 @@ bool parse()
                   if (Id_sign == rem_id) 
                   {
                     Id_sign = for_id;                      //reset signum
-                    sem_context.act_fun = actToken.data;   //save actual id of function
-                    sem_check (&sem_context);
+                    s_con.act_fun = actToken.data;   //save actual id of function
+                    sem_check (&s_con);
                   }
 
                   if (Id_sign == rem_pid)
                   {
                     Id_sign = for_pid;
-                    sem_context.act_id = actToken.data;
+                    s_con.act_id = actToken.data;
                   }
                 }
 
@@ -665,82 +667,103 @@ list* get_local (char* id) {  //vrati referenciu na lokalnu tabulku podla zadane
   return ((list_element) hash_adress(GLOBFRAME, id))->ref;
 }
 
-void sem_check (tSem_context* sem_context)
+void sem_check (tSem_context* s_con)
 {
-  switch (sem_context->context) 
+  switch (s_con->context) 
   {
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
-      if ( hash_search (GLOBFRAME, sem_context->act_id) == CONTAINS ) { //error if var exists
-        fprintf (stderr, "semanticka chyba pri deklaraci globalnej premennej \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id);
+      if ( hash_search (GLOBFRAME, s_con->act_id) == CONTAINS ) { //error if var exists
+        fprintf (stderr, "semanticka chyba pri deklaraci globalnej premennej \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id);
         exit (semanticka_chyba_pri_deklaraci);
       }
 
-      hash_insert_it (GLOBFRAME,sem_context->act_id, sem_context->act_type );  //save var to GTS
+      hash_insert_it (GLOBFRAME,s_con->act_id, s_con->act_type );  //save var to GTS
     break;
 
 
     case FUNCTION_DEC:          //kontext deklaracii funkcii
       //funkcia nebola deklarovana, vytvori sa nova LTS
-      if ( hash_search (GLOBFRAME, sem_context->act_fun) == NOCONTAINS )
+      if ( hash_search (GLOBFRAME, s_con->act_fun) == NOCONTAINS )
         { 
-          hash_insert_i (GLOBFRAME, sem_context->act_fun);     //vlozenie id funkcie
-          hash_insert_func (GLOBFRAME, sem_context->act_fun);  //vytvorenie LTS funkcie
-          hash_insert_it (GLOBFRAME, sem_context->act_fun, F_ID);  //id funkcie je typu F_ID
+          hash_insert_i (GLOBFRAME, s_con->act_fun);     //vlozenie id funkcie
+          hash_insert_func (GLOBFRAME, s_con->act_fun);  //vytvorenie LTS funkcie
+          hash_insert_it (GLOBFRAME, s_con->act_fun, F_ID);  //id funkcie je typu F_ID
+          set_arg_num (GLOBFRAME, s_con->act_fun, arg_num);  //inicializacia poctu argumentov
           break;
         }
     
       //funkcia bola deklarovana, ocakava sa definicia, nevytvara sa nova LTS
-      if (hash_is_sign (GLOBFRAME, sem_context->act_fun) == FORWARDED) { 
-        hash_set_sign (GLOBFRAME, sem_context->act_fun, DEFINED);
+      if (hash_is_sign (GLOBFRAME, s_con->act_fun) == FORWARDED) { 
+        hash_set_sign (GLOBFRAME, s_con->act_fun, DEFINED);
         break;
       }
 
       //nastala chyba pri definicii alebo deklaracii funkcie
-      fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_fun);
+      fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
       exit (semanticka_chyba_pri_deklaraci);
   
 
-    case FUNC_ARG_DEC:        //kontext deklaracie argumentov funkcie
+    case FUNC_ARG_DEC:        //kontext deklaracie a overovania argumentov funkcie
       //definicia funkcie, overuju sa argumenty
-      if (hash_is_sign (GLOBFRAME, sem_context->act_fun) == DEFINED) {
-        //chyba ak argument bebol deklarovany
-        if ( hash_search (get_local (sem_context->act_fun), sem_context->act_id) == NOCONTAINS ||
-           ( hash_return_type (get_local (sem_context->act_fun), sem_context->act_id)) != sem_context->act_type ) 
+      if (hash_is_sign (GLOBFRAME, s_con->act_fun) == DEFINED) {
+       //chyba ak argument bebol deklarovany alebo nesedi typ alebo pozicia
+        if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == NOCONTAINS ||
+             hash_return_type (get_local (s_con->act_fun), s_con->act_id) != s_con->act_type ||
+             get_arg_num (get_local (s_con->act_fun), s_con->act_id) != ++arg_num ) 
           {
-            fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id, sem_context->act_fun);
+            fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
             exit(semanticka_chyba_pri_deklaraci);
           }
       }
 
-      //deklaracia funkcie, ulozia sa argumenty
+      //funkcia nebola deklarovana, ulozia sa argumenty
       else {
         //chyba ak parameter uz existuje
-        if (hash_search (get_local (sem_context->act_fun), sem_context->act_id) == CONTAINS) {
-          fprintf (stderr, "semanticka chyba pri deklaraci argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id, sem_context->act_fun);
+        if (hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS) {
+          fprintf (stderr, "semanticka chyba pri deklaraci argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
           exit (semanticka_chyba_pri_deklaraci);
         }
 
         //ulozenie id a jeho typu do LTS funkcie
-        hash_insert_it (get_local (sem_context->act_fun), sem_context->act_id, sem_context->act_type);
-      break;
+        hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
+        //ulozi sa pozicia argumentu        
+        set_arg_num (get_local (s_con->act_fun), s_con->act_id, ++arg_num);
+        set_arg_num (GLOBFRAME, s_con->act_fun, arg_num); //zvysi sa pocet argumentov funkcie
       }
-
+    break;
+      
 
     case FUNC_TYPE_DEC:     //kontext deklaracie typu navratovej hodnoty funkcie
-      //ulozenie typu do LTS
-      hash_insert_it (get_local(sem_context->act_fun), sem_context->act_fun, sem_context->act_type);
-    break;
+      //funkcia bola deklarovana, musi sa overit typ
+      if (hash_is_sign (GLOBFRAME, s_con->act_fun) == DEFINED) {
+        //ak sa typ pri deklaracii nezhoduje s typom pri definicii
+        if (hash_return_type (get_local (s_con->act_fun), s_con->act_fun) != s_con->act_type) {
+          fprintf (stderr, "semanticka chyba pri defenici typu navratovej hodnoty funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
+          exit(semanticka_chyba_pri_deklaraci);
+        }
+        
+        //funkcia bola deklarovana a pri definicii bol zadany nespravny pocet argumentov
+        if (get_arg_num (GLOBFRAME, s_con->act_fun) != arg_num) {
+          fprintf (stderr, "nespravny pocet argumentov pri defenici funkcie '%s'\n", s_con->act_fun);
+          exit (semanticka_chyba_pri_deklaraci);
+        }
+      }
+      else //funkcia nebola deklarovana, uklada sa typ
+        hash_insert_it (get_local(s_con->act_fun), s_con->act_fun, s_con->act_type);
+   
+      arg_num = 0; //reset pocitadla argumentov, suvisi s FUNC_ARG_DEC
+   break;
      
 
     case L_VAR_DEC:      //kontext deklaracie lokalnych premennych
       //chyba, ak premenna alebo argument alebo navratova hodnota funkcie existuje
-      if ( hash_search (get_local (sem_context->act_fun), sem_context->act_id) == CONTAINS) {
-        fprintf (stderr, "semanticka chyba pri deklaraci lokalnej premennej \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", sem_context->act_id, sem_context->act_fun );
+      if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS) {
+        fprintf (stderr, "semanticka chyba pri deklaraci lokalnej premennej \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun );
         exit (semanticka_chyba_pri_deklaraci);
       }
       
       //ulozenie premennej do LTS
-      hash_insert_it (get_local (sem_context->act_fun), sem_context->act_id, sem_context->act_type);
+      hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
     break;
   }
 }

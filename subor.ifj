@@ -1,19 +1,20 @@
 var
   a:string;
 
-function makewar (a:integer) : integer; forward;
+function makewar (a:integer; b:real; c:real) : integer; forward;
 
-function makewar (b:integer) : string; 
-  var
-    c:integer;
+function foo (bar:real) : string;
+  var 
+    foobar:string;
 
   begin
 
   end;
 
-function foo (bar:real) : string;
-  var 
-    foobar:string;
+
+function makewar (a:integer; b:real) : integer; 
+  var
+    d:integer;
 
   begin
 
