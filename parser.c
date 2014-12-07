@@ -191,6 +191,8 @@ void extractRule(tSem_context* s_con)
         else
         {
             myPop(&S); //  FLIST -> eps prechod
+
+            s_con->scope = GLOBAL;  // prepnutie na globalny scope
         }
         break;
     }
@@ -327,6 +329,8 @@ void extractRule(tSem_context* s_con)
            // printf("GREEP generuji instrukci vloz LL_STAT cize v KODE.. I_IDENT >>");
             //whattoken(actToken.stav);
             NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+            
+            s_con->l_id = actToken.data;  //ulozenie id pre LHS
 
             break;
         }
@@ -384,12 +388,15 @@ void extractRule(tSem_context* s_con)
     case  LL_RHS:
     {
        if ( actToken.stav == S_IDENTIFIKATOR && 
-            hash_return_type (GLOBFRAME, actToken.data) == F_ID)
+            hash_return_type (GLOBFRAME, actToken.data) == F_ID)  //semantika overuje typ id
         	{         // skontrolovat ci je su v podmienke aktualne nazvy//
 
     		  	myPop (&S);
       	  	myPushMul (&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
 
+            s_con->c_fun = actToken.data;   //ulozi sa id volanej funkcie
+            s_con->context = RET_VAL_CHECK;  //typova kontrola priradenia navr. hod. funkcie
+            sem_check (s_con);              
         	 }
 
        else if
@@ -561,7 +568,8 @@ bool parse()
     actToken = get_token();
 
 
-    tSem_context s_con;
+    tSem_context s_con;           //instancia struktury nesie semanticky kontext a jeho atributy
+    s_con.scope = LOCAL;        //na zaciatku je lokalny kontext
     s_con.context = G_VAR_DEC;    //na zaciatku zdrojaku je kontext deklaracii glob. premennych
 
 
@@ -764,6 +772,57 @@ void sem_check (tSem_context* s_con)
       
       //ulozenie premennej do LTS
       hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
+    break;
+
+
+    case RET_VAL_CHECK:            //kontrola priradenia id := funkcia()
+      //lokalny rozsah premennych
+      if (s_con->scope == LOCAL) {
+        //premenna nie je deklarovana lokalne
+        if ( hash_search (get_local (s_con->act_fun), s_con->l_id) != CONTAINS ) {      
+          
+          //premenna nie je deklarovana ani globalne - chyba
+          if ( hash_search (GLOBFRAME, s_con->l_id) != CONTAINS ) {
+            fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+            exit (semanticka_chyba_pri_deklaraci); 
+          }
+          else { //premenna je deklarovana globalne
+            //overenie typov premennej a navratovej hodnoty funkcie
+            if ( hash_return_type (GLOBFRAME, s_con->l_id) != 
+                 hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
+              {
+                fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
+                exit (semanticka_chyba_pri_deklaraci); 
+              }
+          }
+        }
+        else {  //premenna je deklarovana lokalne
+          //overenie typov premennej a navratovej hodnoty funkcie
+          if ( hash_return_type (get_local (s_con->act_fun), s_con->l_id) != 
+               hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
+            {
+              fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
+              exit (semanticka_chyba_pri_deklaraci); 
+            }
+        }
+      }
+        
+      //globalny rozsah premennych
+      if (s_con->scope == GLOBAL) {
+        //globalna premenna nebola deklarovana
+        if (hash_search (GLOBFRAME, s_con->l_id) != CONTAINS) {
+          fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+          exit (semanticka_chyba_pri_deklaraci); 
+        }
+
+        //premenna bola deklarovana, overenie typu premennej a navratovej hodnoty funkcie
+        if ( hash_return_type (GLOBFRAME, s_con->l_id) !=
+             hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
+          {
+            fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n"    , s_con->c_fun, s_con->l_id);
+            exit (semanticka_chyba_pri_deklaraci);
+          }
+      } 
     break;
   }
 }

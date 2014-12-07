@@ -25,7 +25,9 @@ typedef enum {
   L_VAR_DEC,        //kontext deklaracie lok. premennych
   FUNCTION_DEC,     //kontext deklaracii funkci
   FUNC_ARG_DEC,      //kontext deklaracii argumentov funkcie
-  FUNC_TYPE_DEC     //kontext deklaracie navratoveho typu funkcie
+  FUNC_TYPE_DEC,     //kontext deklaracie navratoveho typu funkcie
+  
+  RET_VAL_CHECK          //kontext typovej kontroly navratovej hodnoty funkcie
 } tContext;
 
 typedef struct {   //struktura nesie aktualny semanticky kontext a jeho atributy
@@ -34,6 +36,8 @@ typedef struct {   //struktura nesie aktualny semanticky kontext a jeho atributy
   tStav act_type;    //typ aktualneho id
   char *act_id;      //aktualne id premennej
   char *act_fun;     //aktualne id funkcie
+  char *l_id;        //id lavej strany priradenia
+  char *c_fun;       //id volanej funkcie
 } tSem_context;
    
 typedef enum {   //priznaky pre ulozenie aktualneho tokenu ako id
