@@ -31,6 +31,7 @@ int priznak;
 
 tId_sign Id_sign = for_all;   //priznak zapamatania aktualneho id
 int arg_num = 0;         //pocet argumentov funkcie inicializovany na 0
+unsigned f_counter = 0;             //pocitadlo forwarded funkcii
 
 void extractRule(tSem_context* s_con)
 {
@@ -191,6 +192,11 @@ void extractRule(tSem_context* s_con)
         else
         {
             myPop(&S); //  FLIST -> eps prechod
+            
+            if (f_counter != 0) {  //semanticka kontrola, ci vsetky funkcie boli definovane
+              fprintf (stderr, "v programe su nedefinovane funkcie\n");
+              exit (semanticka_chyba_pri_deklaraci);
+            }
 
             s_con->scope = GLOBAL;  // prepnutie na globalny scope
         }
@@ -209,8 +215,11 @@ void extractRule(tSem_context* s_con)
             s_con->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
             sem_check (s_con);  //ulozi sa typ funkcie
             
-            if (hash_is_sign (GLOBFRAME, s_con->act_fun) != DEFINED)
+            if (hash_is_sign (GLOBFRAME, s_con->act_fun) != DEFINED) {
+              f_counter++;  //zvysuje sa pocet forwardnutych funkcii
+              //funkcia sa nastavi na forwarded, ak nebola definovana
               hash_set_sign (GLOBFRAME, s_con->act_fun, FORWARDED);
+              }
             else {
               fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
               exit (semanticka_chyba_pri_deklaraci);
@@ -703,6 +712,7 @@ void sem_check (tSem_context* s_con)
       //funkcia bola deklarovana, ocakava sa definicia, nevytvara sa nova LTS
       if (hash_is_sign (GLOBFRAME, s_con->act_fun) == FORWARDED) { 
         hash_set_sign (GLOBFRAME, s_con->act_fun, DEFINED);
+        f_counter--;  //pocet forwardnutych funkcii sa znizi
         break;
       }
 
@@ -792,7 +802,7 @@ void sem_check (tSem_context* s_con)
                  hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
               {
                 fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
-                exit (semanticka_chyba_pri_deklaraci); 
+                exit (semanticka_chyba_typove_kompatibility); 
               }
           }
         }
@@ -802,7 +812,7 @@ void sem_check (tSem_context* s_con)
                hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
             {
               fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
-              exit (semanticka_chyba_pri_deklaraci); 
+              exit (semanticka_chyba_typove_kompatibility); 
             }
         }
       }
@@ -814,13 +824,12 @@ void sem_check (tSem_context* s_con)
           fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->l_id);
           exit (semanticka_chyba_pri_deklaraci); 
         }
-
         //premenna bola deklarovana, overenie typu premennej a navratovej hodnoty funkcie
         if ( hash_return_type (GLOBFRAME, s_con->l_id) !=
              hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
           {
             fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n"    , s_con->c_fun, s_con->l_id);
-            exit (semanticka_chyba_pri_deklaraci);
+            exit (semanticka_chyba_typove_kompatibility);
           }
       } 
     break;

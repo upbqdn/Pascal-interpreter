@@ -1,27 +1,28 @@
 var
   a:string;
   foobar:real;
+  fuk: string;
 
 function makewar (a:integer; b:real; c:real) : string; forward;
 
-{function foo (bar:real) : real;
+function foo (bar:real) : real;
   var 
     fuk:string;
 
   begin
     foobar := foo ()
   end;
-}
 
-function makewar (a:integer; b:real; c:real) : string; 
+
+{function makewar (a:integer; b:real; c:real) : string; 
   var
     d:integer;
 
   begin
 
   end;
-
+}
 
 begin
-  foobar := foo ()
+  fuk := makewar ()
 end.
