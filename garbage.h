@@ -41,6 +41,8 @@ extern trash TrashX;
 void trashInit();
 void addToBin(void *);
 void myfree(void *);
-void trashDestroy();
+void trashDestroy(int);
 void emptyMem(void *);
+void *mymalloc(long long int);
+void *myrealloc(void *,long long int);
  

@@ -7,6 +7,7 @@
  *Nainkludovanie hackoveho suboru
  */
 #include "stack.h"
+#include "garbage.h"
 
 /*
  *Premenne definicie
@@ -28,7 +29,7 @@ void stack_init(stack *S)
  */
 void myPush(stack *S ,int data)
 {
-	stack_element pomocna = malloc(sizeof(struct stack_elementS));
+	stack_element pomocna = mymalloc(sizeof(struct stack_elementS));
 	if (pomocna != NULL)
 	{
 		pomocna->data = data;
@@ -67,7 +68,7 @@ void myPop(stack *S)
 	{
 		stack_element pomocna = S->First;
 		S->First = S->First->ptr_next;
-		free(pomocna);
+		myfree(pomocna);
 	}
 } 
 
@@ -95,7 +96,7 @@ void destroyStack(stack *S)
 	{
 		pomocna = S->First;
 		S->First = S->First->ptr_next;
-		free(pomocna);
+		myfree(pomocna);
 	}
 }
 

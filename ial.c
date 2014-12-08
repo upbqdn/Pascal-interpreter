@@ -4,6 +4,7 @@
  */
 
 #include "ial.h"
+#include "garbage.h"
 
 /**********************************
  *Implementacia hashovacej tabulky*
@@ -34,7 +35,7 @@ int hash(char *my_string)
  */
 void *hash_init()
 {
-	list *localTable = malloc(sizeof(list) * HASH_ARRAY_SIZE); //naalokujeme miesto pre hash tabulku
+	list *localTable = mymalloc(sizeof(list) * HASH_ARRAY_SIZE); //naalokujeme miesto pre hash tabulku
  	for(int i = ORIGIN; i < (HASH_ARRAY_SIZE); i++) //pre kazdy zoznam v tabulke
  	{
  		localTable[i].Act = NULL;
@@ -51,8 +52,8 @@ void hash_insert_i(list *localTable, char *id)
 {
 	if(hash_search(localTable, id) == NOCONTAINS)
 	{
-		list_element help_var = malloc(sizeof(struct elementS));
- 		help_var->id = malloc(strlen(id) * sizeof(char));
+		list_element help_var = mymalloc(sizeof(struct elementS));
+ 		help_var->id = mymalloc(strlen(id) * sizeof(char));
  		if(help_var == NULL || help_var->id == NULL) //alokacia prebehla chybne
  		{
  			//doplnit error
@@ -121,8 +122,8 @@ void hash_insert_it(list *localTable, char *id, int type)
 {
  	if(hash_search(localTable, id) == NOCONTAINS) //polozka sa v tabulke este nenachadza 
  	{
- 		list_element help_var = malloc(sizeof(struct elementS));
- 		help_var->id = malloc(strlen(id) * sizeof(char));
+ 		list_element help_var = mymalloc(sizeof(struct elementS));
+ 		help_var->id = mymalloc(strlen(id) * sizeof(char));
  		if(help_var == NULL || help_var->id == NULL) //alokacia prebehla chybne
  		{
  			//doplnit error
@@ -332,11 +333,11 @@ void hash_destroy(list *localTable)
  			}
  			list_element help_var = localTable[i].First;
  			localTable[i].First = localTable[i].First->ptr;
- 			free(help_var->id);
- 			free(help_var); //uvolnime prvok zoznamu
+ 			myfree(help_var->id);
+ 			myfree(help_var); //uvolnime prvok zoznamu
  		}
  	}
- 	free(localTable); //uvolnime tabulku
+ 	myfree(localTable); //uvolnime tabulku
 }
 
 /***************************
@@ -389,7 +390,7 @@ void sort(char *Array, int left, int right)
  */
 int find(char *T, char *P)
 {
-	int *Fail = malloc(strlen(P) * sizeof(int)); //alokovanie miesta pre pomocny vektor
+	int *Fail = mymalloc(strlen(P) * sizeof(int)); //alokovanie miesta pre pomocny vektor
 	int TL = strlen(T); //dlka retazca T
 	int PL = strlen(P); //dlzka retazca P
 	vector(P, Fail);
@@ -409,12 +410,12 @@ int find(char *T, char *P)
 	}
 	if(PInd >= PL) //vrati poziciu kde sa podretazec nasiel
 	{
-		free(Fail);
+		myfree(Fail);
 		return TInd - PL + 1;
 	}
 	else //nenasiel sa retazec
 	{
-		free(Fail);
+		myfree(Fail);
 		return NOSUBSTRING;
 	}
 }

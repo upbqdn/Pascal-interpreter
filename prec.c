@@ -15,6 +15,7 @@
 #include "prec.h"
 #include "instrlist.h"
 #include "garbage.h"
+#include "whattoken.h"
 
 #define MAX_PT 19
 int left = 111;
@@ -95,7 +96,7 @@ do
 		}
 		void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
-		tStav *TIPSTAV = malloc(sizeof(tStav));
+		tStav *TIPSTAV = mymalloc(sizeof(tStav));
 		*TIPSTAV = actToken.stav;
 
 		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actToken.data); if (vypis) whattoken(actToken.stav);

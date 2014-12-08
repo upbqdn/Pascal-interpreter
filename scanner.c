@@ -25,7 +25,7 @@ const char *klicova_slova[POCET_KLICOVYCH_SLOV] =
 
 void vloz_znak_do_tokenu(int znak, int *i)
 {
-    if (( token.data = (char *) realloc(token.data, (*i) + 2)))
+    if (( token.data = (char *) myrealloc(token.data, (*i) + 2)))
     {
         token.data[(*i) + 1] = '\0';
         token.data[(*i)] = znak;
@@ -480,7 +480,7 @@ tToken get_token(void)
                     {  
                         //c = '*';
                         //vloz_znak_do_tokenu(c, &i);
-                        token.data = malloc(sizeof(char)+1);
+                        token.data = mymalloc(sizeof(char)+1);
                         token.data = "";
                        // printf(">>%s<<\n", token.data );
                     }
@@ -500,7 +500,7 @@ tToken get_token(void)
             if (isdigit(c))
             {
                 stav = S_ESCAPE_SEKVENCE;
-                if ((ESCdata = (char *) realloc(ESCdata, (ESCi) + 2)))
+                if ((ESCdata = (char *) myrealloc(ESCdata, (ESCi) + 2)))
                 {
                     ESCdata[(ESCi) + 1] = '\0';
                     ESCdata[(ESCi)] = c;   // ulozime cislo
@@ -521,7 +521,7 @@ tToken get_token(void)
                 {
                     /* prevedieme string na cislo a ulozime do tokenu hotovo */
                     int ASCIcislo = atoi(ESCdata);
-                    free(ESCdata); // dealokujeme pamet pre escape sekvenciu
+                    myfree(ESCdata); // dealokujeme pamet pre escape sekvenciu
                     if (ASCIcislo > 0 && ASCIcislo < 256)
                     {
                         vloz_znak_do_tokenu(ASCIcislo, &i);

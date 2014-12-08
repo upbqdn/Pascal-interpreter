@@ -20,7 +20,7 @@ void addToBin(void *adresa)
  	trash_element pomocny = malloc(sizeof(struct elementSTrash));
 	if(pomocny == NULL) //chyba alokacie
 	{
-		//
+		trashDestroy(99);
 	}
 	else //alokacia prebehla spravne
 	{
@@ -37,6 +37,48 @@ void addToBin(void *adresa)
 		}
 		TrashX.First = pomocny; //prvy je nas vlozeny prvok
 	}
+}
+
+void *mymalloc(long long int size)
+{
+	void *adresa = malloc(size);
+	if(adresa == NULL)
+	{
+		trashDestroy(99);
+	}
+	trash_element pomocny = malloc(sizeof(struct elementSTrash));
+	if(pomocny == NULL) //chyba alokacie
+	{
+		trashDestroy(99);
+	}
+	else //alokacia prebehla spravne
+	{
+		pomocny->adresa = adresa; //nahrame data
+		pomocny->lptr = NULL; //prvok nalavo od pomocneho bude ukazovat na null
+		pomocny->rptr = TrashX.First; //prvok napravo od pomocneho bude ukazovat na prvy prvok
+		if(TrashX.Last == NULL) //ak to je prve vlozenie
+		{
+			TrashX.Last = pomocny; //posledny je nas vlozeny prvok
+		}
+		else //nieje prve vlozenie
+		{
+			TrashX.First->lptr = pomocny; //prvok nalavo prveho bude ukazovat na pomocny
+		}
+		TrashX.First = pomocny; //prvy je nas vlozeny prvok
+	}
+	return adresa;
+}
+
+void *myrealloc(void *adresa,long long int size)
+{
+	emptyMem(adresa);
+	adresa = realloc(adresa, size);
+	if(adresa == NULL)
+	{
+		trashDestroy(99);
+	}
+	addToBin(adresa);
+	return adresa;
 }
 
 void myfree(void *adresa)
@@ -166,7 +208,7 @@ void emptyMem(void *adresa)
 	}
 }
 
-void trashDestroy()
+void trashDestroy(int error)
 {
  	while(TrashX.First != NULL) //prejde vsetky prvky zoznamu
 	{
@@ -184,20 +226,25 @@ void trashDestroy()
 		free(pomocny);
 	}
 	fclose(soubor);
+	exit(error);
 }
 
 /*
 int main()
 {
 	trashInit();
-	int *a = malloc(sizeof(int));
-	addToBin(a);
+	char *a = mymalloc(1);
+	char *x = "ahojXEEEEEE";
+	strcpy(a, x);
+	a = myrealloc(a, sizeof(char) * 6);
 	int *b = malloc(sizeof(int));
 	addToBin(b);
 	int *c = malloc(sizeof(int));
 	addToBin(c);
-	myFree(b);
-	myFree(a);
-	trashDestroy();
+	myfree(b);
+	//myfree(a);
+	//long long int d = sizeof(char);
+	printf("%s", a);
+	trashDestroy(0);
  	return 0;
 }*/

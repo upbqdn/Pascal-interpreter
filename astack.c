@@ -7,6 +7,7 @@
  *Nainkludovanie hackoveho suboru
  */
 #include "astack.h"
+#include "garbage.h"
 
 /*
  *Premenne definicie
@@ -31,7 +32,7 @@ void myaPush(astack *aS , void *adresa)
 {
 	if(aS->First == NULL) //ak sa pushuje prvy prvok
 	{
-		astack_element pomocna = malloc(sizeof(struct astack_elementS));
+		astack_element pomocna = mymalloc(sizeof(struct astack_elementS));
 		pomocna->adresa = adresa;
 		pomocna->ptr_next = aS->First;
 		aS->First = pomocna;
@@ -42,7 +43,7 @@ void myaPush(astack *aS , void *adresa)
 	}
 	else //ak sa pushuje nty prvok
 	{
-		astack_element pomocna = malloc(sizeof(struct astack_elementS));
+		astack_element pomocna = mymalloc(sizeof(struct astack_elementS));
 		pomocna->adresa = adresa;
 		pomocna->ptr_next = aS->First;
 		aS->First = pomocna;
@@ -61,13 +62,13 @@ void myaPop(astack *aS)
 		astack_element pomocna = aS->First;
 		aS->First = aS->First->ptr_next;
 		aS->Second = aS->First->ptr_next;
-		free(pomocna);
+		myfree(pomocna);
 	}
 	else if((aS->First != NULL) && (aS->Second == NULL)) //iba first polozka
 	{
 		astack_element pomocna = aS->First;
 		aS->First = aS->First->ptr_next;
-		free(pomocna);
+		myfree(pomocna);
 	}
 }
 
@@ -110,7 +111,7 @@ void destroyaStack(astack *aS)
 	{
 		pomocna = aS->First;
 		aS->First = aS->First->ptr_next;
-		free(pomocna);
+		myfree(pomocna);
 	}
 	aS->Second = NULL;
 }
