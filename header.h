@@ -126,8 +126,11 @@ typedef enum
     LL_NSPLIST, //76
     LL_E,
 
+    LL_NPLIST_NID,//77
+    LL_FUNCEND, //78
 
-    F_ID, // 78
+
+    F_ID, // 79
     S_BOOLEAN, /* */
     S_DOLAR, /* pomocny stav pro precedencni analyzu */
 

@@ -1,17 +1,32 @@
 var
 a:integer;
-b:string;
-c:integer;
-g:real;
+b:integer;
+
+function ff(a:integer) : integer;
+
+
 
 begin
-readln(b);
-b:=b+b+b+'noooooooooooookdefr';
-write(b);
-readln(a);
-readln(c);
-a:=a+c;
+
+
+
+ff:= a + a
+
+
+end;
+
+
+
+begin
+
+b:=8;
+
+a:=ff(b);
+
 write(a)
+
+
+
 
 
 

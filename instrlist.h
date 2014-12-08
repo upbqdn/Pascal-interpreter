@@ -43,6 +43,17 @@ typedef enum
     I_ROVNO,
     I_NEROVNO,
 
+    // instrukcie na funkcie
+
+    I_JMPF_KEY,
+    I_JMPF_KEY_S,
+    I_JMP_S,
+    I_JMP_BACK,
+    I_FUN_PRIRAD_PARAM,
+    I_RUNFUN_COPY,
+    I_RUNFUN_PARAM,
+    I_FRAME_DEL,
+
 
 } tINSTR;
 

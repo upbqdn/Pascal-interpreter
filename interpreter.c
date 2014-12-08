@@ -21,24 +21,35 @@
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
 
+void* zarazka;
+
 list *GLOBFRAME;
 list *MASTERTAB; // pomocna tabulka pre priame dat typy (int, str,...)
 
 astack FRAME; // zasobnik lokalnzch tabuliek
 astack aS; // pomocny zasobnik adries pre interpreter
 
+astack JMPSTACK; // zasobnik skokov // POZOR TOTO MUSI BYT FRONTA
+astack paramSTACK; // parametre funkcii
 
 void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
+    
     astack_init(&aS);
+    myaPush(&aS, zarazka); // nahadzuje sa hlavna zarazka
+
+    astack_init(&JMPSTACK); // POZOR FRONTA mA BYT
+    myaPush(&JMPSTACK, zarazka);
+
+    astack_init(&paramSTACK);
+
     hash_insert_it (MASTERTAB, "c_integer", S_INTEGER );
     hash_insert_it (MASTERTAB, "c_double", S_DOUBLE );
     hash_insert_it (MASTERTAB, "c_string", S_RETEZEC );
    // hash_insert_it (MASTERTAB, "c_bool", S_RETEZEC );
 
 
-    void* zarazka = mymalloc(sizeof(char));
-    myaPush(&aS, zarazka); // nahadzuje sa hlavna zarazka
+    
 
 
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
@@ -842,6 +853,126 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         }
 
 //-----------------------------------------DOPLNIL MATUSKA----------------------------------------
+
+
+
+//--------------------------------------------INSTRUKCIE SKOKOV------------------TEST VER--------LEN FUNKCIE---------//
+     
+        case I_JMPF_KEY:
+        {//ok
+            //printf("INTER_SKOC podla kluca Z GLOB TAB!\n");
+            //skoc podla KLUCA z GLOB TAB == tam kde zacina urcita funkcia
+            list_element prvok;
+            prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
+
+            InstrGoto(&INSTR_PASKA, (prvok)->start  );
+
+            break;
+        }
+
+
+        case I_JMPF_KEY_S:
+        {//ok
+            //printf("INTER_uloz aktualnu adresu do GLOB TAB! : navestie funkcie \n");
+            // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie
+
+            list_element prvok;
+            prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_KDE));
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
+           // &(prvok)->ref
+
+            ((prvok)->start) = pomad;
+
+
+            break;
+        }
+
+
+        case I_JMP_S:
+        {
+            //printf("INTER_uloz aktualnu adresu do zasobnika skokov! : navratova adresa po skonceni fcie \n");
+            //uloz si AKTUALNU poziciu do zasobniku skokov
+            myaPush(&JMPSTACK, InstrDajPoz(&INSTR_PASKA));
+            
+
+            break;
+        }
+
+        case I_JMP_BACK:
+        {
+            //printf("INTER_skoc na adresu zo zasobnika skokov! : konci funkcia skoc odkial si zacal \n");
+            
+            // skok na ADRESU co je ulozena v zasobniku SKOKOV
+            InstrGoto(&INSTR_PASKA, myaTop(&JMPSTACK));
+            myaPop(&JMPSTACK);
+            //poskoc na dalsiu instr
+            InstrDalsia(&INSTR_PASKA);
+
+            break;
+        }
+
+
+        case I_FUN_PRIRAD_PARAM:
+        {
+            //printf("INTER_napln parametre funkcie! \n");
+            // ber co mas na pomocnom a prirad do toho co je na aS stacku
+            (*(int*)(myaTop(&aS))) = *(int *)(myaTop(&paramSTACK)); // priradime do prvok->ref
+            myaPop(&paramSTACK); // odstranime z pomocneho
+            myaPop(&aS); // odstranime z klasik
+
+            break;
+        }
+
+
+
+        case I_RUNFUN_PARAM:
+        {
+            //printf("INTER_pred spustenim fcie uloz parametre na zasobnik \n");
+            // prehadz mi parametre funkcie na parametrovy zasobnik!
+            
+            while(myaTop(&aS) != zarazka)
+            {
+                myaPush(&paramSTACK, myaTop(&aS) )  ;
+                myaPop(&aS);
+            }
+            myaPop(&aS); // vyhod zarazku
+
+
+            break;
+        }
+
+
+        case I_RUNFUN_COPY:
+        {
+            //printf("INTER_skopiruj TABULKU podla kluca daj ako novy FRAME! \n");
+           //zkopiruje tabulku podla kluca..
+            list *NOVATABULKA;
+
+            list_element prvok;
+            prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
+
+            NOVATABULKA = copyhash(  (prvok)->ref  ); // skopiruje tabulku   OVERIT
+
+            myaPush(&FRAME, NOVATABULKA);
+
+            myaPush(&aS, zarazka);
+            break;
+        }
+
+        
+
+        case I_FRAME_DEL:
+        {
+            //printf("INTER_koniec fcie delete FRAME \n");
+            // vyhodime FRAME koniec funkcie
+            myaPop(&FRAME);
+
+            break;
+        }
+
+
+//----------------------potialto su INSTRUKCIE NA FUNKCIE --------------------------------------------------//
 
 
 

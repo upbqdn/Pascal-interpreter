@@ -7,5 +7,6 @@
   @Author: Eduard Rybár   xrybar04@stud.fit.vutbr.cz
 -----------------------------------------------------
 */
+extern void* zarazka;
 
 void inter();

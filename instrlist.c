@@ -69,6 +69,7 @@ void InstrInsert (tListInstrukcii *I_List, tInstrukcia DataOfInstr)
         }
         /* poslednou sa stáva práve vkladaná instrukcia*/
         I_List->Posledna = PomUk;
+        I_List->Aktivna = PomUk;
     }
 }
 

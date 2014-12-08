@@ -21,6 +21,8 @@
 #include "prec.h"
 #include "garbage.h"
 
+void* zarazka; // global
+
 list *GLOBFRAME; // globalna tabulka
 astack FRAME;
 
@@ -182,6 +184,16 @@ void extractRule(tSem_context* s_con)
     {
         if (actToken.stav == S_KLIC_FUNCTION)
         {
+        	//gener-dole-------------------------------------
+        	
+        	// JMP na BEGIN hlavneho programu 	 	
+            // podla kluca 'begin' si najde v GLOBAL->(key)start  adresu kam skocit 	 	
+	        void *spracADDR = spracuj(S_IDENTIFIKATOR, "begin"); // slo by to aj inac ale pre jednotnost.. 	 	
+            NaplnInstr(I_JMPF_KEY, NULL, spracADDR, NULL); // skoci prec 
+
+			//gener--hore--------------------------
+
+
             myPop(&S);
             myPushMul(&S, 9, S_KLIC_FUNCTION, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_PLIST, S_PRAVA_ZAVORKA, S_DVOJTECKA, LL_TYPE, S_STREDNIK, LL_FUNC);
 
@@ -192,6 +204,28 @@ void extractRule(tSem_context* s_con)
         }
         else
         {
+        	//--gener-dole-----------------------------
+
+        	// generuj adresu BEGINU... tu je begin 	 	
+	            void *spracADDR = spracuj(S_IDENTIFIKATOR, "begin"); // slo by to aj inac ale pre jednotnost.. 	 	
+	           // NaplnInstr(I_JMPF_KEY_S, NULL, spracADDR, NULL); // 	 	
+	 	 	
+	 	 	
+	            //printf("INTER_uloz BEGIN! : navestie funkcie \n"); 	 	
+	            // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie	 	
+	 	 	
+	 	 	
+	            list_element prvok; 	 	
+	            prvok = (list_element)(hash_adress(GLOBFRAME, spracADDR)); 	 	
+	            void* pomad; 	 	
+	            pomad = InstrDajPoz(&INSTR_PASKA); 	 	
+	           // &(prvok)->ref 	 	
+	 	 	 
+	            ((prvok)->start) = pomad; 
+
+			//--gener hore----------------------------------------------------
+
+
             myPop(&S); //  FLIST -> eps prechod
             
             if (f_counter != 0) {  //semanticka kontrola, ci vsetky funkcie boli definovane
@@ -212,6 +246,8 @@ void extractRule(tSem_context* s_con)
 
         if (actToken.stav == S_KLIC_FORWARD)
         {
+        	//--gener-----------ESTE NEVIEME -------------------------------
+
             myPop(&S);
             myPushMul(&S, 3, S_KLIC_FORWARD, S_STREDNIK, LL_FLIST);
          
@@ -231,10 +267,10 @@ void extractRule(tSem_context* s_con)
 
             // FUNC -> forward ; FLIST
         }
-        else
+        else // nasleduje deklaracia (telo) funkcie
         {
             myPop(&S);
-            myPushMul(&S, 6, LL_VLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, S_STREDNIK, LL_FLIST );
+            myPushMul(&S, 6, LL_VLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, LL_FUNCEND, LL_FLIST );
             
             
             s_con->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
@@ -248,11 +284,43 @@ void extractRule(tSem_context* s_con)
         break;
     }
 
+    case LL_FUNCEND:
+    {
+    	if (actToken.stav == S_STREDNIK)
+    	{
+    		myPop(&S);
+    		myPush(&S, S_STREDNIK);
+
+    		//----------------gener---------------------------------------------------
+    		NaplnInstr(I_JMP_BACK, NULL, NULL, NULL); // skoci naspet ... ZASOBNIK skokov.
+
+    		//----------------gener---------------------------------------------------
+    	}
+    	else
+    	{
+    		//syntakt chiba
+    		fprintf(stderr, "2: Syntakticka chyba. Ocakaval som "); 
+    		whattoken(S_STREDNIK);
+    		fprintf(stderr, "\n");
+    		trashDestroy(2);
+    	}
+
+    	break;
+    }
+
 
     case LL_PLIST:
     {
         if (actToken.stav == S_IDENTIFIKATOR)
         {
+        	//gener-----------------------------------------------------
+        	 // generujeme 	 	
+	        void *spracADDR = spracuj(actToken.stav, actToken.data); // mame KLUC 	 	
+	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 	 	
+	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 
+
+			//-----------gener hore ---------------------------------------------------
+
             myPop(&S);
             myPushMul(&S, 4, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
             
@@ -271,25 +339,73 @@ void extractRule(tSem_context* s_con)
     }
 
 
+//--------------------------------krasny stav navyse--------------------------------------------------------
+
+    case LL_NPLIST_NID:
+    {
+    	if (actToken.stav == S_IDENTIFIKATOR)
+    	{
+    		myPop(&S);
+    		myPush(&S, S_IDENTIFIKATOR);
+
+    		//gener-----------------------------------------------------
+        	// generujeme 	 	
+	        void *spracADDR = spracuj(actToken.stav, actToken.data); // mame KLUC 	 	
+	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 	 	
+	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 
+
+			//-----------gener hore ---------------------------------------------------
+
+    	}
+    	else
+    	{
+    		fprintf(stderr, "2: Syntakticka chyba. Ocakaval som IDENTIFIKATOR\n");
+    		trashDestroy(2);
+    	}
+
+    	break;
+    }
+
+
+
+
+//--------------------------------krasny stav navyse--------------------------------------------------------
+
+
     case LL_NPLIST:
     {
         if (actToken.stav == S_STREDNIK)
         {
             myPop(&S);
-            myPushMul(&S, 5, S_STREDNIK, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
+            myPushMul(&S, 5, S_STREDNIK, LL_NPLIST_NID,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
             
            sem_check (s_con);   //kontrola parametra
 
            Id_sign = rem_pid;  // id dalsieho parametra sa zapamata
 
             // NPLIST -> ; id : TYPE NPLIST
+
+
+
         }
         else
         {
             myPop(&S); // NPLIST -> eps prechod
 
             sem_check (s_con);  // kontrola parametra
+
+
         }
+
+          //--gener-------------------------------------------------------------------
+        // toto sa deje vzdy 	 	
+	        // ber co mas na POMOCNOM zasobniku + pop pomocny 	 	
+	        // prirad 	 	
+	        NaplnInstr( I_FUN_PRIRAD_PARAM, NULL, NULL, NULL );
+	        //--gener-------------------------------------------------------------------
+
+		
+
         break;
     }
 
@@ -401,13 +517,24 @@ void extractRule(tSem_context* s_con)
         break;
     }
 
-    //--------------------------RHS----------------------//
+    //--------------------------RHS-----------------------------------------------------------------//
 
     case  LL_RHS:
     {
        if ( actToken.stav == S_IDENTIFIKATOR && 
             hash_return_type (GLOBFRAME, actToken.data) == F_ID)  //semantika overuje typ id
         	{         // skontrolovat ci je su v podmienke aktualne nazvy//
+        		// toto je FUNKCIA
+        		
+        	//----------------------------gener-------------------------------------------------------
+        	// generujeme zaciatocne veci pri spusteni FUNKCIE-kopirovanie tabulki, nahodenie na FRAMESTACK 	 	
+	        // + dalej generujeme pomocnu zarazku na zasobnik -- vsetko v 1 instrukcii 	 	
+	 	
+	            void *spracADDR = spracuj(actToken.stav, actToken.data); 	 	
+	             	 	
+	            NaplnInstr( I_RUNFUN_COPY, NULL , spracADDR, NULL ); // podla kluca
+
+			//-----gener--------------------------------------------------------------------------------
 
     		  	myPop (&S);
       	  	myPushMul (&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
@@ -434,7 +561,8 @@ void extractRule(tSem_context* s_con)
 
         else
         {
-            // chybova hlaska CHYBISKA....
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som FUNKCIU / VYRAZ\n" );
+            trashDestroy(2);
         }
         break;
     }
@@ -455,23 +583,27 @@ void extractRule(tSem_context* s_con)
     {
         if (actToken.stav == S_IDENTIFIKATOR )
         {
-
             myPop(&S);
             myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
+
+
+            void *spracADDR = spracuj(actToken.stav, actToken.data); // kluc 	 	
+	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+
+
             if(priznak == write)
             {
-                void *spracADDR = spracuj(actToken.stav, actToken.data);
-
-                NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
                 NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
             }
+
         }
         else if (actToken.stav == S_INTEGER)
         {
             myPop(&S);
             myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
-            if(priznak == write)
-            {
+            
+
+
                 void *spracADDR = spracuj(actToken.stav, actToken.data); // 
                 void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
@@ -480,40 +612,48 @@ void extractRule(tSem_context* s_con)
                 *TIPSTAV = actToken.stav;
 
                 NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+
+            if(priznak == write)
+            {
                 NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
             }
+
         }
         else if (actToken.stav == S_DOUBLE)
         {
-            if(priznak == write)
-            {
+        	myPop(&S);
+            myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
+            
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
+                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
                 tStav *TIPSTAV = mymalloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
 
-                NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+
+            if(priznak == write)
+            {
                 NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
             }
-
-            myPop(&S);
-            myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
+ 
         }
         else if (actToken.stav == S_RETEZEC)
         {
-            if(priznak == write)
-            {
+        	myPop(&S);
+            myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
+            
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
 
                 tStav *TIPSTAV = mymalloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
 
                 NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
+
+            if(priznak == write)
+            {
                 NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
             }
-
-            myPop(&S);
-            myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
 
         }
         else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
@@ -535,6 +675,37 @@ void extractRule(tSem_context* s_con)
             // generuj instrukcie spust funkciu
             //s_con->c_fun // tu mam ulozeny identifikator ff ***********************************OVERIT
 
+            //----generrr--------------------------------------------------------------------------------
+
+            // tu sa ukoncuje SPLIST ... zatim by mala nasledovat ')'
+            // daj mi to na POMOCNY zasobnik az po zarazku // koli spravnemu poradiu param funkcie
+            // generujem instrukciu DAJ NA POMOCNY ZASOBNIK az po zarazku ak sa spusta funkcia
+            void *spracADDR = spracuj(S_IDENTIFIKATOR, s_con->c_fun);
+
+
+
+            if (priznak != write) // !!IBA!! ak mam UZIVATELSKU FUNKCIU !!
+            {
+                NaplnInstr( I_RUNFUN_PARAM, NULL, NULL, zarazka );
+
+                // ULOZ ADRESU FUNKCIE SAVE na zasobnik skokov
+                NaplnInstr( I_JMP_S, NULL , NULL, NULL );
+
+                // spusti FUNKCIU.........................................................................................SPUSTI FUNKCIU!! 
+                
+                NaplnInstr( I_JMPF_KEY, NULL , spracADDR, NULL ); // KLUC zo zapametania
+
+                // I PRIRAD
+                NaplnInstr( I_PRIRAD, NULL , NULL, NULL ); // priradime
+
+                // stack del FRAME
+                NaplnInstr( I_FRAME_DEL, NULL , NULL, NULL ); 
+                 
+            }
+
+
+            //-----geber---------------------------------------------------------------------------------
+
             myPop(&S); // ->eps prechod ked namam ziadany parameter
             priznak = nic;
         }
@@ -555,83 +726,95 @@ void extractRule(tSem_context* s_con)
             actToken=get_token();
 
 
-                        if (actToken.stav == S_IDENTIFIKATOR )
-                    {
-
-                        myPop(&S);
-                        myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
-                        if(priznak == write)
-                        {
-                            void *spracADDR = spracuj(actToken.stav, actToken.data);
-
-                            NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
-                            NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
-                        }
-                    }
-                    else if (actToken.stav == S_INTEGER)
-                    {
-                        myPop(&S);
-                        myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
-                        if(priznak == write)
-                        {
-                            void *spracADDR = spracuj(actToken.stav, actToken.data); // 
-                            void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
+                    if (actToken.stav == S_IDENTIFIKATOR )
+			        {
+			            myPop(&S);
+			            myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
 
 
-                            tStav *TIPSTAV = mymalloc(sizeof(tStav));
-                            *TIPSTAV = actToken.stav;
+			            void *spracADDR = spracuj(actToken.stav, actToken.data); // kluc 	 	
+				        NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
-                            NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
-                            NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
-                        }
-                    }
-                    else if (actToken.stav == S_DOUBLE)
-                    {
-                        if(priznak == write)
-                        {
-                            void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                            tStav *TIPSTAV = mymalloc(sizeof(tStav));
-                            *TIPSTAV = actToken.stav;
+			            if(priznak == write)
+			            {
+			                NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
+			            }
 
-                            NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
-                            NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
-                        }
+			        }
+			        else if (actToken.stav == S_INTEGER)
+			        {
+			            myPop(&S);
+			            myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
+			            
 
-                        myPop(&S);
-                        myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
-                    }
-                    else if (actToken.stav == S_RETEZEC)
-                    {
-                        if(priznak == write)
-                        {
-                            void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                            tStav *TIPSTAV = mymalloc(sizeof(tStav));
-                            *TIPSTAV = actToken.stav;
+			                void *spracADDR = spracuj(actToken.stav, actToken.data); // 
+			                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
-                            NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
-                            NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
-                        }
 
-                        myPop(&S);
-                        myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
+			                tStav *TIPSTAV = mymalloc(sizeof(tStav));
+			                *TIPSTAV = actToken.stav;
 
-                    }
-                    else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
-                    {
+			                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
 
-                        myPop(&S);
-                        myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
+			            if(priznak == write)
+			            {
+			                NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
+			            }
 
-                    }
-                    else if (actToken.stav == S_KLIC_FALSE)
-                    {
+			        }
+			        else if (actToken.stav == S_DOUBLE)
+			        {
+			        	myPop(&S);
+			            myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
+			            
+			                void *spracADDR = spracuj(actToken.stav, actToken.data);
+			                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
-                        myPop(&S);
-                        myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+			                tStav *TIPSTAV = mymalloc(sizeof(tStav));
+			                *TIPSTAV = actToken.stav;
 
-                    }
+			                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+
+			            if(priznak == write)
+			            {
+			                NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
+			            }
+			 
+			        }
+			        else if (actToken.stav == S_RETEZEC)
+			        {
+			        	myPop(&S);
+			            myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
+			            
+			                void *spracADDR = spracuj(actToken.stav, actToken.data);
+
+			                tStav *TIPSTAV = mymalloc(sizeof(tStav));
+			                *TIPSTAV = actToken.stav;
+
+			                NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
+
+			            if(priznak == write)
+			            {
+			                NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
+			            }
+
+			        }
+			        else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
+			        {
+
+			            myPop(&S);
+			            myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
+
+			        }
+			        else if (actToken.stav == S_KLIC_FALSE)
+			        {
+
+			            myPop(&S);
+			            myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+
+			        }
                     
                     else
                     {
@@ -645,6 +828,36 @@ void extractRule(tSem_context* s_con)
         {
             // generuj instrukcie spust funkciu
             //s_con->c_fun // tu mam ulozeny identifikator ff ***********************************OVERIT
+
+            //----generrr--------------------------------------------------------------------------------
+
+            // tu sa ukoncuje SPLIST ... zatim by mala nasledovat ')'
+            // daj mi to na POMOCNY zasobnik az po zarazku // koli spravnemu poradiu param funkcie
+            // generujem instrukciu DAJ NA POMOCNY ZASOBNIK az po zarazku ak sa spusta funkcia
+            void *spracADDR = spracuj(S_IDENTIFIKATOR, s_con->c_fun);
+
+
+            if (priznak != write) // !!IBA!! ak mam UZIVATELSKU FUNKCIU !!
+            {
+                NaplnInstr( I_RUNFUN_PARAM, NULL, NULL, zarazka );
+
+                // ULOZ ADRESU FUNKCIE SAVE na zasobnik skokov
+                NaplnInstr( I_JMP_S, NULL , NULL, NULL );
+
+                // spusti FUNKCIU.........................................................................................SPUSTI FUNKCIU!! 
+                
+                NaplnInstr( I_JMPF_KEY, NULL , spracADDR, NULL ); // KLUC zo zapametania
+
+                // I PRIRAD
+                NaplnInstr( I_PRIRAD, NULL , NULL, NULL ); // priradime
+
+                // stack del FRAME
+                NaplnInstr( I_FRAME_DEL, NULL , NULL, NULL ); 
+                 
+            }
+
+
+            //-----geber---------------------------------------------------------------------------------
 
             myPop(&S); // ->eps prechod:: ked pride prave jeden parameter
             priznak = nic;
@@ -682,6 +895,10 @@ void extractRule(tSem_context* s_con)
 
 bool parse()
 {
+	zarazka  = malloc(sizeof(char)); // zarazka adresova
+
+	hash_insert_it(GLOBFRAME, "begin", 444); // navestie mainu
+
     bool ERRO = true;
     stack_init(&S);
     myPush(&S, EOF); // zarazka $$$$
@@ -706,7 +923,7 @@ bool parse()
         }
 
 
-        if (myTop(&S) >= LL_INIT && myTop(&S) <= LL_NSPLIST )  // TERMINAL/NETERMINAL
+        if (myTop(&S) >= LL_INIT && myTop(&S) <= LL_FUNCEND )  // TERMINAL/NETERMINAL
         {
             // NETERMINAL  velke mismenka
             //printf("PUSTAM EXTRACT\n");
@@ -741,20 +958,42 @@ bool parse()
                 if ( actToken.stav == S_IDENTIFIKATOR ) 
                 {                                       //ulozenie id funkcie pri deklaracii
                   if (Id_sign == rem_id) 
-                  {/*
+                  {
+                  	Id_sign = for_id;                      //reset signum
+                    s_con.act_fun = actToken.data;   //save actual id of function
+                    sem_check (&s_con);
+
+
                     // *********** TOTO JE INSTRUKCIA***ZACIATOK************************************
                     // posielam ID funkcie koli ADRESE ZACIATKU FUN NA instrukc paske
-                    void *spracADDR = spracuj(actToken.stav, actToken.data); // slo by to aj inac ale pre jednotnost..
-                    NaplnInstr(I_JMPF_KEY_S, spracADDR, NULL, NULL); // ulozi aktualnu instrukciu 
+                    //--gener-dole-----------------------------
+
+		        	// generuj adresu BEGINU... tu je begin 	 	
+			            void *spracADDR = spracuj(S_IDENTIFIKATOR, actToken.data); // slo by to aj inac ale pre jednotnost.. 	 	
+			           // NaplnInstr(I_JMPF_KEY_S, NULL, spracADDR, NULL); // 	 	
+ 	 	
+			           // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie	 	
+			 	 	
+			 	 	
+			            list_element prvok; 	 	
+			            prvok = (list_element)(hash_adress(GLOBFRAME, spracADDR)); 	 	
+			            void* pomad; 	 	
+			            pomad = InstrDajPoz(&INSTR_PASKA); 	 	
+			           	 	
+			 	 	 
+			            ((prvok)->start) = pomad;  	
+
+
+					//--gener hore---------------------------------------------------
 
                     //budeme alokovat miesto pre navratovu hodnotu podla kluca  toto je ALOKACIA NAVRATOVEJ HODNOTY!!
                     NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
-                    // *********** TOTO JE INSTRUKCIA***KONIEC************************************
-					*/
+                    NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
-                    Id_sign = for_id;                      //reset signum
-                    s_con.act_fun = actToken.data;   //save actual id of function
-                    sem_check (&s_con);
+                    // *********** TOTO JE INSTRUKCIA***KONIEC************************************
+					
+
+                    
                   }
 
                   if (Id_sign == rem_pid)
@@ -773,8 +1012,9 @@ bool parse()
             }
             else
             {
-                fprintf(stderr, "2: Syntakticka chyba. Ocakaval som >> ");
+                fprintf(stderr, "2: Syntakticka chyba. Ocakaval som  ");
                 whattoken(myTop(&S));
+                fprintf(stderr, "riadok : %d , stlpec %d .", actToken.radek+1, actToken.sloupec);
                 fprintf(stderr, "\n" );
             	exit(2); // syntakticka chyba
                 ERRO = false;
