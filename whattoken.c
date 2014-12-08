@@ -11,8 +11,8 @@
 /*
  *Nainkludovanie hackoveho suboru
  */
-#include "whattoken.h"
 #include "header.h"
+#include "whattoken.h"
 
  
 void whattoken(tStav stav)
