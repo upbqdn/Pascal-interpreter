@@ -1,28 +1,22 @@
 var
-  a:string;
-  foobar:real;
-  fuk: string;
-
-function makewar (a:integer; b:real; c:real) : string; forward;
-
-function foo (bar:real) : real;
-  var 
-    fuk:string;
-
-  begin
-    foobar := foo ()
-  end;
-
-
-{function makewar (a:integer; b:real; c:real) : string; 
-  var
-    d:integer;
-
-  begin
-
-  end;
-}
+a:integer;
+b:string;
+c:integer;
+g:real;
 
 begin
-  fuk := makewar ()
+readln(b);
+b:=b+b+b+'noooooooooooookdefr';
+write(b);
+readln(a);
+readln(c);
+a:=a+c;
+write(a)
+
+
+
+
+
+
+
 end.

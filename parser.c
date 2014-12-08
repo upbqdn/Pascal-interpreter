@@ -726,9 +726,7 @@ bool parse()
 //-------------------------------GENER-READ---------------------------------------------------------------//
                 if ((actToken.stav == S_IDENTIFIKATOR) && (priznak == read)) // ak ideme citat a pride nam CO ideme citat
                 {
-
                     void *spracADDR = spracuj(actToken.stav, actToken.data);
-                    if (spracADDR == NULL )
 
                     NaplnInstr( I_READ, NULL, spracADDR, NULL );
                     priznak=nic;

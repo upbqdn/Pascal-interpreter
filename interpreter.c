@@ -49,8 +49,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     }
    
 
-    myaPush(&aS, zarazka);
-    //printf("....NAHADZUJEM HLAAAVNUUUUU ZARAZKU\n");
+    myaPush(&aS, zarazka); // nahadzuje sa hlavna zarazka
 
 
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
@@ -116,23 +115,12 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         	TIP = *(tStav *)(Instr->ADDR_DRUHA);				// na tejto adrese musi byt napr. S_INTEGER
         	hash_insert_it (MASTERTAB, Instr->ADDR_KDE, TIP );  //
 
-//printf("KLUC::%s::\n", Instr->ADDR_KDE );
-
         	list_element prvok;
             
             prvok = (list_element)(hash_adress(MASTERTAB, Instr->ADDR_KDE)); // ID kluc
 
-//printf("TYPE::%d::\n", prvok->type );
-
-            //void **kk = &(prvok)->ref;
-
             (prvok)->ref = Instr->ADDR_PRVA;
-            //printf("ADDPRVACISLO::%d::\n", *(int *)(Instr)->ADDR_PRVA);
-
-            //printf("ADDCHLIEVIKU NA ZASOBNIK::%p::\n", &(prvok)->ref );
-
-            // TIP = (*prvok).type;
-
+   
             myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
     
 
@@ -169,13 +157,10 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER)
             {
 
-                printf("<<<<<<<<<<<<<<<%d<<<<<<\n",  *( *(int **) (myaTop(&aS))) );
-
                 int pomoc1 = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
                 *( *(int **) (myaTop(&aS))) = pomoc1 ;
-                printf(">>PRIRANE  JE >>%d>>\n", *( *(int **) (myaTop(&aS))));
                 myaPop(&aS);
             }
             else if (TIP == S_DOUBLE)
@@ -188,7 +173,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             else if (TIP == S_RETEZEC)
             {
-                printf("gjFHJLJ\n");
+
 
 
                 void* pomAddr1; // to co vytiahneme zo zasobnika ako NAJVRCHNEJSIE
@@ -296,6 +281,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_READ:
         {
+ 
             list *TOPFRAME;
             TOPFRAME = myaTop(&FRAME);
 
@@ -311,20 +297,21 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
             case S_INTEGER:
             {
-                scanf("%d", &(prvok)->ref );
+                scanf("%d", (prvok)->ref );
 
                 break;
             }
 
             case S_DOUBLE:
             {
-                scanf("%f", &(prvok)->ref );
+                scanf("%f", (prvok)->ref );
 
                 break;
             }
 
             case S_RETEZEC:
             {
+           
                 char znak;
                 int dlzkastringu = 0;
                 while((znak=getchar())!= '\n' )
@@ -364,24 +351,20 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
             case S_INTEGER:
             {
-                //printf("%d", *(int *)  *kk );
-                printf("LLLL>>%d", *( *(int **) (myaTop(&aS))) );
+                printf("%d", *( *(int **) (myaTop(&aS))) );
                 break;
             }
 
             case S_DOUBLE:
             {
-                printf("%f", *(float*)myaTop(&aS)  );
+                printf("%g", *( *(float **) (myaTop(&aS)))  );
                 break;
             }
 
             case S_RETEZEC:
             {
-
-                void* pomADKA = (*(void **)(myaTop(&aS)));
-                printf("%s",  (char*) pomADKA );
-
-                break;
+            printf("%s", ( *(char **) (myaTop(&aS))) );
+            break;
             }
 
             case S_KLIC_FALSE:
@@ -413,7 +396,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_DOU:
         {
-            printf("%f", *( *(float **) (myaTop(&aS))) );
+            printf("%g", *( *(float **) (myaTop(&aS))) );
             myPop(&aS);
 
             break;
@@ -421,7 +404,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_STR:
         {
-            printf("cshjgdhdsjcksdhjcgsducgcs\n");
             printf("%s", ( *(char **) (myaTop(&aS)))    );
             myPop(&aS);
 
@@ -449,45 +431,38 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
 
                 *(int*)c_integer = b + a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
-
-
-            list_element prvok;
-            
-            prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
-
-
-            (prvok)->ref = c_integer ;
-
-
-            myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                list_element prvok;
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+                (prvok)->ref = c_integer ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
 
 
             }
             else if (TIP == S_DOUBLE)
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
+
                 *(float*)c_double = b + a;
-                myaPush(&aS, c_double);
+                list_element prvok;           
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+                (prvok)->ref = c_double ;
+                myaPush(&aS, &(prvok)->ref);
 
             }
             else if (TIP == S_RETEZEC)
             {
                 void* pomAddr1;
                 void* pomAddr2;
-
- 
-                    pomAddr1 = (*(void **)(myaTop(&aS))) ;
-                    myaPop(&aS);
-                    pomAddr2 = (*(void **)(myaTop(&aS))) ;
-                    myaPop(&aS);
-
-
+                pomAddr1 = (*(void **)(myaTop(&aS))) ;
+                myaPop(&aS);
+                pomAddr2 = (*(void **)(myaTop(&aS))) ;
+                myaPop(&aS);
                 //int dlzka = (  (strlen((*(char**)pomAddr1))) +  (strlen((*(char**)pomAddr2)))    );
-                int dlzka = strlen( pomAddr2 ) + strlen( pomAddr1 );
 
+                int dlzka = strlen( pomAddr2 ) + strlen( pomAddr1 );
                 void* pomAddr3 = malloc(((sizeof(char))*dlzka)+1);
                 if (pomAddr3 == NULL) // chyba alokacie
                 {
@@ -495,9 +470,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         			trashDestroy();
        				exit(99);
                 }
-
                 strcpy(  pomAddr3, ((char**)pomAddr2)  );
-
                 c_string = realloc(   c_string  , ( ((sizeof(char))*dlzka)+2 ) );
                 if (c_string == NULL) // chyba alokacie
                 {
@@ -507,7 +480,10 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 }
                 strcpy(  c_string, ((char**)pomAddr3)  );
                 strcat(  c_string, ((char**)pomAddr1)  );
-                myaPush(&aS, c_string);
+                list_element prvok;
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_string")); // ID kluc
+                (prvok)->ref = c_string ;
+                myaPush(&aS, &(prvok)->ref);
             }
 
 
@@ -520,21 +496,29 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
+
                 *(int*)c_integer = b - a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
-                myaPush(&aS, c_integer);
+                list_element prvok;
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+                (prvok)->ref = c_integer ;
+                myaPush(&aS, &(prvok)->ref);
             }
             else if (TIP == S_DOUBLE)
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
+
                 *(float*)c_double = b - a;
-                myaPush(&aS, c_double);
+                list_element prvok;           
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+                (prvok)->ref = c_double ;
+                myaPush(&aS, &(prvok)->ref);
             }
 
             break;  // KONIEC MINUS
@@ -546,21 +530,29 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
+
                 *(int*)c_integer = b * a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
-                myaPush(&aS, c_integer);
+                list_element prvok;
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+                (prvok)->ref = c_integer ;
+                myaPush(&aS, &(prvok)->ref);
             }
             else if (TIP == S_DOUBLE)
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
+
                 *(float*)c_double = b * a;
-                myaPush(&aS, c_double);
+                list_element prvok;           
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+                (prvok)->ref = c_double ;
+                myaPush(&aS, &(prvok)->ref);
 
             }
 
@@ -573,35 +565,39 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
-                int a = *(int *)(myaTop(&aS));
-
+                int a = *( *(int **) (myaTop(&aS)))  ;
                 if (a == 0)
                 {
                     //DELENIE NULOV
                     exit(8); // zle zle zle fuj fuj
                 }
+                myaPop(&aS);
+                int b = *( *(int **) (myaTop(&aS)))  ;
+                myaPop(&aS);
 
-                myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
-                myaPop(&aS);
                 *(int*)c_integer = b / a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
-                myaPush(&aS, c_integer);
+                list_element prvok;
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+                (prvok)->ref = c_integer ;
+                myaPush(&aS, &(prvok)->ref);
             }
             else if (TIP == S_DOUBLE)
             {
-                float a = *(float *)(myaTop(&aS)) ;
-
+                float a = *( *(float **) (myaTop(&aS))) ;
+                myaPop(&aS);
                 if (a == 0)
                 {
                     //DELENIE NULOV
                     exit(8); // zle zle zle fuj fuj
                 }
+                float b = *( *(float **) (myaTop(&aS))) ;
+                myaPop(&aS);
 
-                myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
-                myaPop(&aS);
                 *(float*)c_double = b / a;
-                myaPush(&aS, c_double);
+                list_element prvok;           
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+                (prvok)->ref = c_double ;
+                myaPush(&aS, &(prvok)->ref);
 
             }
 
@@ -616,9 +612,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER) /*int = int*/
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a == b)
                 {
@@ -632,9 +628,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_DOUBLE) /* real = real */
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a == b)
                 {
@@ -648,9 +644,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_RETEZEC) /* string = string */
             {
-                void* pomAddr1 = myaTop(&aS);
+                char* pomAddr1 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
+                char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
                 if (strcmp (pomAddr1, pomAddr2))
                 {
@@ -669,9 +665,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER) /*int <> int*/
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a != b)
                 {
@@ -685,9 +681,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_DOUBLE) /* real <> real */
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a != b)
                 {
@@ -701,9 +697,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_RETEZEC) /* string <> string */
             {
-                void* pomAddr1 = myaTop(&aS);
+                char* pomAddr1 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
+                char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
                 if (!(strcmp (pomAddr1, pomAddr2)))
                 {
@@ -722,9 +718,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER) /*int > int*/
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a > b)
                 {
@@ -738,9 +734,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_DOUBLE) /* real > real */
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a > b)
                 {
@@ -754,9 +750,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_RETEZEC) /* string > string */
             {
-                void* pomAddr1 = myaTop(&aS);
+                char* pomAddr1 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
+                char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
                 if ((strcmp (pomAddr1, pomAddr2)) > 0)
                 {
@@ -775,9 +771,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER) /*int < int*/
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a < b)
                 {
@@ -791,9 +787,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_DOUBLE) /* real < real */
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a < b)
                 {
@@ -807,9 +803,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_RETEZEC) /* string < string */
             {
-                void* pomAddr1 = myaTop(&aS);
+                char* pomAddr1 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
+                char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
                 if ((strcmp (pomAddr1, pomAddr2)) < 0)
                 {
@@ -828,9 +824,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER) /*int >= int*/
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a >= b)
                 {
@@ -844,9 +840,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_DOUBLE) /* real >= real */
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a >= b)
                 {
@@ -860,9 +856,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_RETEZEC) /* string >= string */
             {
-                void* pomAddr1 = myaTop(&aS);
+                char* pomAddr1 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
+                char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
                 if ((strcmp (pomAddr1, pomAddr2)) >= 0)
                 {
@@ -881,9 +877,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER) /*int <= int*/
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a <= b)
                 {
@@ -897,9 +893,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_DOUBLE) /* real <= real */
             {
-                float a = *(float *)(myaTop(&aS)) ;
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                float b = *(float *)(myaTop(&aS)) ;
+                float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a <= b)
                 {
@@ -913,9 +909,9 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             if (TIP == S_RETEZEC) /* string <= string */
             {
-                void* pomAddr1 = myaTop(&aS);
+                char* pomAddr1 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                void* pomAddr2 = myaTop(&aS);
+                char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
                 if ((strcmp (pomAddr1, pomAddr2)) <= 0)
                 {
