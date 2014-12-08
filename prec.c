@@ -93,12 +93,13 @@ do
 			if (vypis) printf("CHYBISKA.....\n");
 			return 1; // tu nejaky ERR KOD
 		}
+		void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
 		tStav *TIPSTAV = malloc(sizeof(tStav));
 		*TIPSTAV = actToken.stav;
 
 		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actToken.data); if (vypis) whattoken(actToken.stav);
-		NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+		NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
 	}
 
 	if (actToken.stav == S_IDENTIFIKATOR)

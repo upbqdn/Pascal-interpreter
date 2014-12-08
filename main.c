@@ -27,6 +27,8 @@ tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
 list *GLOBFRAME; // globalna tabulka
 astack FRAME;
 
+list *MASTERTAB;
+
 
 
 
@@ -44,6 +46,7 @@ int main(int argc, char *argv[])
   }
 
   GLOBFRAME = hash_init();
+  MASTERTAB = hash_init();
 
 /*  uz nie je treba
   hash_insert_it(GLOBFRAME, "a", S_INTEGER);
@@ -52,7 +55,6 @@ int main(int argc, char *argv[])
 */
 
 
-  printf("PREDTYM SOM GLOB SU:::>>>%p<<<<:::\n" , GLOBFRAME);
   InitInstrList(&INSTR_PASKA);
   astack_init(&FRAME);
   myaPush(&FRAME, GLOBFRAME);
@@ -72,6 +74,7 @@ int main(int argc, char *argv[])
       myfree(actToken.data);
 
       hash_destroy(GLOBFRAME);
+      hash_destroy(MASTERTAB);
       destroyaStack(&FRAME);
       DestroyInstrList(&INSTR_PASKA);
 

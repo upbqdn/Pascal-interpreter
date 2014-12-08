@@ -206,6 +206,9 @@ void extractRule(tSem_context* s_con)
 
     case LL_FUNC:
     {
+        // s_con->c_fun // instrukcie pre Spustenie funkcie
+
+
         if (actToken.stav == S_KLIC_FORWARD)
         {
             myPop(&S);
@@ -327,6 +330,8 @@ void extractRule(tSem_context* s_con)
     {
         switch(actToken.stav)
         {
+
+
         case S_IDENTIFIKATOR:
         {
             myPop(&S);
@@ -386,6 +391,9 @@ void extractRule(tSem_context* s_con)
 
         default:   // co tu ? chyba alebo nie ?
         {
+            whattoken(actToken.stav);
+            fprintf(stderr, "2: Syntakticka chyba. Za poslednym prikazom nesmie byt strednik !\n");
+            exit(2);
             break;
         }
         }
@@ -463,13 +471,14 @@ void extractRule(tSem_context* s_con)
             myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
             if(priznak == write)
             {
-                void *spracADDR = spracuj(actToken.stav, actToken.data);
+                void *spracADDR = spracuj(actToken.stav, actToken.data); // 
+                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
 
                 tStav *TIPSTAV = malloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
 
-                NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
                 NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
             }
         }
@@ -520,10 +529,18 @@ void extractRule(tSem_context* s_con)
             myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
 
         }
+        else if(actToken.stav == S_PRAVA_ZAVORKA)
+        {
+            // generuj instrukcie spust funkciu
+            //s_con->c_fun // tu mam ulozeny identifikator ff ***********************************OVERIT
+
+            myPop(&S); // ->eps prechod ked namam ziadany parameter
+            priznak = nic;
+        }
         else
         {
-            myPop(&S); // ->eps prechod    // SKONTROLOVAT V PRAVIDLACH !!!!!
-            priznak = nic;
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som pravu zatvorku.\n");
+            exit(2);
         }
         break;
     }
@@ -534,14 +551,109 @@ void extractRule(tSem_context* s_con)
     {
         if (actToken.stav == S_CARKA )
         {
-            myPop(&S);
-            myPushMul(&S, 2, S_CARKA, LL_SPLIST);
+            actToken=get_token();
+
+
+                        if (actToken.stav == S_IDENTIFIKATOR )
+                    {
+
+                        myPop(&S);
+                        myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
+                        if(priznak == write)
+                        {
+                            void *spracADDR = spracuj(actToken.stav, actToken.data);
+
+                            NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+                            NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
+                        }
+                    }
+                    else if (actToken.stav == S_INTEGER)
+                    {
+                        myPop(&S);
+                        myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
+                        if(priznak == write)
+                        {
+                            void *spracADDR = spracuj(actToken.stav, actToken.data); // 
+                            void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
+
+
+                            tStav *TIPSTAV = malloc(sizeof(tStav));
+                            *TIPSTAV = actToken.stav;
+
+                            NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+                            NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
+                        }
+                    }
+                    else if (actToken.stav == S_DOUBLE)
+                    {
+                        if(priznak == write)
+                        {
+                            void *spracADDR = spracuj(actToken.stav, actToken.data);
+
+                            tStav *TIPSTAV = malloc(sizeof(tStav));
+                            *TIPSTAV = actToken.stav;
+
+                            NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+                            NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
+                        }
+
+                        myPop(&S);
+                        myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
+                    }
+                    else if (actToken.stav == S_RETEZEC)
+                    {
+                        if(priznak == write)
+                        {
+                            void *spracADDR = spracuj(actToken.stav, actToken.data);
+
+                            tStav *TIPSTAV = malloc(sizeof(tStav));
+                            *TIPSTAV = actToken.stav;
+
+                            NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+                            NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
+                        }
+
+                        myPop(&S);
+                        myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
+
+                    }
+                    else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
+                    {
+
+                        myPop(&S);
+                        myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
+
+                    }
+                    else if (actToken.stav == S_KLIC_FALSE)
+                    {
+
+                        myPop(&S);
+                        myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+
+                    }
+                    
+                    else
+                    {
+                        fprintf(stderr, "2: Syntakticka chyba. Ocakaval som dalsi parameter. \n");
+                        exit(2);
+                    }
+
+
         }
+        else if(actToken.stav == S_PRAVA_ZAVORKA)
+        {
+            // generuj instrukcie spust funkciu
+            //s_con->c_fun // tu mam ulozeny identifikator ff ***********************************OVERIT
+
+            myPop(&S); // ->eps prechod:: ked pride prave jeden parameter
+            priznak = nic;
+        }
+
+
         else
         {
-            myPop(&S);
-            priznak=nic; // ->eps prechod
-
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som pravu zatvorku.\n");
+            exit(2);
         }
         break;
     }
@@ -588,7 +700,7 @@ bool parse()
         if (myTop(&S) == EOF && actToken.stav != S_END_OF_FILE)
         {
             //CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor
-           // printf("CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n");
+            fprintf(stderr, "CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n");
         	exit(2); // syntakticka chyba
         }
 
@@ -630,7 +742,17 @@ bool parse()
                 if ( actToken.stav == S_IDENTIFIKATOR ) 
                 {                                       //ulozenie id funkcie pri deklaracii
                   if (Id_sign == rem_id) 
-                  {
+                  {/*
+                    // *********** TOTO JE INSTRUKCIA***ZACIATOK************************************
+                    // posielam ID funkcie koli ADRESE ZACIATKU FUN NA instrukc paske
+                    void *spracADDR = spracuj(actToken.stav, actToken.data); // slo by to aj inac ale pre jednotnost..
+                    NaplnInstr(I_JMPF_KEY_S, spracADDR, NULL, NULL); // ulozi aktualnu instrukciu 
+
+                    //budeme alokovat miesto pre navratovu hodnotu podla kluca  toto je ALOKACIA NAVRATOVEJ HODNOTY!!
+                    NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+                    // *********** TOTO JE INSTRUKCIA***KONIEC************************************
+					*/
+
                     Id_sign = for_id;                      //reset signum
                     s_con.act_fun = actToken.data;   //save actual id of function
                     sem_check (&s_con);
@@ -652,6 +774,9 @@ bool parse()
             }
             else
             {
+                fprintf(stderr, "2: Syntakticka chyba. Ocakaval som >> ");
+                whattoken(myTop(&S));
+                fprintf(stderr, "\n" );
             	exit(2); // syntakticka chyba
                 ERRO = false;
                // printf("mas to zle ja som cakal  >> ");

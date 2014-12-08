@@ -48,6 +48,7 @@ typedef list list_array[HASH_ARRAY_SIZE]; //tabulka ktoru budeme vytvarat maloco
 //extern list *GLOB;
 
 extern list *GLOBFRAME; // globalna tabulka
+extern list *MASTERTAB; // globalna tabulka
 
 /*
  *Deklaracia funkcii

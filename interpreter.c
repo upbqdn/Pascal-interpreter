@@ -13,17 +13,8 @@
 #include "ial.h"
 #include "instrlist.h"
 #include "interpreter.h"
+#include "garbage.h"
 
-
-
-typedef enum MOZNOSTI
-{
-    IDENT_IDENT = 0,
-    IDENT_PREC,
-    PREC_IDENT,
-    PREC_PREC,
-
-} tMoznosti;
 
 
 
@@ -33,7 +24,9 @@ astack FRAME;
 
 astack aS; // pomocny zasobnik adries pre interpreter
 
-tMoznosti EXTRA = IDENT_IDENT;
+list *MASTERTAB;
+
+
 
 
 int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
@@ -102,6 +95,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     tInstrukcia *Instr; // lokalna instrukcia
     InstrStart(&INSTR_PASKA); // aktivovat instrukcnu pasku
 
+
     while(INSTR_PASKA.Aktivna != NULL) // dokedy neprideme na koniec INSTRUKCNEJ PASKY...
     {
         Instr = DajInstr(&INSTR_PASKA);
@@ -112,20 +106,22 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //-----------------------------ak pride int,double,boolean,string..-----------------------------------//
         case I_PREC:
         {
-            // aby sme vedeli ako je to adresovane .. ci to ide z tabulky symbolov alebo priamo
-            if (EXTRA == IDENT_PREC)
-            {
-                EXTRA = PREC_PREC;
-            }
-            else
-            {
-                EXTRA = IDENT_PREC;
-            }
+        	printf("PICA\n");
+        	TIP = *(tStav *)(Instr->ADDR_DRUHA);				// na tejto adrese musi byt napr. S_INTEGER
+        	hash_insert_it (MASTERTAB, Instr->ADDR_KDE, TIP );  //
 
 
-            myaPush(&aS, Instr->ADDR_PRVA);
+        	list_element prvok;
+            prvok = (list_element)(hash_adress(MASTERTAB, Instr->ADDR_KDE)); // ID kluc
 
-            TIP = *(tStav *)(Instr->ADDR_DRUHA); // na tejto adrese musi byt napr. S_INTEGER
+            void **kk = &(prvok)->ref;
+
+            *kk = Instr->ADDR_PRVA;
+
+            // TIP = (*prvok).type;
+
+            myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+    
 
             break;
         }
@@ -133,11 +129,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //------------------------------------ak pride IDENTIFIKATOR------------------------------------------//
         case I_IDENT:
         {
-            // aby sme vedeli ako je to adresovane .. ci to ide z tabulky symbolov alebo priamo
-            if (EXTRA == IDENT_PREC)
-            {
-                EXTRA = PREC_IDENT;
-            }
 
 
             list *TOPFRAME;
@@ -183,17 +174,8 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 void* pomAddr1; // to co vytiahneme zo zasobnika ako NAJVRCHNEJSIE
-                // ci bolo ADRESOVANE z tabulky symbolov alebo priamo
-                if( (EXTRA == IDENT_PREC) || (EXTRA == PREC_PREC) )
-                {
-                    pomAddr1 = myaTop(&aS);  // PREC (PRIAMO)
 
-                }
-                else
-                {
-                    pomAddr1 = (*(void **)(myaTop(&aS)));  // IDENTIFIKATOR (CEZ TABULKU SYMBOLOV)
-
-                }
+                pomAddr1 = (*(void **)(myaTop(&aS)));  // IDENTIFIKATOR (CEZ TABULKU SYMBOLOV)
 
 
                 myaPop(&aS); // mozme zahodit z zasobniku
@@ -211,8 +193,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                 myaPop(&aS); // pop 2 adresa
 
-                // ci bolo ADRESOVANE z tabulky symbolov alebo priamo
-                EXTRA = IDENT_IDENT;
 
             }
             else if ( TIP == S_KLIC_TRUE || S_KLIC_FALSE )
@@ -366,7 +346,8 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
             case S_INTEGER:
             {
-                printf("%d", *(int*)myaTop(&aS) );
+                printf("%d", myaTop(&aS) );
+                printf("LLLL>>%d", *(int*) (myaTop(&aS)) );
                 break;
             }
 
@@ -406,7 +387,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_INT:
         {
-            printf("%d", myaTop(&aS) );
+            printf("%d", *(int*)myaTop(&aS) );
             myPop(&aS);
 
             break;
@@ -466,34 +447,12 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 void* pomAddr1;
                 void* pomAddr2;
 
-                if(EXTRA == PREC_PREC )  // 2x PRIAMO adresacia  PRECENDECNA
-                {
-                    pomAddr1 = myaTop(&aS);
-                    myaPop(&aS);
-                    pomAddr2 = myaTop(&aS);
-                    myaPop(&aS);
-                }
-                else if (EXTRA == IDENT_IDENT) // 2x IDENTIFIKATOR
-                {
+ 
                     pomAddr1 = (*(void **)(myaTop(&aS))) ;
                     myaPop(&aS);
                     pomAddr2 = (*(void **)(myaTop(&aS))) ;
                     myaPop(&aS);
-                }
-                else if (EXTRA == PREC_IDENT)  // PRECENDECNA +  IDENTIFIKATOR
-                {
-                    pomAddr1 = (*(void **)(myaTop(&aS))) ;
-                    myaPop(&aS);
-                    pomAddr2 = myaTop(&aS);
-                    myaPop(&aS);
-                }
-                else if (EXTRA == IDENT_PREC) // IDENTIFIKATOR + PRECENDECKA
-                {
-                    pomAddr1 = myaTop(&aS);
-                    myaPop(&aS);
-                    pomAddr2 = (*(void **)(myaTop(&aS)));
-                    myaPop(&aS);
-                }
+
 
                 //int dlzka = (  (strlen((*(char**)pomAddr1))) +  (strlen((*(char**)pomAddr2)))    );
                 int dlzka = strlen( pomAddr2 ) + strlen( pomAddr1 );
@@ -520,7 +479,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPush(&aS, c_string);
             }
 
-            EXTRA = IDENT_PREC;
 
             break;  // PLUS KONIEC
         }
