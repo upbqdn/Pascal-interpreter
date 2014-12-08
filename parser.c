@@ -19,6 +19,7 @@
 #include "instrlist.h"
 #include "ial.h"
 #include "prec.h"
+#include "garbage.h"
 
 list *GLOBFRAME; // globalna tabulka
 astack FRAME;
@@ -475,7 +476,7 @@ void extractRule(tSem_context* s_con)
                 void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
 
-                tStav *TIPSTAV = malloc(sizeof(tStav));
+                tStav *TIPSTAV = mymalloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
 
                 NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
@@ -488,7 +489,7 @@ void extractRule(tSem_context* s_con)
             {
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                tStav *TIPSTAV = malloc(sizeof(tStav));
+                tStav *TIPSTAV = mymalloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
 
                 NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
@@ -504,7 +505,7 @@ void extractRule(tSem_context* s_con)
             {
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                tStav *TIPSTAV = malloc(sizeof(tStav));
+                tStav *TIPSTAV = mymalloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
 
                 NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
@@ -577,7 +578,7 @@ void extractRule(tSem_context* s_con)
                             void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
 
-                            tStav *TIPSTAV = malloc(sizeof(tStav));
+                            tStav *TIPSTAV = mymalloc(sizeof(tStav));
                             *TIPSTAV = actToken.stav;
 
                             NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
@@ -590,7 +591,7 @@ void extractRule(tSem_context* s_con)
                         {
                             void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                            tStav *TIPSTAV = malloc(sizeof(tStav));
+                            tStav *TIPSTAV = mymalloc(sizeof(tStav));
                             *TIPSTAV = actToken.stav;
 
                             NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
@@ -606,7 +607,7 @@ void extractRule(tSem_context* s_con)
                         {
                             void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                            tStav *TIPSTAV = malloc(sizeof(tStav));
+                            tStav *TIPSTAV = mymalloc(sizeof(tStav));
                             *TIPSTAV = actToken.stav;
 
                             NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
