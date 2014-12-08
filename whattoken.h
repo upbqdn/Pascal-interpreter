@@ -12,4 +12,4 @@
 /*
  *Deklaracie funkcii
  */
-void whattoken(); //funkcia na vypis tokenu
+void whattoken(tStav); //funkcia na vypis tokenu
