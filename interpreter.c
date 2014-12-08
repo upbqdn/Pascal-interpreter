@@ -8,6 +8,8 @@
 -----------------------------------------------------
 */
 
+//     *( *(int **) (myaTop(&aS)))
+
 #include "header.h"
 #include "astack.h"
 #include "ial.h"
@@ -32,6 +34,11 @@ list *MASTERTAB;
 int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
     astack_init(&aS);
+    hash_insert_it (MASTERTAB, "c_integer", S_INTEGER );
+    hash_insert_it (MASTERTAB, "c_double", S_DOUBLE );
+    hash_insert_it (MASTERTAB, "c_string", S_RETEZEC );
+   // hash_insert_it (MASTERTAB, "c_bool", S_RETEZEC );
+
 
     void* zarazka = malloc(sizeof(char));
     if (zarazka == NULL)
@@ -106,17 +113,23 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //-----------------------------ak pride int,double,boolean,string..-----------------------------------//
         case I_PREC:
         {
-        	printf("PICA\n");
         	TIP = *(tStav *)(Instr->ADDR_DRUHA);				// na tejto adrese musi byt napr. S_INTEGER
         	hash_insert_it (MASTERTAB, Instr->ADDR_KDE, TIP );  //
 
+//printf("KLUC::%s::\n", Instr->ADDR_KDE );
 
         	list_element prvok;
+            
             prvok = (list_element)(hash_adress(MASTERTAB, Instr->ADDR_KDE)); // ID kluc
 
-            void **kk = &(prvok)->ref;
+//printf("TYPE::%d::\n", prvok->type );
 
-            *kk = Instr->ADDR_PRVA;
+            //void **kk = &(prvok)->ref;
+
+            (prvok)->ref = Instr->ADDR_PRVA;
+            //printf("ADDPRVACISLO::%d::\n", *(int *)(Instr)->ADDR_PRVA);
+
+            //printf("ADDCHLIEVIKU NA ZASOBNIK::%p::\n", &(prvok)->ref );
 
             // TIP = (*prvok).type;
 
@@ -155,10 +168,14 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             if (TIP == S_INTEGER)
             {
-                int pomoc1 = (*(int*)(myaTop(&aS)));
+
+                printf("<<<<<<<<<<<<<<<%d<<<<<<\n",  *( *(int **) (myaTop(&aS))) );
+
+                int pomoc1 = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
-                (*(int*)(myaTop(&aS))) = pomoc1 ;
+                *( *(int **) (myaTop(&aS))) = pomoc1 ;
+                printf(">>PRIRANE  JE >>%d>>\n", *( *(int **) (myaTop(&aS))));
                 myaPop(&aS);
             }
             else if (TIP == S_DOUBLE)
@@ -171,6 +188,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             else if (TIP == S_RETEZEC)
             {
+                printf("gjFHJLJ\n");
 
 
                 void* pomAddr1; // to co vytiahneme zo zasobnika ako NAJVRCHNEJSIE
@@ -346,8 +364,8 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
             case S_INTEGER:
             {
-                printf("%d", myaTop(&aS) );
-                printf("LLLL>>%d", *(int*) (myaTop(&aS)) );
+                //printf("%d", *(int *)  *kk );
+                printf("LLLL>>%d", *( *(int **) (myaTop(&aS))) );
                 break;
             }
 
@@ -387,7 +405,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_INT:
         {
-            printf("%d", *(int*)myaTop(&aS) );
+            printf("%d",   *( *(int **) (myaTop(&aS)))   );
             myPop(&aS);
 
             break;
@@ -395,7 +413,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_DOU:
         {
-            printf("%f", myaTop(&aS) );
+            printf("%f", *( *(float **) (myaTop(&aS))) );
             myPop(&aS);
 
             break;
@@ -403,7 +421,8 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_STR:
         {
-            printf("%s", (char*) myaTop(&aS) );
+            printf("cshjgdhdsjcksdhjcgsducgcs\n");
+            printf("%s", ( *(char **) (myaTop(&aS)))    );
             myPop(&aS);
 
             break;
@@ -421,14 +440,26 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //-------------------------------------nasleduje +,-,*,--------------------------------------------//
         case I_PLUS:
         {
+
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
-                int a = *(int *)(myaTop(&aS)) ;
+                int a = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
-                int b = *(int *)(myaTop(&aS)) ;
+                int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
+
                 *(int*)c_integer = b + a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
-                myaPush(&aS, c_integer);
+
+
+            list_element prvok;
+            
+            prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+
+
+            (prvok)->ref = c_integer ;
+
+
+            myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
 
 
             }

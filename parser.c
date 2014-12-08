@@ -507,7 +507,7 @@ void extractRule(tSem_context* s_con)
                 tStav *TIPSTAV = malloc(sizeof(tStav));
                 *TIPSTAV = actToken.stav;
 
-                NaplnInstr( I_PREC, NULL, spracADDR, TIPSTAV );
+                NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
                 NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
             }
 
