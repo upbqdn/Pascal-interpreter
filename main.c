@@ -21,6 +21,7 @@
 #include "whattoken.h"
 #include "prec.h"
 #include "interpreter.h"
+#include "garbage.h"
 
 FILE *soubor;
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
@@ -34,15 +35,16 @@ list *MASTERTAB;
 
 int main(int argc, char *argv[])
 {
+	trashInit();
   if(argc != 2)
   {
     //fprintf(stderr, "");
-    return 99;
+    exit(99);
   }
   if((soubor = fopen(argv[1], "r")) == NULL)
   {
     //fprintf(stderr, "");
-    return 99;
+    exit(99);
   }
 
   GLOBFRAME = hash_init();
@@ -59,17 +61,8 @@ int main(int argc, char *argv[])
   astack_init(&FRAME);
   myaPush(&FRAME, GLOBFRAME);
 
-      bool parsEXT;
-      parsEXT = parse();  //t pustime parser+semant+precend
-
-      printf("GREAT WORK %d\n", parsEXT);
-
-      if (parsEXT)
-      {
-        inter();
-      }
-      else
-        printf("CHYBICKA PARSERU \n");
+      parse();  //t pustime parser+semant+precend
+	inter();
 
       myfree(actToken.data);
 
@@ -78,6 +71,6 @@ int main(int argc, char *argv[])
       destroyaStack(&FRAME);
       DestroyInstrList(&INSTR_PASKA);
 
-	trashDestroy();
+	trashDestroy(0);
   return 0;
 }

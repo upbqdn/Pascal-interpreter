@@ -13,6 +13,7 @@
 /* hlavickove subory */
 #include "header.h"
 #include "instrlist.h"
+#include "garbage.h"
 
 tListInstrukcii INSTR_PASKA;  // globalne >> v .h je extern
 
@@ -35,7 +36,7 @@ void DestroyInstrList (tListInstrukcii *I_List)
         PomUk = I_List->Prva;
 
         I_List->Prva = I_List->Prva->dalsiPtr;
-        free(PomUk);
+        myfree(PomUk);
     }
     I_List->Aktivna = NULL;
 }
@@ -46,12 +47,10 @@ void InstrInsert (tListInstrukcii *I_List, tInstrukcia DataOfInstr)
 {
     tPrvokListuPtr PomUk;
 
-    if ((PomUk = malloc(sizeof(struct tPrvokListu))) == NULL) // keby nastane chyba alokacie..
-    {
-        // chyba alokacie !!
-        void trashDestroy();
-        exit(99);
-    }
+    if ((PomUk = mymalloc(sizeof(struct tPrvokListu))) == NULL) // keby nastane chyba alokacie..
+	{
+		
+	}
     else // alokacia sa podarila mozme vkladat data
     {
         PomUk->Instrukcia = DataOfInstr; // skopirujeme celu inštrukciu
@@ -161,26 +160,14 @@ void *spracuj(tStav TIPSTAV, char* data)
 
         case S_INTEGER:
         {
-            void *pomocnicek = malloc(sizeof(int));
-            if (pomocnicek == NULL) // chyba alokacie
-            {
-            	// chyba alokacie
-                void trashDestroy();
-        		exit(99);
-            }
+            void *pomocnicek = mymalloc(sizeof(int));
             *(int *) pomocnicek = atoi(data);
             return pomocnicek;
         }
 
         case S_DOUBLE:
         {
-            void *pomocnicek = malloc(sizeof(float));
-            if (pomocnicek == NULL) // chyba alokacie
-            {
-                // chyba alokacie
-                void trashDestroy();
-        		exit(99);
-            }
+            void *pomocnicek = mymalloc(sizeof(float));
             *(float *) pomocnicek = atof(data);
             return pomocnicek;
         }
@@ -194,38 +181,20 @@ void *spracuj(tStav TIPSTAV, char* data)
         case S_IDENTIFIKATOR:
         {
             int dlzka = strlen(data);
-            void *pomocnicek = malloc(((sizeof(char))*dlzka)+1);
-            if (pomocnicek == NULL) // chyba alokacie
-            {
-                // chyba alokacie
-                void trashDestroy();
-        		exit(99);
-            }
+            void *pomocnicek = mymalloc(((sizeof(char))*dlzka)+1);
             strcpy( pomocnicek, data);
             return pomocnicek;
         }
 
         case S_KLIC_TRUE:
         {
-            void *pomocnicek = malloc(sizeof(bool));
-            if (pomocnicek == NULL) // chyba alokacie
-            {
-                // chyba alokacie
-                void trashDestroy();
-        		exit(99);
-            }
+            void *pomocnicek = mymalloc(sizeof(bool));
             *(bool *) pomocnicek = true;
             return pomocnicek;
         }
         case S_KLIC_FALSE:
         {
-            void *pomocnicek = malloc(sizeof(bool));
-            if (pomocnicek == NULL) // chyba alokacie
-            {
-                // chyba alokacie
-                void trashDestroy();
-        		exit(99);
-            }
+            void *pomocnicek = mymalloc(sizeof(bool));
             *(bool *) pomocnicek = false;
             return pomocnicek;
         }
@@ -233,7 +202,7 @@ void *spracuj(tStav TIPSTAV, char* data)
 
         default:
         {
-        	
+        	return(NULL);
         }
     }
     
