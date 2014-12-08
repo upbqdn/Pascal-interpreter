@@ -1,14 +1,13 @@
 /*                @Project: IFJ14
 -----------------------------------------------------
   @Author: Marek Bielik   xbieli05@stud.fit.vutbr.cz
-  @Author: Filip Gulan    xgulan00@stud.fit.vutbr.cz
+  @Author: Filip Gulán    xgulan00@stud.fit.vutbr.cz
   @Author: Filip Ježovica xjezov01@stud.fit.vutbr.cz
   @Author: Luboš Matuška  xmatus29@stud.fit.vutbr.cz
   @Author: Eduard Rybár   xrybar04@stud.fit.vutbr.cz
 -----------------------------------------------------
 */
 
-//     *( *(int **) (myaTop(&aS)))
 
 #include "header.h"
 #include "astack.h"
@@ -21,17 +20,15 @@
 
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
-list *GLOBFRAME;
-astack FRAME;
 
+list *GLOBFRAME;
+list *MASTERTAB; // pomocna tabulka pre priame dat typy (int, str,...)
+
+astack FRAME; // zasobnik lokalnzch tabuliek
 astack aS; // pomocny zasobnik adries pre interpreter
 
-list *MASTERTAB;
 
-
-
-
-int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
+void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
     astack_init(&aS);
     hash_insert_it (MASTERTAB, "c_integer", S_INTEGER );
@@ -40,61 +37,15 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
    // hash_insert_it (MASTERTAB, "c_bool", S_RETEZEC );
 
 
-    void* zarazka = malloc(sizeof(char));
-    if (zarazka == NULL)
-    {
-    	// chyba alokacie
-			trashDestroy();
-			exit(99);
-    }
-   
-
+    void* zarazka = mymalloc(sizeof(char));
     myaPush(&aS, zarazka); // nahadzuje sa hlavna zarazka
 
 
     // ----------------alokacia pomocnych premennych roznych TIPOV------------//
-    void *c_integer = malloc(sizeof(int));
-     if (c_integer == NULL)
-    {
-    	// chyba alokacie
-			trashDestroy();
-			exit(99);
-    }
-    
-    
-
-    void *c_double = malloc(sizeof(float));
-    if (c_double == NULL)
-    {
-    	// chyba alokacie
-			trashDestroy();
-			exit(99);
-    }
-    
-    	
-    
-
-    void *c_bool = malloc(sizeof(bool));
-    if (c_bool == NULL)
-    {
-    	// chyba alokacie
-			trashDestroy();
-			exit(99);
-    }
-    
-
-    void *c_string = malloc(sizeof(char));
-    if (c_string == NULL)
-    {
-    	// chyba alokacie
-			trashDestroy();
-			exit(99);
-    }
-    
-    	
-
-    
-    // niekedy odalokujeme
+    void *c_integer = mymalloc(sizeof(int));
+    void *c_double = mymalloc(sizeof(float));
+    void *c_bool = mymalloc(sizeof(bool));
+    void *c_string = mymalloc(sizeof(char));
 
 
     tStav TIP;
@@ -130,8 +81,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //------------------------------------ak pride IDENTIFIKATOR------------------------------------------//
         case I_IDENT:
         {
-
-
             list *TOPFRAME;
             TOPFRAME = myaTop(&FRAME);    // pozrieme sa na najvrchnejsi FRAME //
 
@@ -173,9 +122,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             else if (TIP == S_RETEZEC)
             {
-
-
-
                 void* pomAddr1; // to co vytiahneme zo zasobnika ako NAJVRCHNEJSIE
 
                 pomAddr1 = (*(void **)(myaTop(&aS)));  // IDENTIFIKATOR (CEZ TABULKU SYMBOLOV)
@@ -188,7 +134,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 int dlzka = strlen(((char**)pomAddr1));
 
 
-                void *pom = realloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
+                void *pom = myrealloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
                 void **kk = (myaTop(&aS));
                 *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
 
@@ -215,13 +161,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //-----------------------------------------------ALLOC pripady-----------------------------------------//
         case I_ALLOC_INT:
         {
-            if(  ((*(void **)(myaTop(&aS))) = malloc(sizeof(int))) == NULL)
-            {
-            	// chyba alokacie
-        		trashDestroy();
-       			exit(99);
-            }
-
+            (*(void **)(myaTop(&aS))) = mymalloc(sizeof(int));
 
             myaPop(&aS);
 
@@ -231,13 +171,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_ALLOC_DOU:
         {
-
-            if(  ((*(void **)(myaTop(&aS))) = malloc(sizeof(float))) == NULL)
-            {
-            	// chyba alokacie
-        		trashDestroy();
-       			exit(99);
-            }
+            (*(void **)(myaTop(&aS))) = mymalloc(sizeof(float));
 
             myaPop(&aS);
 
@@ -248,13 +182,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_ALLOC_BOO:
         {
-
-           if( ((*(void **)(myaTop(&aS))) = malloc(sizeof(bool))) == NULL)
-           {
-           		// chyba alokacie
-        		trashDestroy();
-       			exit(99);
-           }
+            (*(void **)(myaTop(&aS))) = mymalloc(sizeof(bool));
 
             myaPop(&aS);
 
@@ -263,13 +191,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_ALLOC_STR:
         {
-
-            if( ((*(void **)(myaTop(&aS))) = malloc(sizeof(char))) == NULL)
-            {
-            	// chyba alokacie
-        		trashDestroy();
-       			exit(99);
-            }
+            (*(void **)(myaTop(&aS))) = mymalloc(sizeof(char));
 
             myaPop(&aS);
 
@@ -281,7 +203,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_READ:
         {
- 
             list *TOPFRAME;
             TOPFRAME = myaTop(&FRAME);
 
@@ -316,18 +237,18 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 int dlzkastringu = 0;
                 while((znak=getchar())!= '\n' )
                 {
-                    (prvok)->ref = realloc( (prvok)->ref , (sizeof(char)*dlzkastringu+2));
+                    (prvok)->ref = myrealloc( (prvok)->ref , (sizeof(char)*dlzkastringu+2));
 
                     //  OK  *(char *) &((prvok)->ref)[dlzkastringu] = znak;  magia takto to ide :D
                     *(char *) &((prvok)->ref)[dlzkastringu] = znak;
                     dlzkastringu++;
-
                 }
 
                 *(char *) &((prvok)->ref)[dlzkastringu+1] = '\0';  // pridame znak ukoncenia retazca
 
                 break;
             }
+
             default:
             {
                 //chybka
@@ -341,9 +262,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
 
-
-
-//------------------------------------------------WRITE pripady-------------------------------------------//
+//------------------------------------------------WRITE -----------------------------------------------//
         case I_WRITE_IDE:
         {
             // treba zistit akeho je tipu //
@@ -419,7 +338,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         }
 
 
-//-------------------------------------nasleduje +,-,*,--------------------------------------------//
+//------------------------------------------ +,-,*, / -------------------------------------------------//
         case I_PLUS:
         {
 
@@ -462,22 +381,15 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
                 //int dlzka = (  (strlen((*(char**)pomAddr1))) +  (strlen((*(char**)pomAddr2)))    );
 
+// SKONTROLOVAT CI DAVA DOBRU DLZKU...-------------------------------------------------------------------------!!!!!-----
+
                 int dlzka = strlen( pomAddr2 ) + strlen( pomAddr1 );
-                void* pomAddr3 = malloc(((sizeof(char))*dlzka)+1);
-                if (pomAddr3 == NULL) // chyba alokacie
-                {
-                    // chyba alokacie
-        			trashDestroy();
-       				exit(99);
-                }
+                void* pomAddr3 = mymalloc(((sizeof(char))*dlzka)+1);
+
                 strcpy(  pomAddr3, ((char**)pomAddr2)  );
-                c_string = realloc(   c_string  , ( ((sizeof(char))*dlzka)+2 ) );
-                if (c_string == NULL) // chyba alokacie
-                {
-                    // chyba alokacie
-        			trashDestroy();
-       				exit(99);
-                }
+
+                c_string = myrealloc(   c_string  , ( ((sizeof(char))*dlzka)+2 ) );
+
                 strcpy(  c_string, ((char**)pomAddr3)  );
                 strcat(  c_string, ((char**)pomAddr1)  );
                 list_element prvok;
@@ -487,7 +399,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
 
 
-            break;  // PLUS KONIEC
+            break;
         }
 
 
@@ -521,7 +433,7 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPush(&aS, &(prvok)->ref);
             }
 
-            break;  // KONIEC MINUS
+            break;
         }
 
 
@@ -569,8 +481,10 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 if (a == 0)
                 {
                     //DELENIE NULOV
-                    exit(8); // zle zle zle fuj fuj
+                    fprintf(stderr, "8: Behova chyba. Snazis sa delit NULOU ! \n");
+                    trashDestroy(behova_chyba_deleni_nulou); // chyba 8
                 }
+
                 myaPop(&aS);
                 int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
@@ -585,11 +499,13 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
                 float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
-                if (a == 0)
+                if (a == 0.0)
                 {
                     //DELENIE NULOV
-                    exit(8); // zle zle zle fuj fuj
+                    fprintf(stderr, "8: Behova chyba. Snazis sa delit NULOU ! \n");
+                    trashDestroy(behova_chyba_deleni_nulou); // chyba 8
                 }
+
                 float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
@@ -607,7 +523,6 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
         //----------------------------------DOPLNIL MATUSKA - TREBA SKONTROLOVAT----------------------------//
-// NUTNO ZKONTROLOVAT
         case I_ROVNO:
         {
             if (TIP == S_INTEGER) /*int = int*/
@@ -943,5 +858,5 @@ int inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
     // tuto bude dealokacia pomocnych premenych
 
-    return 1; // VSETKO OK
+    return ; // VSETKO OK
 }
