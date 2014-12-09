@@ -142,9 +142,6 @@ void whattoken(tStav stav)
         case S_TECKA:
         	fprintf(stderr, "< key: . >");
         	break;
-        case S_DVE_TECKY:
-        	fprintf(stderr, "< key: .. >");
-        	break;
         case S_CARKA:
         	fprintf(stderr, "< key: , >");
         	break;
@@ -153,12 +150,6 @@ void whattoken(tStav stav)
         	break;
         case S_PRAVA_ZAVORKA:
         	fprintf(stderr, "< key: ) >");
-        	break;
-        case S_LEVA_HRANATA_ZAVORKA:
-        	fprintf(stderr, "< key: [ >");
-        	break;
-        case S_PRAVA_HRANATA_ZAVORKA:
-        	fprintf(stderr, "< key: ] >");
         	break;
         case S_LEVA_SLOZENA_ZAVORKA:
         	fprintf(stderr, "< key: { >");
