@@ -546,8 +546,9 @@ void extractRule(tSem_context* s_con)
 
        else if
          ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || 
-          (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE) ||
-          (actToken.stav == S_BOOLEAN) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ?
+          (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE)   ||
+          (actToken.stav == S_BOOLEAN) || (actToken.stav == S_KLIC_FALSE)  || 
+          (actToken.stav == S_KLIC_TRUE) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ?
         {
             //vieme ze nemama FUKNCIU, BUDEME PUSTAT PRECEDENCNU---->isVyraz();
 
@@ -555,6 +556,7 @@ void extractRule(tSem_context* s_con)
 
             if ((isVyraz()) == 0)   // ak podmienka plati vytvorime instrukciu priradenia
             {
+
                 NaplnInstr( I_PRIRAD, NULL , NULL, NULL );
             }
         }
@@ -914,7 +916,6 @@ bool parse()
 
     while(actToken.stav != S_END_OF_FILE) // dokym som neni na konci suboru
     {
-
         if (myTop(&S) == EOF && actToken.stav != S_END_OF_FILE)
         {
             //CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor

@@ -1,35 +1,26 @@
 var
 a:integer;
 b:integer;
+c:string;
 
-function ff(a:integer) : integer;
+x:boolean;
+z:boolean;
+
+v:boolean;
+
+
 
 
 
 begin
 
 
+x:= true ;
+z:= false;
 
-ff:= a + a
+v:= 2 = 2 ;
 
-
-end;
-
-
-
-begin
-
-b:=8;
-
-a:=ff(b);
-
-write(a)
-
-
-
-
-
-
+write(v)
 
 
 

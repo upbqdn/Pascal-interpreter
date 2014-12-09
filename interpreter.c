@@ -46,7 +46,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     hash_insert_it (MASTERTAB, "c_integer", S_INTEGER );
     hash_insert_it (MASTERTAB, "c_double", S_DOUBLE );
     hash_insert_it (MASTERTAB, "c_string", S_RETEZEC );
-   // hash_insert_it (MASTERTAB, "c_bool", S_RETEZEC );
+    hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
 
 
     
@@ -104,6 +104,10 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
 
             TIP = (*prvok).type;
+            if (TIP == S_KLIC_BOOLEAN)
+            {
+                TIP = S_BOOLEAN;
+            }
 
             myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
 
@@ -155,12 +159,12 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
             }
-            else if ( TIP == S_KLIC_TRUE || S_KLIC_FALSE )
+            else if ( (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) || (TIP == S_BOOLEAN) )
             {
-                bool pomoc1 = (*(bool*)(myaTop(&aS)));
+                bool pomoc1 = *( *(bool **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
-                (*(bool*)(myaTop(&aS))) = pomoc1 ;
+                *( *(bool **) (myaTop(&aS))) = pomoc1 ;
                 myaPop(&aS);
             }
 
@@ -276,31 +280,36 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 //------------------------------------------------WRITE -----------------------------------------------//
         case I_WRITE_IDE:
         {
-            // treba zistit akeho je tipu //
+            // treba zistit akeho je tipu //  // PRIDALI SME POP uvidime :D
             switch(TIP)
             {
             case S_INTEGER:
             {
                 printf("%d", *( *(int **) (myaTop(&aS))) );
+                myPop(&aS);
                 break;
             }
 
             case S_DOUBLE:
             {
                 printf("%g", *( *(float **) (myaTop(&aS)))  );
+                myPop(&aS);
                 break;
             }
 
             case S_RETEZEC:
             {
             printf("%s", ( *(char **) (myaTop(&aS))) );
+            myPop(&aS);
             break;
             }
 
             case S_KLIC_FALSE:
             case S_KLIC_TRUE:
+            case S_BOOLEAN:
             {
-                printf("%d", *(bool*)myaTop(&aS)  );
+                printf("%d", *( *(bool **) (myaTop(&aS)))  );
+                myPop(&aS);
                 break;
             }
 
@@ -342,7 +351,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_BOO:
         {
-            printf("%d", myaTop(&aS) );
+            printf("%d", *( *(bool **) (myaTop(&aS)))  );
             myPop(&aS);
 
             break;
@@ -361,8 +370,12 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
 
                 *(int*)c_integer = b + a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
+
+                hash_insert_it (MASTERTAB, "4", S_INTEGER );
+                
                 list_element prvok;
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "4"  )); // ID kluc
                 (prvok)->ref = c_integer ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
 
@@ -403,6 +416,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                 strcpy(  c_string, ((char**)pomAddr3)  );
                 strcat(  c_string, ((char**)pomAddr1)  );
+
                 list_element prvok;
                 prvok = (list_element)(hash_adress(MASTERTAB, "c_string")); // ID kluc
                 (prvok)->ref = c_string ;
@@ -550,7 +564,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+
+                //myaPush(&aS, c_bool);
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
+
+
             }
             if (TIP == S_DOUBLE) /* real = real */
             {
@@ -566,7 +593,16 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
             }
             if (TIP == S_RETEZEC) /* string = string */
             {
@@ -574,7 +610,35 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
+
                 if (strcmp (pomAddr1, pomAddr2))
+                {
+                    *(bool*)c_bool = false;
+                }
+                else
+                {
+                    *(bool*)c_bool = true;
+                }
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
+            }
+
+            if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool = bool */
+            {
+                bool a = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                if (a == b)
                 {
                     *(bool*)c_bool = true;
                 }
@@ -582,10 +646,22 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+            }
+
+
+
             break;
         }
+
+
 
         case I_NEROVNO:
         {
@@ -603,7 +679,16 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_DOUBLE) /* real <> real */
             {
@@ -619,7 +704,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_RETEZEC) /* string <> string */
             {
@@ -627,7 +722,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                if (!(strcmp (pomAddr1, pomAddr2)))
+                if ((strcmp (pomAddr1, pomAddr2)))
                 {
                     *(bool*)c_bool = true;
                 }
@@ -635,10 +730,51 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
+            }
+
+
+
+            if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool != bool */
+            {
+                bool a = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                if (a != b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+            }
+
+
+
             break;
         }
+
+
 
         case I_VETSI:
         {
@@ -656,7 +792,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_DOUBLE) /* real > real */
             {
@@ -672,7 +818,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_RETEZEC) /* string > string */
             {
@@ -680,7 +836,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) > 0)
+                if ((strcmp (pomAddr2, pomAddr1)) > 0)
                 {
                     *(bool*)c_bool = true;
                 }
@@ -688,10 +844,49 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
+            }
+
+
+            if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool > bool */
+            {
+                bool a = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                if (a > b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+            }
+
+
             break;
         }
+
+
 
         case I_MENSI:
         {
@@ -709,7 +904,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_DOUBLE) /* real < real */
             {
@@ -725,7 +930,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_RETEZEC) /* string < string */
             {
@@ -733,7 +948,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) < 0)
+                if ((strcmp (pomAddr2, pomAddr1)) < 0)
                 {
                     *(bool*)c_bool = true;
                 }
@@ -741,10 +956,49 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
+            }
+
+
+            if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool < bool */
+            {
+                bool a = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                if (a < b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+            }
+
+
             break;
         }
+
+
 
         case I_VETSIROVNO:
         {
@@ -762,7 +1016,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_DOUBLE) /* real >= real */
             {
@@ -778,7 +1042,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_RETEZEC) /* string >= string */
             {
@@ -786,7 +1060,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) >= 0)
+                if ((strcmp (pomAddr2, pomAddr1)) >= 0)
                 {
                     *(bool*)c_bool = true;
                 }
@@ -794,8 +1068,46 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
+            }
+
+
+            if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool >= bool */
+            {
+                bool a = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                if (a >= b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+            }
+
+
+
             break;
         }
 
@@ -815,7 +1127,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_DOUBLE) /* real <= real */
             {
@@ -831,7 +1153,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
             }
             if (TIP == S_RETEZEC) /* string <= string */
             {
@@ -839,7 +1171,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 myaPop(&aS);
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
                 myaPop(&aS);
-                if ((strcmp (pomAddr1, pomAddr2)) <= 0)
+                if ((strcmp (pomAddr2, pomAddr1)) <= 0)
                 {
                     *(bool*)c_bool = true;
                 }
@@ -847,8 +1179,46 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                myaPush(&aS, c_bool);
-            }// bude nasledovat porovnani dvou hodnot typu boolean
+                
+
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+
+            }
+
+
+            if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool <= bool */
+            {
+                bool a = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                if (a <= b)
+                {
+                    *(bool*)c_bool = true;
+                }
+                else
+                {
+                    *(bool*)c_bool = false;
+                }
+                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
+                
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                (prvok)->ref = c_bool ;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+
+            }
+
+
+
             break;
         }
 

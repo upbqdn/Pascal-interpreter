@@ -88,12 +88,7 @@ do
 	if ( (actToken.stav == S_INTEGER) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_KLIC_TRUE) || (actToken.stav == S_KLIC_FALSE))/* + int , double ... */
 	{
 		void *spracADDR = spracuj(actToken.stav, actToken.data);
-		if (spracADDR == NULL )
-		{
-			// chybiska
-			if (vypis) printf("CHYBISKA.....\n");
-			return 1; // tu nejaky ERR KOD
-		}
+
 		void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
 		tStav *TIPSTAV = mymalloc(sizeof(tStav));
@@ -106,12 +101,7 @@ do
 	if (actToken.stav == S_IDENTIFIKATOR)
 	{
 		void *spracADDR = spracuj(actToken.stav, actToken.data);
-		if (spracADDR == NULL )
-		{
-			// chybiska
-			if (vypis) printf("CHYBISKA.....\n");
-			return 1; // tu nejaky ERR KOD
-		}
+
 		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actToken.data); if (vypis) whattoken(actToken.stav);
 		NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 	}
@@ -176,7 +166,7 @@ do
 		case '>':
 			if (vypis) showStack(&S);
 			if (vypis) printf(" pouzivam pravidlo > \n");
-			if ((myTop(&S) == 12) || (myTop(&S) == 14) || (myTop(&S) == 15) || (myTop(&S) == 16) || (myTop(&S) == 17))
+			if ((myTop(&S) == 12) || (myTop(&S) == 14) || (myTop(&S) == 15) || (myTop(&S) == 16) || (myTop(&S) == 17) || (myTop(&S) == 18))
 			{
 				do 
 				{ 
