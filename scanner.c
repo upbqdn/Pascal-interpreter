@@ -102,7 +102,6 @@ tToken get_token(void)
             else if (c == '.')          stav = S_TECKA;
             else if (c == ':')          stav = S_DVOJTECKA;
             else if (c == ';')          stav = S_STREDNIK;
-            else if (c == '^')          stav = S_UKAZATEL;
             else if (c == ',')          stav = S_CARKA;
             else if (c == '<')          stav = S_MENSI;
             else if (c == '{')
@@ -117,8 +116,6 @@ tToken get_token(void)
             }
             else if (c == '(')          stav = S_LEVA_ZAVORKA;
             else if (c == ')')          stav = S_PRAVA_ZAVORKA;
-            else if (c == '[')          stav = S_LEVA_HRANATA_ZAVORKA;
-            else if     (c == ']')          stav = S_PRAVA_HRANATA_ZAVORKA;
             else if (c == '>')          stav = S_VETSI;
             else if (c == '\'')
             {
@@ -250,7 +247,7 @@ tToken get_token(void)
             if (isdigit(c))
             {
                 stav = S_DOUBLE;
-                vloz_znak_do_tokenu(c, &i);
+                //vloz_znak_do_tokenu(c, &i);
             }
             else
             {
@@ -298,7 +295,7 @@ tToken get_token(void)
             break;
         }
 
-        case S_DOUBLE_CELA_A_DESETINNA_CAST_A_EXPONENT:
+   /*     case S_DOUBLE_CELA_A_DESETINNA_CAST_A_EXPONENT:
         {
             if (isdigit(c))
             {
@@ -317,7 +314,7 @@ tToken get_token(void)
                 vrat_se_o_znak((char) c);
             }
             break;
-        }
+        }*/
 
         case S_DOUBLE:
         {
@@ -347,6 +344,7 @@ tToken get_token(void)
                 stav = S_NEROVNO;
                 vloz_znak_do_tokenu(c, &i);
             }
+            else
             {
                 napln_token(stav);
                 stav = S_END;
@@ -376,22 +374,6 @@ tToken get_token(void)
             if (c == '=')
             {
                 stav = S_PRIRAZENI;
-                vloz_znak_do_tokenu(c, &i);
-            }
-            else
-            {
-                napln_token(stav);
-                stav = S_END;
-                vrat_se_o_znak((char) c);
-            }
-            break;
-        }
-
-        case S_TECKA:
-        {
-            if (c == '.')
-            {
-                stav = S_DVE_TECKY;
                 vloz_znak_do_tokenu(c, &i);
             }
             else
@@ -564,9 +546,9 @@ tToken get_token(void)
         case S_KLIC_WRITE:      // klucove slova potialto
 
         case S_CARKA:
+        case S_TECKA:
         case S_STREDNIK:
         case S_PRIRAZENI:
-        case S_DVE_TECKY:
         case S_PLUS:
         case S_MINUS:
         case S_KRAT:
@@ -574,14 +556,10 @@ tToken get_token(void)
         case S_ROVNO:
         case S_LEVA_ZAVORKA:
         case S_PRAVA_ZAVORKA:
-        case S_LEVA_HRANATA_ZAVORKA:
-        case S_PRAVA_HRANATA_ZAVORKA:
         case S_VETSI_NEBO_ROVNO:
         case S_MENSI_NEBO_ROVNO:
         case S_NEROVNO:
-        case S_UKAZATEL:
         case S_END_OF_FILE:
-        case S_KOMENTAR:
         {
             napln_token(stav);
             stav = S_END;
@@ -591,7 +569,7 @@ tToken get_token(void)
 
         case S_CHYBA:
         {
-            vloz_znak_do_tokenu(c, &i);
+            //vloz_znak_do_tokenu(c, &i);
             napln_token(stav);
             error = chyba_v_programu_v_ramci_lexikalni_analyzy;
             //vrat_se_o_znak((char) c);
@@ -599,8 +577,7 @@ tToken get_token(void)
             token.radek = radek;
             token.sloupec = sloupec;
             fprintf(stderr, "LEXIKALNI CHYBA : %d na souradnici[%d, %d] \n", error, radek+1, sloupec);
-            void trashDestroy(); /* uklizim */
-            exit(1);
+            void trashDestroy(chyba_v_programu_v_ramci_lexikalni_analyzy); /* uklizim */
             break;
         }
         case S_END:
