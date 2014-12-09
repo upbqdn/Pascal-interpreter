@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdarg.h>
+#include <signal.h>
 
 extern FILE *soubor;
 

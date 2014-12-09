@@ -30,11 +30,15 @@ astack FRAME;
 
 list *MASTERTAB;
 
-
-
+void signals(int sighandler) {
+    (void)sighandler;
+    trashDestroy(9);
+}
 
 int main(int argc, char *argv[])
 {
+	signal(SIGTERM, signals);
+	signal(SIGINT, signals);
 	trashInit();
   if(argc != 2)
   {
