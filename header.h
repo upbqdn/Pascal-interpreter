@@ -74,14 +74,12 @@ typedef enum
     S_DOUBLE,					//cislo typu double
   //  S_DOUBLE_CELA_A_DESETINNA_CAST,		//cislo typu double
     S_DOUBLE_CELA_CAST_A_EXPONENT,		//cislo typu double
-    S_DOUBLE_CELA_A_DESETINNA_CAST_A_EXPONENT,//cislo typu double
     S_DOUBLE_POMOC,				//pomocny double 
     S_IDENTIFIKATOR,				//identifikator  // 29
     S_PLUS,					// +
     S_MINUS,					// -
     S_KRAT,					// *
     S_DELENO,					// / 
-    S_UKAZATEL,					// ^
     S_MENSI,					// <
     S_MENSI_NEBO_ROVNO,				// <=
     S_VETSI,					// >
@@ -92,12 +90,9 @@ typedef enum
     S_DVOJTECKA,				// :
     S_PRIRAZENI,				// := 
     S_TECKA,					// . //44
-    S_DVE_TECKY,				// ..
     S_CARKA,					// ,
     S_LEVA_ZAVORKA,				// (
     S_PRAVA_ZAVORKA,				// ) 
-    S_LEVA_HRANATA_ZAVORKA,			// [
-    S_PRAVA_HRANATA_ZAVORKA,			// ]
     S_LEVA_SLOZENA_ZAVORKA,			// {
     S_PRAVA_SLOZENA_ZAVORKA,			// }
     S_RETEZEC,					// string 
