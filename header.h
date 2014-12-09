@@ -123,7 +123,12 @@ typedef enum
     LL_E,
 
     LL_NPLIST_NID,//77
-    LL_FUNCEND, //78
+    LL_IF_END,  //
+    LL_BSTAT_END,
+    LL_BSTAT_THEN,
+    LL_BSTAT_WHILE,
+    LL_BSTAT_WHILE_END,
+    LL_FUNCEND, //
 
 
     F_ID, // 79

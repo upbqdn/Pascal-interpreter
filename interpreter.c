@@ -68,8 +68,17 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     {
         Instr = DajInstr(&INSTR_PASKA);
 
+        //printf("INSTR_<<%d>>\n",  Instr->AKCIA );
+
         switch(Instr->AKCIA)
         {
+
+            case I_NICNEROBA:
+            {
+
+
+                break;
+            }
 
 //-----------------------------ak pride int,double,boolean,string..-----------------------------------//
         case I_PREC:
@@ -1344,6 +1353,40 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 //----------------------potialto su INSTRUKCIE NA FUNKCIE --------------------------------------------------//
 
+        case I_JMP:
+        {
+
+            //DIRECT JUMP
+
+            //NaplnInstr(I_PODM_JMP, myaSecTop(&IFJMP), NULL, NULL);
+            
+            InstrGoto(&INSTR_PASKA,   *(void**) (Instr->ADDR_KDE)   );
+
+        continue;
+    //InstrDalsia(&INSTR_PASKA);
+
+
+
+
+            
+
+            break;
+        }
+
+        case I_PODM_JMP:
+        {
+
+            if (   !(*( *(bool **) (myaTop(&aS))))     )
+            {
+
+                InstrGoto(&INSTR_PASKA,   *(void**) (Instr->ADDR_KDE)    );
+                continue;
+                //InstrDalsia(&INSTR_PASKA);
+            }
+            //else neskace
+
+            break;
+        }
 
 
         default:

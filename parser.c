@@ -26,6 +26,8 @@ void* zarazka; // global
 list *GLOBFRAME; // globalna tabulka
 astack FRAME;
 
+astack IFJMP;
+
 stack S; //zasobnik
 tToken actToken; // aktualny token GLOBALNY
 
@@ -470,20 +472,46 @@ void extractRule(tSem_context* s_con)
         case S_KLIC_WHILE:
         {
             myPop(&S);      // mozna zmena LL_E //
-            myPushMul(&S, 4, S_KLIC_WHILE, LL_E, S_KLIC_DO, LL_BSTAT);
+            myPushMul(&S, 4, S_KLIC_WHILE, LL_E, S_KLIC_DO, LL_BSTAT_WHILE);
 
-            // tuto sa musi hned vygenerovat instrukcia skoku //
+            // koli instrukciam
+            void *whileaddr1 = mymalloc(sizeof(struct tPrvokListu)) ;
+            myaPush(&IFJMP, whileaddr1);
+
+            // vytvorime si navestie pomocou NIC-NEROBY :D
+            NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
+
+            void* pomad;        
+            pomad = InstrDajPoz(&INSTR_PASKA); 
+
+            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
+
+
+
+            void *whileaddr2 = mymalloc(sizeof(struct tPrvokListu)) ;
+            myaPush(&IFJMP, whileaddr2);
 
             break;
         }
 
         case S_KLIC_IF:
         {
-            myPop(&S);      // mozna zmena LL_E //
-            myPushMul(&S, 6, S_KLIC_IF, LL_E, S_KLIC_THEN, LL_BSTAT, S_KLIC_ELSE, LL_BSTAT);
+            myPop(&S);
+            myPushMul(&S, 6, S_KLIC_IF, LL_E, S_KLIC_THEN, LL_BSTAT_THEN, LL_IF_END, LL_BSTAT);
+
+            // koli instrukciam
+            void *ifaddr1 = mymalloc(sizeof(struct tPrvokListu)) ;
+            myaPush(&IFJMP, ifaddr1);
+
+
+            void *ifaddr2 = mymalloc(sizeof(struct tPrvokListu)) ;
+            myaPush(&IFJMP, ifaddr2);
+
 
             break;
         }
+
+
 
         case S_KLIC_READLN:
         {
@@ -514,6 +542,40 @@ void extractRule(tSem_context* s_con)
             break;
         }
         }
+        break;
+    }
+
+    case LL_IF_END:
+    {
+        if (actToken.stav == S_KLIC_ELSE)
+        {
+            myPop(&S);
+            myPush(&S, S_KLIC_ELSE);
+
+            // treba zapisat do instrukcie adresu kam sa bude skakat.
+            // lenze to miestecko mame az ako druhe v zasobniku
+            // DIRECT JMP musi skocit
+
+            NaplnInstr(I_JMP, myaSecTop(&IFJMP), NULL, NULL);
+
+            NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
+
+            // tu nam zacina vetva ELSE.. sem sme mohli skocit po vyhodnoteni vyrazu >> FALSE
+            void* pomad;        
+            pomad = InstrDajPoz(&INSTR_PASKA); 
+
+            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
+
+            myaPop(&IFJMP);
+
+            
+        }
+        else
+        {
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som ELSE\n");
+            trashDestroy(2);
+        }
+
         break;
     }
 
@@ -571,11 +633,94 @@ void extractRule(tSem_context* s_con)
 
 
 //----------------------------------BSTAT----------------------------------
-    case  LL_BSTAT:
+    
+    case LL_BSTAT_WHILE:
+    {
+        myPop(&S);
+        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, LL_BSTAT_WHILE_END );
+
+        // podmienka vyhodnotena
+
+        break;
+    }
+
+
+    case LL_BSTAT_WHILE_END:
+    {
+        if (actToken.stav == S_KLIC_END)
+        {
+            myPop(&S);
+            myPush(&S, S_KLIC_END );
+
+            NaplnInstr(I_JMP, myaSecTop(&IFJMP), NULL, NULL);
+
+            NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
+
+            void* pomad;        
+            pomad = InstrDajPoz(&INSTR_PASKA); 
+
+            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
+    
+            myaPop(&IFJMP);
+            myaPop(&IFJMP);
+ 
+
+
+        }
+        else
+        {
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som END\n" );
+            trashDestroy(2);
+        }
+        break;
+    }
+
+
+
+
+
+    case  LL_BSTAT_THEN:
     {
         myPop(&S);
         myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END );
 
+        break;
+    }
+
+    case  LL_BSTAT:
+    {
+        myPop(&S);
+        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, LL_BSTAT_END );
+
+        break;
+    }
+
+    case LL_BSTAT_END:
+    {
+        if (actToken.stav == S_KLIC_END)
+        {
+            myPop(&S);
+            myPush(&S, S_KLIC_END );
+            // PRE IF kocien
+
+            // tu nam konci vetva ELSE.. sem sme mohli skocit po vyhodnoteni vyrazu >> FALSE
+            NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
+
+
+            void* pomad;        
+            pomad = InstrDajPoz(&INSTR_PASKA); 
+
+            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
+    
+            myaPop(&IFJMP);
+
+
+        }
+        else
+        {
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som END\n" );
+            trashDestroy(2);
+        }
         break;
     }
 
@@ -878,9 +1023,9 @@ void extractRule(tSem_context* s_con)
     {
         myPop(&S);
 
-        if ((isVyraz()) == 0)   // ak podmienka plati vytvorime instrukciu priradenia
+        if ((isVyraz()) == 0)   // ak podmienka plati vytvorime instrukciu
         {
-            NaplnInstr( I_PRIRAD, NULL , NULL, NULL );
+            NaplnInstr(I_PODM_JMP, myaTop(&IFJMP), NULL, NULL);
         }
 
         break;
@@ -897,12 +1042,18 @@ void extractRule(tSem_context* s_con)
 
 bool parse()
 {
+    NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
+    InstrStart(&INSTR_PASKA);
+
 	zarazka  = malloc(sizeof(char)); // zarazka adresova
 
 	hash_insert_it(GLOBFRAME, "begin", 444); // navestie mainu
 
     bool ERRO = true;
     stack_init(&S);
+
+    astack_init(&IFJMP);
+
     myPush(&S, EOF); // zarazka $$$$
     myPush(&S, LL_INIT);
 
@@ -1013,7 +1164,7 @@ bool parse()
             }
             else
             {
-                fprintf(stderr, "2: Syntakticka chyba. Ocakaval som  ");
+                fprintf(stderr, "2: Syntakticka chyba..... Ocakaval som  ");
                 whattoken(myTop(&S));
                 fprintf(stderr, "riadok : %d , stlpec %d .", actToken.radek+1, actToken.sloupec);
                 fprintf(stderr, "\n" );

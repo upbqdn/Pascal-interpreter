@@ -17,42 +17,43 @@
  */
 typedef enum
 {
-    I_STOP = 0, //  
-    I_READ, //      
-    I_WRITE_INT, // 
-    I_WRITE_IDE,
-    I_WRITE_DOU, //
-    I_WRITE_STR, //
-    I_WRITE_BOO, // 
-    I_PREC, //     
-    I_IDENT, //     
-    I_PRIRAD, //   
-    I_PLUS, //     
-    I_MINUS, //     
-    I_KRAT, //      
-    I_DELENO, //    
-    I_ALLOC_INT,  
-    I_ALLOC_DOU,
-    I_ALLOC_BOO,
-    I_ALLOC_STR,
-    I_VAR_ZARAZKA,
-    I_VETSI,
-    I_MENSI,
-    I_MENSIROVNO,
-    I_VETSIROVNO,
-    I_ROVNO,
-    I_NEROVNO,
-
-    // instrukcie na funkcie
-
-    I_JMPF_KEY,
-    I_JMPF_KEY_S,
-    I_JMP_S,
-    I_JMP_BACK,
-    I_FUN_PRIRAD_PARAM,
-    I_RUNFUN_COPY,
-    I_RUNFUN_PARAM,
-    I_FRAME_DEL,
+    I_STOP = 0,     //0
+    I_NICNEROBA,    //1
+    I_READ,         //2     
+    I_WRITE_INT,    //3 
+    I_WRITE_IDE,    //4
+    I_WRITE_DOU,    //5
+    I_WRITE_STR,    //6
+    I_WRITE_BOO,    //7
+    I_PREC,         //8    
+    I_IDENT,        //9     
+    I_PRIRAD,       //10
+    I_PLUS,         //11    
+    I_MINUS,        //12    
+    I_KRAT,         //13     
+    I_DELENO,       //14  
+    I_ALLOC_INT,    //15
+    I_ALLOC_DOU,    //16
+    I_ALLOC_BOO,    //17
+    I_ALLOC_STR,    //18
+    I_VAR_ZARAZKA,  //19
+    I_VETSI,        //20
+    I_MENSI,        //21
+    I_MENSIROVNO,   //22   
+    I_VETSIROVNO,   //23
+    I_ROVNO,        //24
+    I_NEROVNO,      //25
+                        // instrukcie na funkcie
+    I_JMPF_KEY,     //26
+    I_JMPF_KEY_S,   //27
+    I_JMP_S,        //28
+    I_JMP_BACK,     //29    
+    I_FUN_PRIRAD_PARAM, //30
+    I_RUNFUN_COPY,  //31
+    I_RUNFUN_PARAM, //32
+    I_FRAME_DEL,    //33
+    I_PODM_JMP,     //34
+    I_JMP,          //35
 
 
 } tINSTR;
