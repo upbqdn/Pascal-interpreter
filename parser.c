@@ -78,10 +78,10 @@ void extractRule(tSem_context* s_con)
         if (actToken.stav == S_IDENTIFIKATOR)
         {
             //VDEC -> id : TYPE
-            
+
             myPop(&S);
             myPushMul(&S, 3, S_IDENTIFIKATOR, S_DVOJTECKA, LL_TYPE);
-            
+
 
             void *spracADDR = spracuj(actToken.stav, actToken.data);
 
@@ -106,7 +106,7 @@ void extractRule(tSem_context* s_con)
 
             //  NVLIST -> VDEC ; NVLIST
 
-             sem_check (s_con);  //volam analyzu novo deklarovanej premennej
+            sem_check (s_con);  //volam analyzu novo deklarovanej premennej
         }
         else // eps prechod
         {
@@ -132,7 +132,7 @@ void extractRule(tSem_context* s_con)
 
             NaplnInstr(I_ALLOC_INT, NULL, NULL, NULL);
 
-        		s_con->act_type = S_INTEGER;
+            s_con->act_type = S_INTEGER;
             break;
         }
 
@@ -186,14 +186,14 @@ void extractRule(tSem_context* s_con)
     {
         if (actToken.stav == S_KLIC_FUNCTION)
         {
-        	//gener-dole-------------------------------------
-        	
-        	// JMP na BEGIN hlavneho programu 	 	
-            // podla kluca 'begin' si najde v GLOBAL->(key)start  adresu kam skocit 	 	
-	        void *spracADDR = spracuj(S_IDENTIFIKATOR, "begin"); // slo by to aj inac ale pre jednotnost.. 	 	
-            NaplnInstr(I_JMPF_KEY, NULL, spracADDR, NULL); // skoci prec 
+            //gener-dole-------------------------------------
 
-			//gener--hore--------------------------
+            // JMP na BEGIN hlavneho programu
+            // podla kluca 'begin' si najde v GLOBAL->(key)start  adresu kam skocit
+            void *spracADDR = spracuj(S_IDENTIFIKATOR, "begin"); // slo by to aj inac ale pre jednotnost..
+            NaplnInstr(I_JMPF_KEY, NULL, spracADDR, NULL); // skoci prec
+
+            //gener--hore--------------------------
 
 
             myPop(&S);
@@ -206,33 +206,34 @@ void extractRule(tSem_context* s_con)
         }
         else
         {
-        	//--gener-dole-----------------------------
+            //--gener-dole-----------------------------
 
-        	// generuj adresu BEGINU... tu je begin 	 	
-	            void *spracADDR = spracuj(S_IDENTIFIKATOR, "begin"); // slo by to aj inac ale pre jednotnost.. 	 	
-	           // NaplnInstr(I_JMPF_KEY_S, NULL, spracADDR, NULL); // 	 	
-	 	 	
-	 	 	
-	            //printf("INTER_uloz BEGIN! : navestie funkcie \n"); 	 	
-	            // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie	 	
-	 	 	
-	 	 	
-	            list_element prvok; 	 	
-	            prvok = (list_element)(hash_adress(GLOBFRAME, spracADDR)); 	 	
-	            void* pomad; 	 	
-	            pomad = InstrDajPoz(&INSTR_PASKA); 	 	
-	           // &(prvok)->ref 	 	
-	 	 	 
-	            ((prvok)->start) = pomad; 
+            // generuj adresu BEGINU... tu je begin
+            void *spracADDR = spracuj(S_IDENTIFIKATOR, "begin"); // slo by to aj inac ale pre jednotnost..
+            // NaplnInstr(I_JMPF_KEY_S, NULL, spracADDR, NULL); //
 
-			//--gener hore----------------------------------------------------
+
+            //printf("INTER_uloz BEGIN! : navestie funkcie \n");
+            // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie
+
+
+            list_element prvok;
+            prvok = (list_element)(hash_adress(GLOBFRAME, spracADDR));
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
+            // &(prvok)->ref
+
+            ((prvok)->start) = pomad;
+
+            //--gener hore----------------------------------------------------
 
 
             myPop(&S); //  FLIST -> eps prechod
-            
-            if (f_counter != 0) {  //semanticka kontrola, ci vsetky funkcie boli definovane
-              fprintf (stderr, "v programe su nedefinovane funkcie\n");
-              exit (semanticka_chyba_pri_deklaraci);
+
+            if (f_counter != 0)    //semanticka kontrola, ci vsetky funkcie boli definovane
+            {
+                fprintf (stderr, "v programe su nedefinovane funkcie\n");
+                exit (semanticka_chyba_pri_deklaraci);
             }
 
             s_con->scope = GLOBAL;  // prepnutie na globalny scope
@@ -248,23 +249,25 @@ void extractRule(tSem_context* s_con)
 
         if (actToken.stav == S_KLIC_FORWARD)
         {
-        	//--gener-----------ESTE NEVIEME -------------------------------
+            //--gener-----------ESTE NEVIEME -------------------------------
 
             myPop(&S);
             myPushMul(&S, 3, S_KLIC_FORWARD, S_STREDNIK, LL_FLIST);
-         
+
 
             s_con->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
             sem_check (s_con);  //ulozi sa typ funkcie
-            
-            if (hash_is_sign (GLOBFRAME, s_con->act_fun) != DEFINED) {
-              f_counter++;  //zvysuje sa pocet forwardnutych funkcii
-              //funkcia sa nastavi na forwarded, ak nebola definovana
-              hash_set_sign (GLOBFRAME, s_con->act_fun, FORWARDED);
-              }
-            else {
-              fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
-              exit (semanticka_chyba_pri_deklaraci);
+
+            if (hash_is_sign (GLOBFRAME, s_con->act_fun) != DEFINED)
+            {
+                f_counter++;  //zvysuje sa pocet forwardnutych funkcii
+                //funkcia sa nastavi na forwarded, ak nebola definovana
+                hash_set_sign (GLOBFRAME, s_con->act_fun, FORWARDED);
+            }
+            else
+            {
+                fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
+                exit (semanticka_chyba_pri_deklaraci);
             }
 
             // FUNC -> forward ; FLIST
@@ -273,10 +276,10 @@ void extractRule(tSem_context* s_con)
         {
             myPop(&S);
             myPushMul(&S, 6, LL_VLIST, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END, LL_FUNCEND, LL_FLIST );
-            
-            
+
+
             s_con->context = FUNC_TYPE_DEC;  //kontext nastavenia navratoveho typu funkcie
-            sem_check (s_con);  //ulozi sa typ funkcie, v pripade definicie sa skontroluje 
+            sem_check (s_con);  //ulozi sa typ funkcie, v pripade definicie sa skontroluje
 
             s_con->context = L_VAR_DEC;  //nasleduje kontext deklaracie lok. premennych
 
@@ -288,26 +291,26 @@ void extractRule(tSem_context* s_con)
 
     case LL_FUNCEND:
     {
-    	if (actToken.stav == S_STREDNIK)
-    	{
-    		myPop(&S);
-    		myPush(&S, S_STREDNIK);
+        if (actToken.stav == S_STREDNIK)
+        {
+            myPop(&S);
+            myPush(&S, S_STREDNIK);
 
-    		//----------------gener---------------------------------------------------
-    		NaplnInstr(I_JMP_BACK, NULL, NULL, NULL); // skoci naspet ... ZASOBNIK skokov.
+            //----------------gener---------------------------------------------------
+            NaplnInstr(I_JMP_BACK, NULL, NULL, NULL); // skoci naspet ... ZASOBNIK skokov.
 
-    		//----------------gener---------------------------------------------------
-    	}
-    	else
-    	{
-    		//syntakt chiba
-    		fprintf(stderr, "2: Syntakticka chyba. Ocakaval som "); 
-    		whattoken(S_STREDNIK);
-    		fprintf(stderr, "\n");
-    		trashDestroy(2);
-    	}
+            //----------------gener---------------------------------------------------
+        }
+        else
+        {
+            //syntakt chiba
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som ");
+            whattoken(S_STREDNIK);
+            fprintf(stderr, "\n");
+            trashDestroy(2);
+        }
 
-    	break;
+        break;
     }
 
 
@@ -315,17 +318,17 @@ void extractRule(tSem_context* s_con)
     {
         if (actToken.stav == S_IDENTIFIKATOR)
         {
-        	//gener-----------------------------------------------------
-        	 // generujeme 	 	
-	        void *spracADDR = spracuj(actToken.stav, actToken.data); // mame KLUC 	 	
-	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 	 	
-	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 
+            //gener-----------------------------------------------------
+            // generujeme
+            void *spracADDR = spracuj(actToken.stav, actToken.data); // mame KLUC
+            NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x
+            NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x
 
-			//-----------gener hore ---------------------------------------------------
+            //-----------gener hore ---------------------------------------------------
 
             myPop(&S);
             myPushMul(&S, 4, S_IDENTIFIKATOR,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
-            
+
             s_con->act_id = actToken.data;      //ulozenie id parametra
             s_con->context = FUNC_ARG_DEC;      //kontext deklaracii argumentov funkcie
 
@@ -345,27 +348,27 @@ void extractRule(tSem_context* s_con)
 
     case LL_NPLIST_NID:
     {
-    	if (actToken.stav == S_IDENTIFIKATOR)
-    	{
-    		myPop(&S);
-    		myPush(&S, S_IDENTIFIKATOR);
+        if (actToken.stav == S_IDENTIFIKATOR)
+        {
+            myPop(&S);
+            myPush(&S, S_IDENTIFIKATOR);
 
-    		//gener-----------------------------------------------------
-        	// generujeme 	 	
-	        void *spracADDR = spracuj(actToken.stav, actToken.data); // mame KLUC 	 	
-	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 	 	
-	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x 
+            //gener-----------------------------------------------------
+            // generujeme
+            void *spracADDR = spracuj(actToken.stav, actToken.data); // mame KLUC
+            NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x
+            NaplnInstr( I_IDENT, NULL, spracADDR, NULL ); // ulozime identifikator 2x
 
-			//-----------gener hore ---------------------------------------------------
+            //-----------gener hore ---------------------------------------------------
 
-    	}
-    	else
-    	{
-    		fprintf(stderr, "2: Syntakticka chyba. Ocakaval som IDENTIFIKATOR\n");
-    		trashDestroy(2);
-    	}
+        }
+        else
+        {
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som IDENTIFIKATOR\n");
+            trashDestroy(2);
+        }
 
-    	break;
+        break;
     }
 
 
@@ -380,10 +383,10 @@ void extractRule(tSem_context* s_con)
         {
             myPop(&S);
             myPushMul(&S, 5, S_STREDNIK, LL_NPLIST_NID,  S_DVOJTECKA, LL_TYPE, LL_NPLIST);
-            
-           sem_check (s_con);   //kontrola parametra
 
-           Id_sign = rem_pid;  // id dalsieho parametra sa zapamata
+            sem_check (s_con);   //kontrola parametra
+
+            Id_sign = rem_pid;  // id dalsieho parametra sa zapamata
 
             // NPLIST -> ; id : TYPE NPLIST
 
@@ -399,14 +402,14 @@ void extractRule(tSem_context* s_con)
 
         }
 
-          //--gener-------------------------------------------------------------------
-        // toto sa deje vzdy 	 	
-	        // ber co mas na POMOCNOM zasobniku + pop pomocny 	 	
-	        // prirad 	 	
-	        NaplnInstr( I_FUN_PRIRAD_PARAM, NULL, NULL, NULL );
-	        //--gener-------------------------------------------------------------------
+        //--gener-------------------------------------------------------------------
+        // toto sa deje vzdy
+        // ber co mas na POMOCNOM zasobniku + pop pomocny
+        // prirad
+        NaplnInstr( I_FUN_PRIRAD_PARAM, NULL, NULL, NULL );
+        //--gener-------------------------------------------------------------------
 
-		
+
 
         break;
     }
@@ -459,10 +462,10 @@ void extractRule(tSem_context* s_con)
 
             void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-           // printf("GREEP generuji instrukci vloz LL_STAT cize v KODE.. I_IDENT >>");
+            // printf("GREEP generuji instrukci vloz LL_STAT cize v KODE.. I_IDENT >>");
             //whattoken(actToken.stav);
             NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
-            
+
             s_con->l_id = actToken.data;  //ulozenie id pre LHS
 
             break;
@@ -481,8 +484,8 @@ void extractRule(tSem_context* s_con)
             // vytvorime si navestie pomocou NIC-NEROBY :D
             NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
 
-            void* pomad;        
-            pomad = InstrDajPoz(&INSTR_PASKA); 
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
 
             *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
 
@@ -561,14 +564,14 @@ void extractRule(tSem_context* s_con)
             NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
 
             // tu nam zacina vetva ELSE.. sem sme mohli skocit po vyhodnoteni vyrazu >> FALSE
-            void* pomad;        
-            pomad = InstrDajPoz(&INSTR_PASKA); 
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
 
             *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
 
             myaPop(&IFJMP);
 
-            
+
         }
         else
         {
@@ -583,34 +586,35 @@ void extractRule(tSem_context* s_con)
 
     case  LL_RHS:
     {
-       if ( actToken.stav == S_IDENTIFIKATOR && 
-            hash_return_type (GLOBFRAME, actToken.data) == F_ID)  //semantika overuje typ id
-        	{         // skontrolovat ci je su v podmienke aktualne nazvy//
-        		// toto je FUNKCIA
-        		
-        	//----------------------------gener-------------------------------------------------------
-        	// generujeme zaciatocne veci pri spusteni FUNKCIE-kopirovanie tabulki, nahodenie na FRAMESTACK 	 	
-	        // + dalej generujeme pomocnu zarazku na zasobnik -- vsetko v 1 instrukcii 	 	
-	 	
-	            void *spracADDR = spracuj(actToken.stav, actToken.data); 	 	
-	             	 	
-	            NaplnInstr( I_RUNFUN_COPY, NULL , spracADDR, NULL ); // podla kluca
+        if ( actToken.stav == S_IDENTIFIKATOR &&
+                hash_return_type (GLOBFRAME, actToken.data) == F_ID)  //semantika overuje typ id
+        {
+            // skontrolovat ci je su v podmienke aktualne nazvy//
+            // toto je FUNKCIA
 
-			//-----gener--------------------------------------------------------------------------------
+            //----------------------------gener-------------------------------------------------------
+            // generujeme zaciatocne veci pri spusteni FUNKCIE-kopirovanie tabulki, nahodenie na FRAMESTACK
+            // + dalej generujeme pomocnu zarazku na zasobnik -- vsetko v 1 instrukcii
 
-    		  	myPop (&S);
-      	  	myPushMul (&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
+            void *spracADDR = spracuj(actToken.stav, actToken.data);
+
+            NaplnInstr( I_RUNFUN_COPY, NULL , spracADDR, NULL ); // podla kluca
+
+            //-----gener--------------------------------------------------------------------------------
+
+            myPop (&S);
+            myPushMul (&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
 
             s_con->c_fun = actToken.data;   //ulozi sa id volanej funkcie
             s_con->context = RET_VAL_CHECK;  //typova kontrola priradenia navr. hod. funkcie
-            sem_check (s_con);              
-        	 }
+            sem_check (s_con);
+        }
 
-       else if
-         ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) || 
-          (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE)   ||
-          (actToken.stav == S_BOOLEAN) || (actToken.stav == S_KLIC_FALSE)  || 
-          (actToken.stav == S_KLIC_TRUE) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ?
+        else if
+        ((actToken.stav == S_IDENTIFIKATOR ) || (actToken.stav == S_INTEGER) ||
+                (actToken.stav == S_RETEZEC) || (actToken.stav == S_DOUBLE)   ||
+                (actToken.stav == S_BOOLEAN) || (actToken.stav == S_KLIC_FALSE)  ||
+                (actToken.stav == S_KLIC_TRUE) || (actToken.stav == S_LEVA_ZAVORKA)) // opytat sa ci je to ?
         {
             //vieme ze nemama FUKNCIU, BUDEME PUSTAT PRECEDENCNU---->isVyraz();
 
@@ -633,7 +637,7 @@ void extractRule(tSem_context* s_con)
 
 
 //----------------------------------BSTAT----------------------------------
-    
+
     case LL_BSTAT_WHILE:
     {
         myPop(&S);
@@ -656,14 +660,14 @@ void extractRule(tSem_context* s_con)
 
             NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
 
-            void* pomad;        
-            pomad = InstrDajPoz(&INSTR_PASKA); 
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
 
             *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
-    
+
             myaPop(&IFJMP);
             myaPop(&IFJMP);
- 
+
 
 
         }
@@ -707,11 +711,11 @@ void extractRule(tSem_context* s_con)
             NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
 
 
-            void* pomad;        
-            pomad = InstrDajPoz(&INSTR_PASKA); 
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
 
             *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
-    
+
             myaPop(&IFJMP);
 
 
@@ -734,8 +738,8 @@ void extractRule(tSem_context* s_con)
             myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
 
 
-            void *spracADDR = spracuj(actToken.stav, actToken.data); // kluc 	 	
-	        NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+            void *spracADDR = spracuj(actToken.stav, actToken.data); // kluc
+            NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
 
             if(priznak == write)
@@ -748,17 +752,17 @@ void extractRule(tSem_context* s_con)
         {
             myPop(&S);
             myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
-            
 
 
-                void *spracADDR = spracuj(actToken.stav, actToken.data); // 
-                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
+
+            void *spracADDR = spracuj(actToken.stav, actToken.data); //
+            void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
 
-                tStav *TIPSTAV = mymalloc(sizeof(tStav));
-                *TIPSTAV = actToken.stav;
+            tStav *TIPSTAV = mymalloc(sizeof(tStav));
+            *TIPSTAV = actToken.stav;
 
-                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+            NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
 
             if(priznak == write)
             {
@@ -768,34 +772,34 @@ void extractRule(tSem_context* s_con)
         }
         else if (actToken.stav == S_DOUBLE)
         {
-        	myPop(&S);
+            myPop(&S);
             myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
-            
-                void *spracADDR = spracuj(actToken.stav, actToken.data);
-                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
-                tStav *TIPSTAV = mymalloc(sizeof(tStav));
-                *TIPSTAV = actToken.stav;
+            void *spracADDR = spracuj(actToken.stav, actToken.data);
+            void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
-                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+            tStav *TIPSTAV = mymalloc(sizeof(tStav));
+            *TIPSTAV = actToken.stav;
+
+            NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
 
             if(priznak == write)
             {
                 NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
             }
- 
+
         }
         else if (actToken.stav == S_RETEZEC)
         {
-        	myPop(&S);
+            myPop(&S);
             myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
-            
-                void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                tStav *TIPSTAV = mymalloc(sizeof(tStav));
-                *TIPSTAV = actToken.stav;
+            void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-                NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
+            tStav *TIPSTAV = mymalloc(sizeof(tStav));
+            *TIPSTAV = actToken.stav;
+
+            NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
 
             if(priznak == write)
             {
@@ -838,16 +842,16 @@ void extractRule(tSem_context* s_con)
                 // ULOZ ADRESU FUNKCIE SAVE na zasobnik skokov
                 NaplnInstr( I_JMP_S, NULL , NULL, NULL );
 
-                // spusti FUNKCIU.........................................................................................SPUSTI FUNKCIU!! 
-                
+                // spusti FUNKCIU.........................................................................................SPUSTI FUNKCIU!!
+
                 NaplnInstr( I_JMPF_KEY, NULL , spracADDR, NULL ); // KLUC zo zapametania
 
                 // I PRIRAD
                 NaplnInstr( I_PRIRAD, NULL , NULL, NULL ); // priradime
 
                 // stack del FRAME
-                NaplnInstr( I_FRAME_DEL, NULL , NULL, NULL ); 
-                 
+                NaplnInstr( I_FRAME_DEL, NULL , NULL, NULL );
+
             }
 
 
@@ -873,101 +877,101 @@ void extractRule(tSem_context* s_con)
             actToken=get_token();
 
 
-                    if (actToken.stav == S_IDENTIFIKATOR )
-			        {
-			            myPop(&S);
-			            myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
+            if (actToken.stav == S_IDENTIFIKATOR )
+            {
+                myPop(&S);
+                myPushMul(&S, 2, S_IDENTIFIKATOR, LL_NSPLIST);
 
 
-			            void *spracADDR = spracuj(actToken.stav, actToken.data); // kluc 	 	
-				        NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+                void *spracADDR = spracuj(actToken.stav, actToken.data); // kluc
+                NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
 
-			            if(priznak == write)
-			            {
-			                NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
-			            }
+                if(priznak == write)
+                {
+                    NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
+                }
 
-			        }
-			        else if (actToken.stav == S_INTEGER)
-			        {
-			            myPop(&S);
-			            myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
-			            
-
-
-			                void *spracADDR = spracuj(actToken.stav, actToken.data); // 
-			                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
+            }
+            else if (actToken.stav == S_INTEGER)
+            {
+                myPop(&S);
+                myPushMul(&S, 2, S_INTEGER, LL_NSPLIST);
 
 
-			                tStav *TIPSTAV = mymalloc(sizeof(tStav));
-			                *TIPSTAV = actToken.stav;
 
-			                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+                void *spracADDR = spracuj(actToken.stav, actToken.data); //
+                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
-			            if(priznak == write)
-			            {
-			                NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
-			            }
 
-			        }
-			        else if (actToken.stav == S_DOUBLE)
-			        {
-			        	myPop(&S);
-			            myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
-			            
-			                void *spracADDR = spracuj(actToken.stav, actToken.data);
-			                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
+                tStav *TIPSTAV = mymalloc(sizeof(tStav));
+                *TIPSTAV = actToken.stav;
 
-			                tStav *TIPSTAV = mymalloc(sizeof(tStav));
-			                *TIPSTAV = actToken.stav;
+                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
 
-			                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+                if(priznak == write)
+                {
+                    NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
+                }
 
-			            if(priznak == write)
-			            {
-			                NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
-			            }
-			 
-			        }
-			        else if (actToken.stav == S_RETEZEC)
-			        {
-			        	myPop(&S);
-			            myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
-			            
-			                void *spracADDR = spracuj(actToken.stav, actToken.data);
+            }
+            else if (actToken.stav == S_DOUBLE)
+            {
+                myPop(&S);
+                myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
 
-			                tStav *TIPSTAV = mymalloc(sizeof(tStav));
-			                *TIPSTAV = actToken.stav;
+                void *spracADDR = spracuj(actToken.stav, actToken.data);
+                void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
 
-			                NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
+                tStav *TIPSTAV = mymalloc(sizeof(tStav));
+                *TIPSTAV = actToken.stav;
 
-			            if(priznak == write)
-			            {
-			                NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
-			            }
+                NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
 
-			        }
-			        else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
-			        {
+                if(priznak == write)
+                {
+                    NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
+                }
 
-			            myPop(&S);
-			            myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
+            }
+            else if (actToken.stav == S_RETEZEC)
+            {
+                myPop(&S);
+                myPushMul(&S, 2, S_RETEZEC, LL_NSPLIST);
 
-			        }
-			        else if (actToken.stav == S_KLIC_FALSE)
-			        {
+                void *spracADDR = spracuj(actToken.stav, actToken.data);
 
-			            myPop(&S);
-			            myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+                tStav *TIPSTAV = mymalloc(sizeof(tStav));
+                *TIPSTAV = actToken.stav;
 
-			        }
-                    
-                    else
-                    {
-                        fprintf(stderr, "2: Syntakticka chyba. Ocakaval som dalsi parameter. \n");
-                        exit(2);
-                    }
+                NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
+
+                if(priznak == write)
+                {
+                    NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
+                }
+
+            }
+            else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
+            {
+
+                myPop(&S);
+                myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
+
+            }
+            else if (actToken.stav == S_KLIC_FALSE)
+            {
+
+                myPop(&S);
+                myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+
+            }
+
+            else
+            {
+                fprintf(stderr, "2: Syntakticka chyba. Ocakaval som dalsi parameter. \n");
+                exit(2);
+            }
 
 
         }
@@ -991,16 +995,16 @@ void extractRule(tSem_context* s_con)
                 // ULOZ ADRESU FUNKCIE SAVE na zasobnik skokov
                 NaplnInstr( I_JMP_S, NULL , NULL, NULL );
 
-                // spusti FUNKCIU.........................................................................................SPUSTI FUNKCIU!! 
-                
+                // spusti FUNKCIU.........................................................................................SPUSTI FUNKCIU!!
+
                 NaplnInstr( I_JMPF_KEY, NULL , spracADDR, NULL ); // KLUC zo zapametania
 
                 // I PRIRAD
                 NaplnInstr( I_PRIRAD, NULL , NULL, NULL ); // priradime
 
                 // stack del FRAME
-                NaplnInstr( I_FRAME_DEL, NULL , NULL, NULL ); 
-                 
+                NaplnInstr( I_FRAME_DEL, NULL , NULL, NULL );
+
             }
 
 
@@ -1045,9 +1049,9 @@ bool parse()
     NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
     InstrStart(&INSTR_PASKA);
 
-	zarazka  = malloc(sizeof(char)); // zarazka adresova
+    zarazka  = malloc(sizeof(char)); // zarazka adresova
 
-	hash_insert_it(GLOBFRAME, "begin", 444); // navestie mainu
+    hash_insert_it(GLOBFRAME, "begin", 444); // navestie mainu
 
     bool ERRO = true;
     stack_init(&S);
@@ -1071,7 +1075,7 @@ bool parse()
         {
             //CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor
             fprintf(stderr, "CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n");
-        	exit(2); // syntakticka chyba
+            exit(2); // syntakticka chyba
         }
 
 
@@ -1088,7 +1092,7 @@ bool parse()
             if (((unsigned int) myTop(&S)) == actToken.stav)
             {
                 //showStack(&S);
-               // printf("Pustam TERMINAL  actToken je ");
+                // printf("Pustam TERMINAL  actToken je ");
                 //whattoken(actToken.stav);
                 //printf("PUSTAM TERMINAL  a mam na TOPE a zmazem ho ");
                 //whattoken(myTop(&S));
@@ -1107,60 +1111,61 @@ bool parse()
                 myPop(&S);	// odstranime z vrcholu zasobnika
                 //free(actToken.data); // free
 
-                if ( actToken.stav == S_IDENTIFIKATOR ) 
-                {                                       //ulozenie id funkcie pri deklaracii
-                  if (Id_sign == rem_id) 
-                  {
-                  	Id_sign = for_id;                      //reset signum
-                    s_con.act_fun = actToken.data;   //save actual id of function
-                    sem_check (&s_con);
+                if ( actToken.stav == S_IDENTIFIKATOR )
+                {
+                    //ulozenie id funkcie pri deklaracii
+                    if (Id_sign == rem_id)
+                    {
+                        Id_sign = for_id;                      //reset signum
+                        s_con.act_fun = actToken.data;   //save actual id of function
+                        sem_check (&s_con);
 
 
-                    // *********** TOTO JE INSTRUKCIA***ZACIATOK************************************
-                    // posielam ID funkcie koli ADRESE ZACIATKU FUN NA instrukc paske
-                    //--gener-dole-----------------------------
+                        // *********** TOTO JE INSTRUKCIA***ZACIATOK************************************
+                        // posielam ID funkcie koli ADRESE ZACIATKU FUN NA instrukc paske
+                        //--gener-dole-----------------------------
 
-		        	// generuj adresu BEGINU... tu je begin 	 	
-			            void *spracADDR = spracuj(S_IDENTIFIKATOR, actToken.data); // slo by to aj inac ale pre jednotnost.. 	 	
-			           // NaplnInstr(I_JMPF_KEY_S, NULL, spracADDR, NULL); // 	 	
- 	 	
-			           // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie	 	
-			 	 	
-			 	 	
-			            list_element prvok; 	 	
-			            prvok = (list_element)(hash_adress(GLOBFRAME, spracADDR)); 	 	
-			            void* pomad; 	 	
-			            pomad = InstrDajPoz(&INSTR_PASKA); 	 	
-			           	 	
-			 	 	 
-			            ((prvok)->start) = pomad;  	
+                        // generuj adresu BEGINU... tu je begin
+                        void *spracADDR = spracuj(S_IDENTIFIKATOR, actToken.data); // slo by to aj inac ale pre jednotnost..
+                        // NaplnInstr(I_JMPF_KEY_S, NULL, spracADDR, NULL); //
+
+                        // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie
 
 
-					//--gener hore---------------------------------------------------
+                        list_element prvok;
+                        prvok = (list_element)(hash_adress(GLOBFRAME, spracADDR));
+                        void* pomad;
+                        pomad = InstrDajPoz(&INSTR_PASKA);
 
-                    //budeme alokovat miesto pre navratovu hodnotu podla kluca  toto je ALOKACIA NAVRATOVEJ HODNOTY!!
-                    NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
-                    NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
-                    // *********** TOTO JE INSTRUKCIA***KONIEC************************************
-					
+                        ((prvok)->start) = pomad;
 
-                    
-                  }
 
-                  if (Id_sign == rem_pid)
-                  {
-                    Id_sign = for_pid;
-                    s_con.act_id = actToken.data;
-                  }
+                        //--gener hore---------------------------------------------------
+
+                        //budeme alokovat miesto pre navratovu hodnotu podla kluca  toto je ALOKACIA NAVRATOVEJ HODNOTY!!
+                        NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+                        NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+
+                        // *********** TOTO JE INSTRUKCIA***KONIEC************************************
+
+
+
+                    }
+
+                    if (Id_sign == rem_pid)
+                    {
+                        Id_sign = for_pid;
+                        s_con.act_id = actToken.data;
+                    }
                 }
 
-                
+
                 actToken = get_token(); // nacitame novy token
-               // printf("KOEC TERMINAL GET TOKEN token je ");
+                // printf("KOEC TERMINAL GET TOKEN token je ");
                 //whattoken(actToken.stav);
                 //printf("KOEC TERMINAL GET TOKEN TOP  je ");
-               // whattoken(myTop(&S)) ;
+                // whattoken(myTop(&S)) ;
             }
             else
             {
@@ -1168,13 +1173,13 @@ bool parse()
                 whattoken(myTop(&S));
                 fprintf(stderr, "riadok : %d , stlpec %d .", actToken.radek+1, actToken.sloupec);
                 fprintf(stderr, "\n" );
-            	exit(2); // syntakticka chyba
+                exit(2); // syntakticka chyba
                 ERRO = false;
-               // printf("mas to zle ja som cakal  >> ");
-               // whattoken(myTop(&S));
+                // printf("mas to zle ja som cakal  >> ");
+                // whattoken(myTop(&S));
                 //printf("mas to zle NAPISAL SI    >> ");
-               // whattoken( actToken.stav);
-               // printf("mas to zle riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
+                // whattoken( actToken.stav);
+                // printf("mas to zle riadok.sltpec >> %d .. %d\n", actToken.radek + 1, actToken.sloupec);
                 myPop(&S);	// odstranime z vrcholu zasobnika
                 //free(actToken.data); // free
                 actToken = get_token(); // nacitame novy token
@@ -1183,7 +1188,7 @@ bool parse()
 
         if (myTop(&S) != EOF && actToken.stav == S_END_OF_FILE)
         {
-        	exit(2); // syntakticka chyba
+            exit(2); // syntakticka chyba
             ERRO = false;
             //printf("ChyBA na zasobniku nieco zostalo a my sme na konci suboru\n");
         }
@@ -1196,158 +1201,175 @@ bool parse()
 }
 
 
-list* get_local (char* id) {  //vrati referenciu na lokalnu tabulku podla zadaneho id funkcie
-  return ((list_element) hash_adress(GLOBFRAME, id))->ref;
+list* get_local (char* id)    //vrati referenciu na lokalnu tabulku podla zadaneho id funkcie
+{
+    return ((list_element) hash_adress(GLOBFRAME, id))->ref;
 }
 
 void sem_check (tSem_context* s_con)
 {
-  switch (s_con->context) 
-  {
+    switch (s_con->context)
+    {
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
-      if ( hash_search (GLOBFRAME, s_con->act_id) == CONTAINS ) { //error if var exists
-        fprintf (stderr, "semanticka chyba pri deklaraci globalnej premennej \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id);
-        exit (semanticka_chyba_pri_deklaraci);
-      }
+        if ( hash_search (GLOBFRAME, s_con->act_id) == CONTAINS )   //error if var exists
+        {
+            fprintf (stderr, "semanticka chyba pri deklaraci globalnej premennej \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id);
+            exit (semanticka_chyba_pri_deklaraci);
+        }
 
-      hash_insert_it (GLOBFRAME,s_con->act_id, s_con->act_type );  //save var to GTS
-    break;
+        hash_insert_it (GLOBFRAME,s_con->act_id, s_con->act_type );  //save var to GTS
+        break;
 
 
     case FUNCTION_DEC:          //kontext deklaracii funkcii
-      //funkcia nebola deklarovana, vytvori sa nova LTS
-      if ( hash_search (GLOBFRAME, s_con->act_fun) == NOCONTAINS )
-        { 
-          hash_insert_i (GLOBFRAME, s_con->act_fun);     //vlozenie id funkcie
-          hash_insert_func (GLOBFRAME, s_con->act_fun);  //vytvorenie LTS funkcie
-          hash_insert_it (GLOBFRAME, s_con->act_fun, F_ID);  //id funkcie je typu F_ID
-          set_arg_num (GLOBFRAME, s_con->act_fun, arg_num);  //inicializacia poctu argumentov
-          break;
+        //funkcia nebola deklarovana, vytvori sa nova LTS
+        if ( hash_search (GLOBFRAME, s_con->act_fun) == NOCONTAINS )
+        {
+            hash_insert_i (GLOBFRAME, s_con->act_fun);     //vlozenie id funkcie
+            hash_insert_func (GLOBFRAME, s_con->act_fun);  //vytvorenie LTS funkcie
+            hash_insert_it (GLOBFRAME, s_con->act_fun, F_ID);  //id funkcie je typu F_ID
+            set_arg_num (GLOBFRAME, s_con->act_fun, arg_num);  //inicializacia poctu argumentov
+            break;
         }
-    
-      //funkcia bola deklarovana, ocakava sa definicia, nevytvara sa nova LTS
-      if (hash_is_sign (GLOBFRAME, s_con->act_fun) == FORWARDED) { 
-        hash_set_sign (GLOBFRAME, s_con->act_fun, DEFINED);
-        f_counter--;  //pocet forwardnutych funkcii sa znizi
-        break;
-      }
 
-      //nastala chyba pri definicii alebo deklaracii funkcie
-      fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
-      exit (semanticka_chyba_pri_deklaraci);
-  
+        //funkcia bola deklarovana, ocakava sa definicia, nevytvara sa nova LTS
+        if (hash_is_sign (GLOBFRAME, s_con->act_fun) == FORWARDED)
+        {
+            hash_set_sign (GLOBFRAME, s_con->act_fun, DEFINED);
+            f_counter--;  //pocet forwardnutych funkcii sa znizi
+            break;
+        }
+
+        //nastala chyba pri definicii alebo deklaracii funkcie
+        fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
+        exit (semanticka_chyba_pri_deklaraci);
+
 
     case FUNC_ARG_DEC:        //kontext deklaracie a overovania argumentov funkcie
-      //definicia funkcie, overuju sa argumenty
-      if (hash_is_sign (GLOBFRAME, s_con->act_fun) == DEFINED) {
-       //chyba ak argument bebol deklarovany alebo nesedi typ alebo pozicia
-        if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == NOCONTAINS ||
-             hash_return_type (get_local (s_con->act_fun), s_con->act_id) != s_con->act_type ||
-             get_arg_num (get_local (s_con->act_fun), s_con->act_id) != ++arg_num ) 
-          {
-            fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
-            exit(semanticka_chyba_pri_deklaraci);
-          }
-      }
-
-      //funkcia nebola deklarovana, ulozia sa argumenty
-      else {
-        //chyba ak parameter uz existuje
-        if (hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS) {
-          fprintf (stderr, "semanticka chyba pri deklaraci argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
-          exit (semanticka_chyba_pri_deklaraci);
+        //definicia funkcie, overuju sa argumenty
+        if (hash_is_sign (GLOBFRAME, s_con->act_fun) == DEFINED)
+        {
+            //chyba ak argument bebol deklarovany alebo nesedi typ alebo pozicia
+            if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == NOCONTAINS ||
+                    hash_return_type (get_local (s_con->act_fun), s_con->act_id) != s_con->act_type ||
+                    get_arg_num (get_local (s_con->act_fun), s_con->act_id) != ++arg_num )
+            {
+                fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
+                exit(semanticka_chyba_pri_deklaraci);
+            }
         }
 
-        //ulozenie id a jeho typu do LTS funkcie
-        hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
-        //ulozi sa pozicia argumentu        
-        set_arg_num (get_local (s_con->act_fun), s_con->act_id, ++arg_num);
-        set_arg_num (GLOBFRAME, s_con->act_fun, arg_num); //zvysi sa pocet argumentov funkcie
-      }
-    break;
-      
+        //funkcia nebola deklarovana, ulozia sa argumenty
+        else
+        {
+            //chyba ak parameter uz existuje
+            if (hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS)
+            {
+                fprintf (stderr, "semanticka chyba pri deklaraci argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
+                exit (semanticka_chyba_pri_deklaraci);
+            }
+
+            //ulozenie id a jeho typu do LTS funkcie
+            hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
+            //ulozi sa pozicia argumentu
+            set_arg_num (get_local (s_con->act_fun), s_con->act_id, ++arg_num);
+            set_arg_num (GLOBFRAME, s_con->act_fun, arg_num); //zvysi sa pocet argumentov funkcie
+        }
+        break;
+
 
     case FUNC_TYPE_DEC:     //kontext deklaracie typu navratovej hodnoty funkcie
-      //funkcia bola deklarovana, musi sa overit typ
-      if (hash_is_sign (GLOBFRAME, s_con->act_fun) == DEFINED) {
-        //ak sa typ pri deklaracii nezhoduje s typom pri definicii
-        if (hash_return_type (get_local (s_con->act_fun), s_con->act_fun) != s_con->act_type) {
-          fprintf (stderr, "semanticka chyba pri defenici typu navratovej hodnoty funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
-          exit(semanticka_chyba_pri_deklaraci);
+        //funkcia bola deklarovana, musi sa overit typ
+        if (hash_is_sign (GLOBFRAME, s_con->act_fun) == DEFINED)
+        {
+            //ak sa typ pri deklaracii nezhoduje s typom pri definicii
+            if (hash_return_type (get_local (s_con->act_fun), s_con->act_fun) != s_con->act_type)
+            {
+                fprintf (stderr, "semanticka chyba pri defenici typu navratovej hodnoty funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
+                exit(semanticka_chyba_pri_deklaraci);
+            }
+
+            //funkcia bola deklarovana a pri definicii bol zadany nespravny pocet argumentov
+            if (get_arg_num (GLOBFRAME, s_con->act_fun) != arg_num)
+            {
+                fprintf (stderr, "nespravny pocet argumentov pri defenici funkcie '%s'\n", s_con->act_fun);
+                exit (semanticka_chyba_pri_deklaraci);
+            }
         }
-        
-        //funkcia bola deklarovana a pri definicii bol zadany nespravny pocet argumentov
-        if (get_arg_num (GLOBFRAME, s_con->act_fun) != arg_num) {
-          fprintf (stderr, "nespravny pocet argumentov pri defenici funkcie '%s'\n", s_con->act_fun);
-          exit (semanticka_chyba_pri_deklaraci);
-        }
-      }
-      else //funkcia nebola deklarovana, uklada sa typ
-        hash_insert_it (get_local(s_con->act_fun), s_con->act_fun, s_con->act_type);
-   
-      arg_num = 0; //reset pocitadla argumentov, suvisi s FUNC_ARG_DEC
-   break;
-     
+        else //funkcia nebola deklarovana, uklada sa typ
+            hash_insert_it (get_local(s_con->act_fun), s_con->act_fun, s_con->act_type);
+
+        arg_num = 0; //reset pocitadla argumentov, suvisi s FUNC_ARG_DEC
+        break;
+
 
     case L_VAR_DEC:      //kontext deklaracie lokalnych premennych
-      //chyba, ak premenna alebo argument alebo navratova hodnota funkcie existuje
-      if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS) {
-        fprintf (stderr, "semanticka chyba pri deklaraci lokalnej premennej \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun );
-        exit (semanticka_chyba_pri_deklaraci);
-      }
-      
-      //ulozenie premennej do LTS
-      hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
-    break;
+        //chyba, ak premenna alebo argument alebo navratova hodnota funkcie existuje
+        if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS)
+        {
+            fprintf (stderr, "semanticka chyba pri deklaraci lokalnej premennej \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun );
+            exit (semanticka_chyba_pri_deklaraci);
+        }
+
+        //ulozenie premennej do LTS
+        hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
+        break;
 
 
     case RET_VAL_CHECK:            //kontrola priradenia id := funkcia()
-      //lokalny rozsah premennych
-      if (s_con->scope == LOCAL) {
-        //premenna nie je deklarovana lokalne
-        if ( hash_search (get_local (s_con->act_fun), s_con->l_id) != CONTAINS ) {      
-          
-          //premenna nie je deklarovana ani globalne - chyba
-          if ( hash_search (GLOBFRAME, s_con->l_id) != CONTAINS ) {
-            fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->l_id);
-            exit (semanticka_chyba_pri_deklaraci); 
-          }
-          else { //premenna je deklarovana globalne
-            //overenie typov premennej a navratovej hodnoty funkcie
-            if ( hash_return_type (GLOBFRAME, s_con->l_id) != 
-                 hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
-              {
-                fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
-                exit (semanticka_chyba_typove_kompatibility); 
-              }
-          }
-        }
-        else {  //premenna je deklarovana lokalne
-          //overenie typov premennej a navratovej hodnoty funkcie
-          if ( hash_return_type (get_local (s_con->act_fun), s_con->l_id) != 
-               hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
+        //lokalny rozsah premennych
+        if (s_con->scope == LOCAL)
+        {
+            //premenna nie je deklarovana lokalne
+            if ( hash_search (get_local (s_con->act_fun), s_con->l_id) != CONTAINS )
             {
-              fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
-              exit (semanticka_chyba_typove_kompatibility); 
+
+                //premenna nie je deklarovana ani globalne - chyba
+                if ( hash_search (GLOBFRAME, s_con->l_id) != CONTAINS )
+                {
+                    fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+                    exit (semanticka_chyba_pri_deklaraci);
+                }
+                else   //premenna je deklarovana globalne
+                {
+                    //overenie typov premennej a navratovej hodnoty funkcie
+                    if ( hash_return_type (GLOBFRAME, s_con->l_id) !=
+                            hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
+                    {
+                        fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
+                        exit (semanticka_chyba_typove_kompatibility);
+                    }
+                }
+            }
+            else    //premenna je deklarovana lokalne
+            {
+                //overenie typov premennej a navratovej hodnoty funkcie
+                if ( hash_return_type (get_local (s_con->act_fun), s_con->l_id) !=
+                        hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
+                {
+                    fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
+                    exit (semanticka_chyba_typove_kompatibility);
+                }
             }
         }
-      }
-        
-      //globalny rozsah premennych
-      if (s_con->scope == GLOBAL) {
-        //globalna premenna nebola deklarovana
-        if (hash_search (GLOBFRAME, s_con->l_id) != CONTAINS) {
-          fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->l_id);
-          exit (semanticka_chyba_pri_deklaraci); 
+
+        //globalny rozsah premennych
+        if (s_con->scope == GLOBAL)
+        {
+            //globalna premenna nebola deklarovana
+            if (hash_search (GLOBFRAME, s_con->l_id) != CONTAINS)
+            {
+                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+                exit (semanticka_chyba_pri_deklaraci);
+            }
+            //premenna bola deklarovana, overenie typu premennej a navratovej hodnoty funkcie
+            if ( hash_return_type (GLOBFRAME, s_con->l_id) !=
+                    hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
+            {
+                fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n"    , s_con->c_fun, s_con->l_id);
+                exit (semanticka_chyba_typove_kompatibility);
+            }
         }
-        //premenna bola deklarovana, overenie typu premennej a navratovej hodnoty funkcie
-        if ( hash_return_type (GLOBFRAME, s_con->l_id) !=
-             hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
-          {
-            fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n"    , s_con->c_fun, s_con->l_id);
-            exit (semanticka_chyba_typove_kompatibility);
-          }
-      } 
-    break;
-  }
+        break;
+    }
 }

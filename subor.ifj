@@ -1,12 +1,6 @@
 var
-a:integer;
-b:integer;
-c:string;
-
-x:boolean;
-z:boolean;
-
-v:boolean;
+a:boolean;
+b:boolean;
 
 
 
@@ -15,12 +9,10 @@ v:boolean;
 begin
 
 
-x:= true ;
-z:= false;
 
-v:= 2 = 2 ;
+b:= false < true ;
 
-write(v)
+write(b)
 
 
 
