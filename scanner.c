@@ -35,8 +35,7 @@ void vloz_znak_do_tokenu(int znak, int *i)
     {
 		error = interni_chyba_interpretu; /* interni chyba prekladace */
          fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
-         void trashDestroy();
-         exit(99);
+         trashDestroy(interni_chyba_interpretu);
 	 }
 }
 
@@ -501,8 +500,7 @@ tToken get_token(void)
                 else {
 					error = interni_chyba_interpretu; /* interni chyba prekladace */
 					fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
-					void trashDestroy();
-					exit(99);
+					trashDestroy(interni_chyba_interpretu);
 					
 				}
 
