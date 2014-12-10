@@ -414,6 +414,7 @@ tToken get_token(void)
         /******************************************************************************************************************/
         case S_RETEZEC:
         {
+			
           // pozor mozno tu tento IF nebude  >> bud '#65'  alebo ''#65''
           /*  if (token.data == NULL && c == '#') // jedna sa o samostatnu ESCAPE SEKV
             {
@@ -434,6 +435,13 @@ tToken get_token(void)
                     // nejaka chybycka !                                treba VYRIESIT TUTO CHYBU NEJAK !!!!!
                     break;
                 }
+                else if ((c == '\t') || (c == '\v')) /* soucasti retezce nesmi byt tabulator */
+                {
+				        napln_token(stav);
+                        stav = S_CHYBA;
+                        vrat_se_o_znak((char) c);
+                        break;
+				}
 
                 stav = S_RETEZEC;
                 vloz_znak_do_tokenu(c, &i);
@@ -453,11 +461,13 @@ tToken get_token(void)
                 }
                 else if (c == '\'') // mame dve za sebu idece ''  >> to je v retazci jeden '  isdigit(c)
                 {
-                    stav = S_RETEZEC;
-                    vloz_znak_do_tokenu(c, &i);
+				        napln_token(stav);
+                        stav = S_CHYBA;
+                        vrat_se_o_znak((char) c);
                 }
                 else
                 {
+				
                     if (  token.data == NULL )
                     {  
                         //c = '*';
@@ -497,6 +507,12 @@ tToken get_token(void)
 				}
 
             }
+            else if (c == '-') /* asci hodnota musi byt kladna  */
+            {
+				        napln_token(stav);
+                        stav = S_CHYBA;
+                        vrat_se_o_znak((char) c);
+			}
             else // uz nemame cislo ...
             {
                 if (c == '\'') // ok ukoncili sme escape sekvenciu apostrofom vsetko ok :)
@@ -513,7 +529,7 @@ tToken get_token(void)
                     {
                         // chyba cislo je mimo ASCI !!!
                         napln_token(stav);
-                        stav = S_END;
+                        stav = S_CHYBA;
                         vrat_se_o_znak((char) c);
                     }
 
