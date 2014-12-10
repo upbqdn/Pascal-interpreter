@@ -908,6 +908,7 @@ bool parse()
 
     actToken = get_token();
 
+    fun_init ();       //inicializacia vstavanych funkcii
 
     tSem_context s_con;           //instancia struktury nesie semanticky kontext a jeho atributy
     s_con.scope = LOCAL;        //na zaciatku je lokalny kontext
@@ -1199,4 +1200,13 @@ void sem_check (tSem_context* s_con)
       } 
     break;
   }
+}
+
+void fun_init() {
+   
+  hash_insert_i (GLOBFRAME, "length");     //vlozenie id funkcie
+  hash_insert_func (GLOBFRAME, "length");  //vytvorenie LTS funkcie
+  hash_insert_it (GLOBFRAME, "length", F_ID);  //id funkcie je typu F_ID
+          
+
 }

@@ -51,3 +51,4 @@ typedef enum {   //priznaky pre ulozenie aktualneho tokenu ako id
 bool parse();
 void extractRule(tSem_context* sem_context);
 void sem_check (tSem_context* sem_context);   //funkcia vykonava semanticke akcie
+void fun_init ();
