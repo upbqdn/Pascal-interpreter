@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "strangen.h"
 
 int a1 = 0;
 int a2 = 0;
@@ -10,9 +11,9 @@ int a7 = 0;
 int a8 = 0;
 int a9 = 0;
 int a10 = 0;
-char a[] = "AAAAAAAAAA";
+char UNIKAT[] = "AAAAAAAAAA";
 
-void stringRandGen()
+void strningRandGen()
 {
    		if(a1 > 23)
    		{
@@ -95,18 +96,18 @@ void stringRandGen()
    			a2 = 0;
    			a1 = 0;
    		}
-   		a[0] = a1 + 65;
-   		a[1] = a2 + 65;
-   		a[2] = a3 + 65;
-   		a[3] = a4 + 65;
-   		a[4] = a5 + 65;
-   		a[5] = a6 + 65;
-   		a[6] = a7 + 65;
-   		a[7] = a8 + 65;
-   		a[8] = a9 + 65;
-   		a[9] = a10 + 65;
+   		UNIKAT[0] = a1 + 65;
+   		UNIKAT[1] = a2 + 65;
+   		UNIKAT[2] = a3 + 65;
+   		UNIKAT[3] = a4 + 65;
+   		UNIKAT[4] = a5 + 65;
+   		UNIKAT[5] = a6 + 65;
+   		UNIKAT[6] = a7 + 65;
+   		UNIKAT[7] = a8 + 65;
+   		UNIKAT[8] = a9 + 65;
+   		UNIKAT[9] = a10 + 65;
    		a1++;
-   		//printf("%s\n", a);
+   		printf("%s\n", UNIKAT);
    		//return(a);
 }
 
@@ -117,4 +118,4 @@ void stringRandGen()
    		stringRandGen();
    		printf("%s\n", a);
    }
-}/*
+}*/

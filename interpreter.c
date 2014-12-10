@@ -84,7 +84,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             */
 
             //------------------------- UNIKATNY KLUC DO TABULKY MASTER-------------------------------------//
-               char* UNIKAT =  stringRandGen();
+               strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, TIP );
 
@@ -385,7 +385,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
 
@@ -411,7 +411,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 *(float*)c_double = b + a;
                 
                 //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
 
@@ -449,7 +449,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                 
                 //-----------STRING-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
 
@@ -484,7 +484,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
 
@@ -509,7 +509,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
 
@@ -543,7 +543,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
 
@@ -569,7 +569,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
 
@@ -610,7 +610,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
 
@@ -643,7 +643,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
 
@@ -689,7 +689,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -721,7 +721,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -752,7 +752,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -784,7 +784,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -827,7 +827,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -858,7 +858,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -889,7 +889,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -922,7 +922,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -966,7 +966,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -997,7 +997,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1028,7 +1028,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1061,7 +1061,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1104,7 +1104,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1135,7 +1135,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1166,7 +1166,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1199,7 +1199,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1242,7 +1242,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1273,7 +1273,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1304,7 +1304,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1337,7 +1337,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1379,7 +1379,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1410,7 +1410,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1441,7 +1441,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
@@ -1474,7 +1474,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
                 //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
-                char* UNIKAT =  stringRandGen();
+                strningRandGen();
 
                 hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
 
