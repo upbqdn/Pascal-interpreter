@@ -577,7 +577,7 @@ tToken get_token(void)
             token.radek = radek;
             token.sloupec = sloupec;
             fprintf(stderr, "%d : LEXIKALNI CHYBA na souradnici [%d, %d] \n", error, radek+1, sloupec);
-            void trashDestroy(chyba_v_programu_v_ramci_lexikalni_analyzy); /* uklizim */
+            trashDestroy(chyba_v_programu_v_ramci_lexikalni_analyzy); /* uklizim */
             break;
         }
         case S_END:
