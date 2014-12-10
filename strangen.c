@@ -107,7 +107,7 @@ void strningRandGen()
    		UNIKAT[8] = a9 + 65;
    		UNIKAT[9] = a10 + 65;
    		a1++;
-   		printf("%s\n", UNIKAT);
+   		//printf("%s\n", UNIKAT);
    		//return(a);
 }
 
