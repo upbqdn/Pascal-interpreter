@@ -50,14 +50,12 @@ typedef enum
     S_KLIC_ELSE,
     S_KLIC_END, // 4
     S_KLIC_FALSE, // 5
-    S_KLIC_FIND,
     S_KLIC_FORWARD,
     S_KLIC_FUNCTION,
     S_KLIC_IF,
     S_KLIC_INTEGER,  // 10
     S_KLIC_READLN,
     S_KLIC_REAL,
-    S_KLIC_SORT,
     S_KLIC_STRING,  // 14
     S_KLIC_THEN,  // 15
     S_KLIC_TRUE,
