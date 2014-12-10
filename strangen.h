@@ -26,4 +26,4 @@ extern int GlobalI;
 /*
  *Deklaracia funkcii
  */
- char *stringRandGen();
+ void stringRandGen();
