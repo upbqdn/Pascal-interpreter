@@ -1,6 +1,35 @@
 var
-a:boolean;
-b:boolean;
+a:integer;
+b:integer;
+c:integer;
+
+{function xx(a:integer):integer;
+begin
+
+a:=a+1;
+
+if(a = 5) then
+
+begin
+  write(''#10'');
+  write('USPECH');
+  write(''#10'')
+
+  end
+
+  else
+
+  begin
+    write(a);
+    a:=xx(a)
+  end;
+
+xx:=a
+
+end;}
+
+
+
 
 
 
@@ -10,11 +39,7 @@ begin
 
 
 
-b:= false < true ;
-
+b:=(5+5)*(1+1);
 write(b)
-
-
-
 
 end.

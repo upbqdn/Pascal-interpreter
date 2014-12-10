@@ -54,6 +54,7 @@ typedef enum
     I_FRAME_DEL,    //33
     I_PODM_JMP,     //34
     I_JMP,          //35
+    I_ZARAZKA,
 
 
 } tINSTR;

@@ -220,6 +220,10 @@ void extractRule(tSem_context* s_con)
             list_element prvok;
             prvok = (list_element)(hash_adress(GLOBFRAME, spracADDR));
             void* pomad;
+
+            //navestie na BEGIN
+            NaplnInstr(I_NICNEROBA, NULL, NULL, NULL);
+
             pomad = InstrDajPoz(&INSTR_PASKA);
             // &(prvok)->ref
 
@@ -298,6 +302,7 @@ void extractRule(tSem_context* s_con)
 
             //----------------gener---------------------------------------------------
             NaplnInstr(I_JMP_BACK, NULL, NULL, NULL); // skoci naspet ... ZASOBNIK skokov.
+            //direct JUMP MA BYT ZMENTTOOO
 
             //----------------gener---------------------------------------------------
         }
@@ -402,11 +407,16 @@ void extractRule(tSem_context* s_con)
 
         }
 
+        //->act_type;
+        //printf("AKTUAL TYP :::%d:::\n", s_con->act_type); whattoken(s_con->act_type);
         //--gener-------------------------------------------------------------------
         // toto sa deje vzdy
         // ber co mas na POMOCNOM zasobniku + pop pomocny
         // prirad
-        NaplnInstr( I_FUN_PRIRAD_PARAM, NULL, NULL, NULL );
+        tStav *TIPSTAV = mymalloc(sizeof(tStav));;
+        *TIPSTAV = s_con->act_type;
+
+        NaplnInstr( I_FUN_PRIRAD_PARAM, NULL, NULL, TIPSTAV );
         //--gener-------------------------------------------------------------------
 
 
@@ -591,7 +601,7 @@ void extractRule(tSem_context* s_con)
         {
             // skontrolovat ci je su v podmienke aktualne nazvy//
             // toto je FUNKCIA
-
+/*
             //----------------------------gener-------------------------------------------------------
             // generujeme zaciatocne veci pri spusteni FUNKCIE-kopirovanie tabulki, nahodenie na FRAMESTACK
             // + dalej generujeme pomocnu zarazku na zasobnik -- vsetko v 1 instrukcii
@@ -601,9 +611,13 @@ void extractRule(tSem_context* s_con)
             NaplnInstr( I_RUNFUN_COPY, NULL , spracADDR, NULL ); // podla kluca
 
             //-----gener--------------------------------------------------------------------------------
+*/
+            
+            NaplnInstr(I_ZARAZKA,NULL,NULL,NULL);
 
             myPop (&S);
             myPushMul (&S, 4, S_IDENTIFIKATOR, S_LEVA_ZAVORKA, LL_SPLIST, S_PRAVA_ZAVORKA );
+
 
             s_con->c_fun = actToken.data;   //ulozi sa id volanej funkcie
             s_con->context = RET_VAL_CHECK;  //typova kontrola priradenia navr. hod. funkcie
@@ -667,6 +681,8 @@ void extractRule(tSem_context* s_con)
 
             myaPop(&IFJMP);
             myaPop(&IFJMP);
+
+
 
 
 
@@ -837,7 +853,19 @@ void extractRule(tSem_context* s_con)
 
             if (priznak != write) // !!IBA!! ak mam UZIVATELSKU FUNKCIU !!
             {
-                NaplnInstr( I_RUNFUN_PARAM, NULL, NULL, zarazka );
+
+                NaplnInstr( I_RUNFUN_PARAM, NULL, NULL, NULL );
+
+                           //----------------------------gener-------------------------------------------------------
+            // generujeme zaciatocne veci pri spusteni FUNKCIE-kopirovanie tabulki, nahodenie na FRAMESTACK
+            // + dalej generujeme pomocnu zarazku na zasobnik -- vsetko v 1 instrukcii
+
+            NaplnInstr( I_RUNFUN_COPY, NULL , spracADDR, NULL ); // podla kluca
+
+            //-----gener--------------------------------------------------------------------------------
+
+
+                
 
                 // ULOZ ADRESU FUNKCIE SAVE na zasobnik skokov
                 NaplnInstr( I_JMP_S, NULL , NULL, NULL );
@@ -988,9 +1016,26 @@ void extractRule(tSem_context* s_con)
             void *spracADDR = spracuj(S_IDENTIFIKATOR, s_con->c_fun);
 
 
+
             if (priznak != write) // !!IBA!! ak mam UZIVATELSKU FUNKCIU !!
             {
-                NaplnInstr( I_RUNFUN_PARAM, NULL, NULL, zarazka );
+
+                NaplnInstr( I_RUNFUN_PARAM, NULL, NULL, NULL );
+
+
+                       //----------------------------gener-------------------------------------------------------
+            // generujeme zaciatocne veci pri spusteni FUNKCIE-kopirovanie tabulki, nahodenie na FRAMESTACK
+            // + dalej generujeme pomocnu zarazku na zasobnik -- vsetko v 1 instrukcii
+
+            NaplnInstr( I_RUNFUN_COPY, NULL , spracADDR, NULL ); // podla kluca
+
+            //-----gener--------------------------------------------------------------------------------
+
+
+                
+
+         
+
 
                 // ULOZ ADRESU FUNKCIE SAVE na zasobnik skokov
                 NaplnInstr( I_JMP_S, NULL , NULL, NULL );
@@ -1125,11 +1170,14 @@ bool parse()
                         // posielam ID funkcie koli ADRESE ZACIATKU FUN NA instrukc paske
                         //--gener-dole-----------------------------
 
-                        // generuj adresu BEGINU... tu je begin
+                        // generuj kluc na zaciatok funkcie TU zacina funkcia
                         void *spracADDR = spracuj(S_IDENTIFIKATOR, actToken.data); // slo by to aj inac ale pre jednotnost..
                         // NaplnInstr(I_JMPF_KEY_S, NULL, spracADDR, NULL); //
 
                         // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie
+
+                        // vytvorime si navestie pomocou NIC-NEROBY :D
+                        NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
 
 
                         list_element prvok;
