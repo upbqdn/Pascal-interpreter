@@ -72,3 +72,4 @@ extern list *MASTERTAB; // globalna tabulka
  char *copy(char *string, int i, int n);
  void set_arg_num(list *, char *, int);
  int get_arg_num(list *, char *);
+ int arg_numSearch(list *, unsigned int);

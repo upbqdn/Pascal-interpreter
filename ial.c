@@ -56,7 +56,7 @@ void hash_insert_i(list *localTable, char *id)
  		help_var->id = mymalloc(strlen(id) * sizeof(char));
  		if(help_var == NULL || help_var->id == NULL) //alokacia prebehla chybne
  		{
- 			//doplnit error
+ 			//nic
  		}
  		else //alokacia prebehla spravne
  		{
@@ -76,7 +76,7 @@ void hash_set_sign(list *localTable, char *id, int sign)
 {
 	if(hash_search(localTable, id) == NOCONTAINS)
 	{
-		
+		//nic
 	}
 	else
 	{
@@ -97,7 +97,7 @@ void set_arg_num(list *localTable, char *id, int arg_num)
 {
 	if(hash_search(localTable, id) == NOCONTAINS)
 	{
-		
+		//nic
 	}
 	else
 	{
@@ -126,7 +126,7 @@ void hash_insert_it(list *localTable, char *id, int type)
  		help_var->id = mymalloc(strlen(id) * sizeof(char));
  		if(help_var == NULL || help_var->id == NULL) //alokacia prebehla chybne
  		{
- 			//doplnit error
+ 			//nic
  		}
  		else //alokacia prebehla spravne
  		{
@@ -293,6 +293,24 @@ list_element hash_return(list *localTable, char *id)
 	return NULL;
 }
 
+int arg_numSearch(list *localTable, unsigned int num)
+{
+	for(int i = ORIGIN; i < HASH_ARRAY_SIZE; i++) //pre kazdy zoznam v tabulke
+ 	{
+ 		localTable[i].Act = localTable[i].First;
+ 		while(localTable[i].Act != NULL) //prejde vsetky elementy zoznamu
+ 		{
+ 			if(num == localTable[i].Act->arg_num)
+ 			{
+
+ 				return localTable[i].Act->type;
+ 			}
+ 			localTable[i].Act = localTable[i].Act->ptr;
+ 		}
+ 	}
+ 	return NAN;
+}
+
 /*
  *Funkcia na skopirovanie celej hash tabulky
  *Parameter: tabulka, ktoru chceme skopirovat
@@ -390,7 +408,7 @@ void sort(char *Array, int left, int right)
  */
 int find(char *T, char *P)
 {
-	int *Fail = mymalloc(strlen(P) * sizeof(int)); //alokovanie miesta pre pomocny vektor
+	int *Fail = malloc(strlen(P) * sizeof(int)); //alokovanie miesta pre pomocny vektor
 	int TL = strlen(T); //dlka retazca T
 	int PL = strlen(P); //dlzka retazca P
 	vector(P, Fail);
@@ -465,17 +483,22 @@ int main()
 {
 	//UKAZKA
 	GLOB = hash_init(); //vytvorime tabulku a ulozime si jej adresu  //vytvorenie 2 tabulky, pre ukazku
-	hash_insert_i(GLOB, "aaa"); //vlozime hodnotu do 2 tabulky
-	hash_insert_it(GLOB, "aaa", 5);
-	printf("%d\n", hash_return_type(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
-	printf("%d\n", (*((list_element) (hash_adress(GLOB, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
-	set_arg_num(GLOB, "aaa", 5555);
-	printf("%d\n", get_arg_num(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
-	hash_insert_func(GLOB, "aaa");
-	list *lokalna;
-	lokalna = (*((list_element) (hash_adress(GLOB, "aaa")))).ref;
-	hash_insert_it(lokalna, "ab", 515);
-	printf("%d\n", (*((list_element) (hash_adress(lokalna, "ab")))).type);
+	//hash_insert_i(GLOB, "aaa"); //vlozime hodnotu do 2 tabulky
+	//hash_insert_it(GLOB, "aaa", 5);
+	//printf("%d\n", hash_return_type(GLOB, "aaa")); //vypiseme obsah token.state poriadna hnusoba!
+	//printf("%d\n", (*((list_element) (hash_adress(GLOB, "aaa")))).type); //vypiseme obsah token.state poriadna hnusoba!
+	//set_arg_num(GLOB, "aaa", 5555);
+	hash_insert_it(GLOB, "ccc", 587);
+	hash_insert_it(GLOB, "a", 1);
+	set_arg_num(GLOB, "a", 3);
+	set_arg_num(GLOB, "ccc", 4785);
+	//printf("%d\n", get_arg_num(GLOB, "ccc")); //vypiseme obsah token.state poriadna hnusoba!
+	//hash_insert_func(GLOB, "aaa");
+	//list *lokalna;
+	//lokalna = (*((list_element) (hash_adress(GLOB, "aaa")))).ref;
+	//hash_insert_it(lokalna, "ab", 515);
+	//printf("%d\n", (*((list_element) (hash_adress(lokalna, "ab")))).type);
+	printf("%d novinka\n", arg_numSearch(GLOB, 3));
 	//TO JE IBA PRE MNA!
 	//hash_insert_it(localTable, "bbbb", 15);
 	//Lhash_insert_it(local, "aaa", 10);
