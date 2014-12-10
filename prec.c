@@ -290,7 +290,7 @@ adios:
 if (chyba == 1) 
 {
 	//printf("NE, tohle neni vyraz! \n"); 
-	fprintf(stderr, "SYNTAKTICKA CHYBA : 2 na radku c. %d \n",actToken.radek ); 
+	fprintf(stderr, "2: SYNTAKTICKA CHYBA ve vyrazu na radku c. %d \n",actToken.radek+1 ); 
 	trashDestroy(chyba_v_programu_v_ramci_syntakticke_analyzy); /* uklizime */
 }
 //if (chyba == 0) {printf("OK, tohle je vyraz \n");}
