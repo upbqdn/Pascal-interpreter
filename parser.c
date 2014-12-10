@@ -1094,7 +1094,7 @@ bool parse()
     NaplnInstr(I_NICNEROBA, NULL,NULL,NULL);
     InstrStart(&INSTR_PASKA);
 
-    zarazka  = malloc(sizeof(char)); // zarazka adresova
+    zarazka  = mymalloc(sizeof(char)); // zarazka adresova
 
     hash_insert_it(GLOBFRAME, "begin", 444); // navestie mainu
 
