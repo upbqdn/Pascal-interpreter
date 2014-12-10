@@ -15,7 +15,9 @@
  */
  #define PREFIX (3)
  #define ROZP5 (93)
+ #define BEGINASCI (33)
 
+ 
 /*
  *Deklaracia struktur a premennych
  */

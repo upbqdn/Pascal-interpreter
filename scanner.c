@@ -20,7 +20,7 @@
 /* klicova slova */
 const char *klicova_slova[POCET_KLICOVYCH_SLOV] =
 {
-    "begin\0", "boolean\0", "do\0", "else\0", "end\0", "false\0", "find\0", "forward\0", "function\0", "if\0", "integer\0", "readln\0", "real\0", "sort\0", "string\0", "then\0", "true\0", "var\0", "while\0", "write\0"
+    "begin\0", "boolean\0", "do\0", "else\0", "end\0", "false\0", "forward\0", "function\0", "if\0", "integer\0", "readln\0", "real\0", "string\0", "then\0", "true\0", "var\0", "while\0", "write\0"
 };
 
 void vloz_znak_do_tokenu(int znak, int *i)
@@ -35,8 +35,7 @@ void vloz_znak_do_tokenu(int znak, int *i)
     {
 		error = interni_chyba_interpretu; /* interni chyba prekladace */
          fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
-         void trashDestroy();
-         exit(99);
+         trashDestroy(interni_chyba_interpretu);
 	 }
 }
 
@@ -132,7 +131,7 @@ tToken get_token(void)
                 stav = S_CHYBA;
                 break;
             }
-            vloz_znak_do_tokenu(c, &i);
+            vloz_znak_do_tokenu(tolower(c), &i);
             break;
         }
 
@@ -141,7 +140,7 @@ tToken get_token(void)
             if ((isalpha(c) || isdigit(c) || (c == '_')))
             {
                 stav = S_IDENTIFIKATOR;
-                vloz_znak_do_tokenu(c, &i);
+                vloz_znak_do_tokenu(tolower(c), &i);
             }
             else
             {
@@ -414,6 +413,7 @@ tToken get_token(void)
         /******************************************************************************************************************/
         case S_RETEZEC:
         {
+			
           // pozor mozno tu tento IF nebude  >> bud '#65'  alebo ''#65''
           /*  if (token.data == NULL && c == '#') // jedna sa o samostatnu ESCAPE SEKV
             {
@@ -434,6 +434,13 @@ tToken get_token(void)
                     // nejaka chybycka !                                treba VYRIESIT TUTO CHYBU NEJAK !!!!!
                     break;
                 }
+                else if ((c == '\t') || (c == '\v')) /* soucasti retezce nesmi byt tabulator */
+                {
+				        napln_token(stav);
+                        stav = S_CHYBA;
+                        vrat_se_o_znak((char) c);
+                        break;
+				}
 
                 stav = S_RETEZEC;
                 vloz_znak_do_tokenu(c, &i);
@@ -453,11 +460,13 @@ tToken get_token(void)
                 }
                 else if (c == '\'') // mame dve za sebu idece ''  >> to je v retazci jeden '  isdigit(c)
                 {
-                    stav = S_RETEZEC;
-                    vloz_znak_do_tokenu(c, &i);
+				        napln_token(stav);
+                        stav = S_CHYBA;
+                        vrat_se_o_znak((char) c);
                 }
                 else
                 {
+				
                     if (  token.data == NULL )
                     {  
                         //c = '*';
@@ -491,12 +500,17 @@ tToken get_token(void)
                 else {
 					error = interni_chyba_interpretu; /* interni chyba prekladace */
 					fprintf(stderr, "CHYBA ALOKACE : %d \n",error );
-					void trashDestroy();
-					exit(99);
+					trashDestroy(interni_chyba_interpretu);
 					
 				}
 
             }
+            else if (c == '-') /* asci hodnota musi byt kladna  */
+            {
+				        napln_token(stav);
+                        stav = S_CHYBA;
+                        vrat_se_o_znak((char) c);
+			}
             else // uz nemame cislo ...
             {
                 if (c == '\'') // ok ukoncili sme escape sekvenciu apostrofom vsetko ok :)
@@ -513,7 +527,7 @@ tToken get_token(void)
                     {
                         // chyba cislo je mimo ASCI !!!
                         napln_token(stav);
-                        stav = S_END;
+                        stav = S_CHYBA;
                         vrat_se_o_znak((char) c);
                     }
 
@@ -530,14 +544,12 @@ tToken get_token(void)
         case S_KLIC_ELSE:
         case S_KLIC_END:
         case S_KLIC_FALSE:
-        case S_KLIC_FIND:
         case S_KLIC_FORWARD:
         case S_KLIC_FUNCTION:
         case S_KLIC_IF:
         case S_KLIC_INTEGER:
         case S_KLIC_READLN:
         case S_KLIC_REAL:
-        case S_KLIC_SORT:
         case S_KLIC_STRING:
         case S_KLIC_THEN:
         case S_KLIC_TRUE:
@@ -576,8 +588,8 @@ tToken get_token(void)
             konec = true;
             token.radek = radek;
             token.sloupec = sloupec;
-            fprintf(stderr, "LEXIKALNI CHYBA : %d na souradnici[%d, %d] \n", error, radek+1, sloupec);
-            void trashDestroy(chyba_v_programu_v_ramci_lexikalni_analyzy); /* uklizim */
+            fprintf(stderr, "%d : LEXIKALNI CHYBA na souradnici [%d, %d] \n", error, radek+1, sloupec);
+            trashDestroy(chyba_v_programu_v_ramci_lexikalni_analyzy); /* uklizim */
             break;
         }
         case S_END:

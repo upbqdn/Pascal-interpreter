@@ -10,10 +10,13 @@ int GlobalI = 1;
 char *stringRandGen()
 {
 	char *pomocna = mymalloc(sizeof(char)* PREFIX);
-	strcat(pomocna, "@#$"); 
-	char *c = mymalloc(sizeof(char));
+	strcpy(pomocna, "@#$");
+
+	//char *c = mymalloc(sizeof(char));
+	char *c;
 	int GlobPom = GlobalI;
 	int i = 0;
+	char SUFFIX[] = "@$$#";
 	do{
 		if(GlobPom > ROZP5)
 		{
@@ -24,9 +27,11 @@ char *stringRandGen()
 		else
 		{
 
-			pomocna = myrealloc(pomocna, (sizeof(char)* (PREFIX + i)));
-			*c = GlobPom + BEGINASCI;
-			strcat(pomocna, c);
+			 pomocna =  myrealloc(pomocna, (sizeof(char)* (PREFIX + i+1)));
+			//*c = GlobPom + BEGINASCI;
+			c = GlobPom + BEGINASCI;
+			strcat(pomocna, &c);
+			strcat(pomocna, SUFFIX);
 			GlobPom = GlobPom - ROZP5;
 		}
 		i++;

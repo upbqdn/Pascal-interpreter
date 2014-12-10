@@ -13,7 +13,7 @@
  */
 
 /* konstanty */
-#define POCET_KLICOVYCH_SLOV 20
+#define POCET_KLICOVYCH_SLOV 18
 
 /* struktura pro token */
 typedef struct

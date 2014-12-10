@@ -1,12 +1,35 @@
 var
 a:integer;
 b:integer;
-c:string;
+c:integer;
 
-x:boolean;
-z:boolean;
+{function xx(a:integer):integer;
+begin
 
-v:boolean;
+a:=a+1;
+
+if(a = 5) then
+
+begin
+  write(''#10'');
+  write('USPECH');
+  write(''#10'')
+
+  end
+
+  else
+
+  begin
+    write(a);
+    a:=xx(a)
+  end;
+
+xx:=a
+
+end;}
+
+
+
 
 
 
@@ -15,14 +38,8 @@ v:boolean;
 begin
 
 
-x:= true ;
-z:= false;
 
-v:= 2 = 2 ;
-
-write(v)
-
-
-
+b:=(5+5)*(1+1);
+write(b)
 
 end.

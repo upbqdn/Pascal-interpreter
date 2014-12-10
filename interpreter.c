@@ -15,6 +15,7 @@
 #include "instrlist.h"
 #include "interpreter.h"
 #include "garbage.h"
+#include "strangen.h"
 
 
 
@@ -34,7 +35,7 @@ astack paramSTACK; // parametre funkcii
 
 void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
-    
+
     astack_init(&aS);
     myaPush(&aS, zarazka); // nahadzuje sa hlavna zarazka
 
@@ -43,21 +44,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
     astack_init(&paramSTACK);
 
-    hash_insert_it (MASTERTAB, "c_integer", S_INTEGER );
-    hash_insert_it (MASTERTAB, "c_double", S_DOUBLE );
-    hash_insert_it (MASTERTAB, "c_string", S_RETEZEC );
-    hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-
-
     
-
-
-    // ----------------alokacia pomocnych premennych roznych TIPOV------------//
-    void *c_integer = mymalloc(sizeof(int));
-    void *c_double = mymalloc(sizeof(float));
-    void *c_bool = mymalloc(sizeof(bool));
-    void *c_string = mymalloc(sizeof(char));
-
 
     tStav TIP;
     tInstrukcia *Instr; // lokalna instrukcia
@@ -68,23 +55,46 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
     {
         Instr = DajInstr(&INSTR_PASKA);
 
+        //printf("INSTR_<<%d>>\n",  Instr->AKCIA );
+
         switch(Instr->AKCIA)
         {
+
+        case I_NICNEROBA:
+        {
+
+
+            break;
+        }
 
 //-----------------------------ak pride int,double,boolean,string..-----------------------------------//
         case I_PREC:
         {
-        	TIP = *(tStav *)(Instr->ADDR_DRUHA);				// na tejto adrese musi byt napr. S_INTEGER
-        	hash_insert_it (MASTERTAB, Instr->ADDR_KDE, TIP );  //
-
-        	list_element prvok;
+            TIP = *(tStav *)(Instr->ADDR_DRUHA);				// na tejto adrese musi byt napr. S_INTEGER
             
+            /*hash_insert_it (MASTERTAB, Instr->ADDR_KDE, TIP );  //
+
+            list_element prvok;
+
             prvok = (list_element)(hash_adress(MASTERTAB, Instr->ADDR_KDE)); // ID kluc
 
             (prvok)->ref = Instr->ADDR_PRVA;
-   
+
             myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
-    
+            */
+
+            //------------------------- UNIKATNY KLUC DO TABULKY MASTER-------------------------------------//
+               char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, TIP );
+
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
+                (prvok)->ref = Instr->ADDR_PRVA;
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+            //---------------------- UNIKATNY KLUC DO TABULKY MASTER--------------------------------------------/
+
 
             break;
         }
@@ -247,7 +257,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             case S_RETEZEC:
             {
-           
+
                 char znak;
                 int dlzkastringu = 0;
                 while((znak=getchar())!= '\n' )
@@ -299,9 +309,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             case S_RETEZEC:
             {
-            printf("%s", ( *(char **) (myaTop(&aS))) );
-            myPop(&aS);
-            break;
+                printf("%s", ( *(char **) (myaTop(&aS))) );
+                myPop(&aS);
+                break;
             }
 
             case S_KLIC_FALSE:
@@ -369,15 +379,23 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
 
+                int c_integer = mymalloc(sizeof(int));
+
                 *(int*)c_integer = b + a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
 
-                hash_insert_it (MASTERTAB, "4", S_INTEGER );
-                
+
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "4"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_integer ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
+
 
 
             }
@@ -388,17 +406,29 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
+                int c_double = mymalloc(sizeof(float));
+
                 *(float*)c_double = b + a;
-                list_element prvok;           
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+                
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
+
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_double ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
 
             }
             else if (TIP == S_RETEZEC)
             {
                 void* pomAddr1;
                 void* pomAddr2;
+                void* c_string = mymalloc(sizeof(char));
+
                 pomAddr1 = (*(void **)(myaTop(&aS))) ;
                 myaPop(&aS);
                 pomAddr2 = (*(void **)(myaTop(&aS))) ;
@@ -417,10 +447,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 strcpy(  c_string, ((char**)pomAddr3)  );
                 strcat(  c_string, ((char**)pomAddr1)  );
 
+                
+                //-----------STRING-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
+
                 list_element prvok;
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_string")); // ID kluc
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_string ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------STRING-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
+
+
             }
 
 
@@ -438,11 +478,23 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
 
+                int c_integer = mymalloc(sizeof(int));
+
                 *(int*)c_integer = b - a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
+
+
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
+
                 list_element prvok;
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_integer ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
+
             }
             else if (TIP == S_DOUBLE)
             {
@@ -451,11 +503,24 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
+                int c_double = mymalloc(sizeof(float));
+
                 *(float*)c_double = b - a;
-                list_element prvok;           
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+
+
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
+
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_double ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
+
+
             }
 
             break;
@@ -472,11 +537,24 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
 
+                int c_integer = mymalloc(sizeof(int));
+
                 *(int*)c_integer = b * a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
+
+
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
+
                 list_element prvok;
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_integer ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
+
+
             }
             else if (TIP == S_DOUBLE)
             {
@@ -485,11 +563,22 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
+                int c_double = mymalloc(sizeof(float));
+
                 *(float*)c_double = b * a;
-                list_element prvok;           
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+
+
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
+
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_double ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
 
             }
 
@@ -514,11 +603,25 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 int b = *( *(int **) (myaTop(&aS)))  ;
                 myaPop(&aS);
 
+                int c_integer = mymalloc(sizeof(int));
+
                 *(int*)c_integer = b / a;   // spocitaju sa hodnoty a priradia sa do medzi vysledku
+
+
+
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_INTEGER );
+
                 list_element prvok;
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_integer")); // ID kluc
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_integer ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------INTEGER-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
+
+
             }
             else if (TIP == S_DOUBLE)
             {
@@ -534,11 +637,23 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 float b = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
 
+                int c_double = mymalloc(sizeof(float));
+
                 *(float*)c_double = b / a;
-                list_element prvok;           
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_double")); // ID kluc
+
+
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER------------------------------------------------//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_DOUBLE );
+
+                list_element prvok;
+
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_double ;
-                myaPush(&aS, &(prvok)->ref);
+                myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //-----------DOUBLE-------UNIKATNY KLUC DO TABULKY MASTER----------------------------------------------//
+
 
             }
 
@@ -547,9 +662,15 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 
 
-        //----------------------------------DOPLNIL MATUSKA - TREBA SKONTROLOVAT----------------------------//
+
+//---------------------------------- POROVNAVACIE INSTRUKCIE  dole ----------------------------//
+
         case I_ROVNO:
         {
+            void* c_bool = mymalloc(sizeof(bool));
+
+
+            //ok
             if (TIP == S_INTEGER) /*int = int*/
             {
                 int a = *( *(int **) (myaTop(&aS))) ;
@@ -565,16 +686,19 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                     *(bool*)c_bool = false;
                 }
 
-                //myaPush(&aS, c_bool);
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
-
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
 
@@ -593,15 +717,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
             }
             if (TIP == S_RETEZEC) /* string = string */
@@ -619,15 +748,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = true;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -646,13 +780,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
             }
 
@@ -665,6 +806,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_NEROVNO:
         {
+            void* c_bool = mymalloc(sizeof(bool));
+
+            //ok
             if (TIP == S_INTEGER) /*int <> int*/
             {
                 int a = *( *(int **) (myaTop(&aS))) ;
@@ -679,14 +823,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -704,15 +854,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -730,15 +885,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -759,13 +919,19 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
             }
 
@@ -778,11 +944,15 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_VETSI:
         {
+            void* c_bool = mymalloc(sizeof(bool));
+
+
+            //ok
             if (TIP == S_INTEGER) /*int > int*/
             {
-                int a = *( *(int **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 int b = *( *(int **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a > b)
                 {
@@ -792,23 +962,28 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
             if (TIP == S_DOUBLE) /* real > real */
             {
-                float a = *( *(float **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 float b = *( *(float **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a > b)
                 {
@@ -818,15 +993,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -844,15 +1024,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -860,9 +1045,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool > bool */
             {
-                bool a = *( *(bool **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool a = *( *(bool **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a > b)
                 {
@@ -872,13 +1057,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
             }
 
@@ -890,11 +1082,15 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_MENSI:
         {
+            void* c_bool = mymalloc(sizeof(bool));
+
+
+            //ok
             if (TIP == S_INTEGER) /*int < int*/
             {
-                int a = *( *(int **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 int b = *( *(int **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a < b)
                 {
@@ -904,23 +1100,28 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
             if (TIP == S_DOUBLE) /* real < real */
             {
-                float a = *( *(float **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 float b = *( *(float **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a < b)
                 {
@@ -930,15 +1131,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -956,15 +1162,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -972,9 +1183,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool < bool */
             {
-                bool a = *( *(bool **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool a = *( *(bool **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a < b)
                 {
@@ -984,13 +1195,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
             }
 
@@ -1002,11 +1220,15 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_VETSIROVNO:
         {
+            void* c_bool = mymalloc(sizeof(bool));
+
+
+            //ok
             if (TIP == S_INTEGER) /*int >= int*/
             {
-                int a = *( *(int **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 int b = *( *(int **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a >= b)
                 {
@@ -1016,23 +1238,28 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
             if (TIP == S_DOUBLE) /* real >= real */
             {
-                float a = *( *(float **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 float b = *( *(float **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a >= b)
                 {
@@ -1042,15 +1269,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -1068,15 +1300,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -1084,9 +1321,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool >= bool */
             {
-                bool a = *( *(bool **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool a = *( *(bool **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a >= b)
                 {
@@ -1096,13 +1333,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
             }
 
@@ -1113,11 +1357,15 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_MENSIROVNO:
         {
+            void* c_bool = mymalloc(sizeof(bool));
+
+            
+            //ok
             if (TIP == S_INTEGER) /*int <= int*/
             {
-                int a = *( *(int **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 int b = *( *(int **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                int a = *( *(int **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a <= b)
                 {
@@ -1127,23 +1375,28 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
             if (TIP == S_DOUBLE) /* real <= real */
             {
-                float a = *( *(float **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 float b = *( *(float **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                float a = *( *(float **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a <= b)
                 {
@@ -1153,15 +1406,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -1179,15 +1437,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                
 
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
 
             }
@@ -1195,9 +1458,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             if ( (TIP == S_BOOLEAN) || (TIP == S_KLIC_TRUE) || (TIP == S_KLIC_FALSE) ) /* bool <= bool */
             {
-                bool a = *( *(bool **) (myaTop(&aS))) ;
-                myaPop(&aS);
                 bool b = *( *(bool **) (myaTop(&aS))) ;
+                myaPop(&aS);
+                bool a = *( *(bool **) (myaTop(&aS))) ;
                 myaPop(&aS);
                 if (a <= b)
                 {
@@ -1207,13 +1470,20 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 {
                     *(bool*)c_bool = false;
                 }
-                //hash_insert_it (MASTERTAB, "c_bool", S_BOOLEAN );
-                
+
+
+
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
+                char* UNIKAT =  stringRandGen();
+
+                hash_insert_it (MASTERTAB, UNIKAT, S_BOOLEAN );
+
                 list_element prvok;
 
-                prvok = (list_element)(hash_adress(MASTERTAB, "c_bool"  )); // ID kluc
+                prvok = (list_element)(hash_adress(MASTERTAB, UNIKAT  )); // ID kluc
                 (prvok)->ref = c_bool ;
                 myaPush(&aS, &(prvok)->ref); // vlozime na zasobnik adresu chlieviku v ktorom je adresa na danu polozku dat
+                //***************** UNIKATNY KLUC DO TABULKY MASTER*************************************************//
 
             }
 
@@ -1222,35 +1492,36 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             break;
         }
 
-//-----------------------------------------DOPLNIL MATUSKA----------------------------------------
 
 
 
 //--------------------------------------------INSTRUKCIE SKOKOV------------------TEST VER--------LEN FUNKCIE---------//
-     
+
         case I_JMPF_KEY:
-        {//ok
+        {
+            //ok
             //printf("INTER_SKOC podla kluca Z GLOB TAB!\n");
             //skoc podla KLUCA z GLOB TAB == tam kde zacina urcita funkcia
             list_element prvok;
             prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
 
             InstrGoto(&INSTR_PASKA, (prvok)->start  );
-
+            //continue;
             break;
         }
 
 
         case I_JMPF_KEY_S:
-        {//ok
-            //printf("INTER_uloz aktualnu adresu do GLOB TAB! : navestie funkcie \n");
+        {
+            //ok
+           // printf("INTER_uloz aktualnu adresu do GLOB TAB! : navestie funkcie \n");
             // uloz adresu KDE sa skoci  do GLOB TAB... cize navestie funkcie
 
             list_element prvok;
             prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_KDE));
             void* pomad;
             pomad = InstrDajPoz(&INSTR_PASKA);
-           // &(prvok)->ref
+            // &(prvok)->ref
 
             ((prvok)->start) = pomad;
 
@@ -1264,7 +1535,6 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             //printf("INTER_uloz aktualnu adresu do zasobnika skokov! : navratova adresa po skonceni fcie \n");
             //uloz si AKTUALNU poziciu do zasobniku skokov
             myaPush(&JMPSTACK, InstrDajPoz(&INSTR_PASKA));
-            
 
             break;
         }
@@ -1272,7 +1542,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         case I_JMP_BACK:
         {
             //printf("INTER_skoc na adresu zo zasobnika skokov! : konci funkcia skoc odkial si zacal \n");
-            
+
             // skok na ADRESU co je ulozena v zasobniku SKOKOV
             InstrGoto(&INSTR_PASKA, myaTop(&JMPSTACK));
             myaPop(&JMPSTACK);
@@ -1285,9 +1555,76 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_FUN_PRIRAD_PARAM:
         {
+
             //printf("INTER_napln parametre funkcie! \n");
             // ber co mas na pomocnom a prirad do toho co je na aS stacku
-            (*(int*)(myaTop(&aS))) = *(int *)(myaTop(&paramSTACK)); // priradime do prvok->ref
+            
+
+            switch(   *(tStav *)(Instr->ADDR_DRUHA)   )
+            {
+                case S_INTEGER:
+                {
+                    *( *(int **) (myaTop(&aS))) =  *( *(int **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
+
+                    break;
+                }
+
+                case S_DOUBLE:
+                {
+                    *( *(float **) (myaTop(&aS))) =  *( *(float **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
+
+                    break;
+                }
+
+                case S_BOOLEAN:
+                case S_KLIC_FALSE:
+                case S_KLIC_TRUE:
+                {
+                    *( *(bool **) (myaTop(&aS))) =  *( *(bool **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
+                    
+                    break;
+                }
+
+                case S_RETEZEC:
+                {
+                    //PARAM STACK == TO CO CHCEME SKOPIROVAT tu su DATA
+
+                    //( *(char **) (myaTop(&aS))) =  ( *(char **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
+
+                    //to co kopirujeme
+                    void* pomAddr1; 
+                    pomAddr1 = (*(void **) (myaTop(&paramSTACK)));
+                    int dlzka = strlen(((char**)pomAddr1));
+
+                    //printf("SZZZZZZ>>%s<<<dlzka je >%d<\n",  pomAddr1 , dlzka);
+
+
+                    // KAM kopirujeme
+                    void* pomAddr2 = (*(void **)(myaTop(&aS)));
+
+                    
+
+
+                    void *pom = myrealloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
+                    void **kk = (myaTop(&aS));
+                    *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
+
+                    strcpy( ((char*) pom) , ((char*)pomAddr1)  );
+
+                    
+
+
+                    break;
+                }
+
+
+
+                default:
+                    {
+                        break;
+                    }
+            }
+
             myaPop(&paramSTACK); // odstranime z pomocneho
             myaPop(&aS); // odstranime z klasik
 
@@ -1300,10 +1637,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             //printf("INTER_pred spustenim fcie uloz parametre na zasobnik \n");
             // prehadz mi parametre funkcie na parametrovy zasobnik!
-            
             while(myaTop(&aS) != zarazka)
             {
+
                 myaPush(&paramSTACK, myaTop(&aS) )  ;
+
                 myaPop(&aS);
             }
             myaPop(&aS); // vyhod zarazku
@@ -1313,24 +1651,30 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         }
 
 
+        case I_ZARAZKA:
+        {
+            myaPush(&aS, zarazka);
+            break;
+        }
+
+
         case I_RUNFUN_COPY:
         {
             //printf("INTER_skopiruj TABULKU podla kluca daj ako novy FRAME! \n");
-           //zkopiruje tabulku podla kluca..
+            //zkopiruje tabulku podla kluca..
             list *NOVATABULKA;
 
             list_element prvok;
             prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
 
-            NOVATABULKA = copyhash(  (prvok)->ref  ); // skopiruje tabulku   OVERIT
+            NOVATABULKA = copyhash(  (prvok)->ref  ); // skopiruje tabulku
 
             myaPush(&FRAME, NOVATABULKA);
-
-            myaPush(&aS, zarazka);
+            //myaPush(&aS, zarazka);
             break;
         }
 
-        
+
 
         case I_FRAME_DEL:
         {
@@ -1344,6 +1688,44 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 //----------------------potialto su INSTRUKCIE NA FUNKCIE --------------------------------------------------//
 
+        case I_JMP:
+        {
+
+            //DIRECT JUMP
+
+            //NaplnInstr(I_PODM_JMP, myaSecTop(&IFJMP), NULL, NULL);
+
+            InstrGoto(&INSTR_PASKA,   *(void**) (Instr->ADDR_KDE)   );
+
+            continue;
+            //InstrDalsia(&INSTR_PASKA);
+
+
+
+
+
+
+            break;
+        }
+
+        case I_PODM_JMP:
+        {
+
+            if (   !(*( *(bool **) (myaTop(&aS))))     )
+            {
+
+                InstrGoto(&INSTR_PASKA,   *(void**) (Instr->ADDR_KDE)    );
+                myaPop(&aS); // toto som pridal
+                continue;
+                //InstrDalsia(&INSTR_PASKA);
+
+
+
+            }
+            //else neskace
+            myaPop(&aS); // toto som pridal
+            break;
+        }
 
 
         default:
