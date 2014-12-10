@@ -132,7 +132,7 @@ tToken get_token(void)
                 stav = S_CHYBA;
                 break;
             }
-            vloz_znak_do_tokenu(c, &i);
+            vloz_znak_do_tokenu(tolower(c), &i);
             break;
         }
 
@@ -141,7 +141,7 @@ tToken get_token(void)
             if ((isalpha(c) || isdigit(c) || (c == '_')))
             {
                 stav = S_IDENTIFIKATOR;
-                vloz_znak_do_tokenu(c, &i);
+                vloz_znak_do_tokenu(tolower(c), &i);
             }
             else
             {
@@ -576,7 +576,7 @@ tToken get_token(void)
             konec = true;
             token.radek = radek;
             token.sloupec = sloupec;
-            fprintf(stderr, "LEXIKALNI CHYBA : %d na souradnici[%d, %d] \n", error, radek+1, sloupec);
+            fprintf(stderr, "%d : LEXIKALNI CHYBA na souradnici [%d, %d] \n", error, radek+1, sloupec);
             void trashDestroy(chyba_v_programu_v_ramci_lexikalni_analyzy); /* uklizim */
             break;
         }
