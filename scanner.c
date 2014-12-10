@@ -20,7 +20,7 @@
 /* klicova slova */
 const char *klicova_slova[POCET_KLICOVYCH_SLOV] =
 {
-    "begin\0", "boolean\0", "do\0", "else\0", "end\0", "false\0", "find\0", "forward\0", "function\0", "if\0", "integer\0", "readln\0", "real\0", "sort\0", "string\0", "then\0", "true\0", "var\0", "while\0", "write\0"
+    "begin\0", "boolean\0", "do\0", "else\0", "end\0", "false\0", "forward\0", "function\0", "if\0", "integer\0", "readln\0", "real\0", "string\0", "then\0", "true\0", "var\0", "while\0", "write\0"
 };
 
 void vloz_znak_do_tokenu(int znak, int *i)
@@ -544,14 +544,12 @@ tToken get_token(void)
         case S_KLIC_ELSE:
         case S_KLIC_END:
         case S_KLIC_FALSE:
-        case S_KLIC_FIND:
         case S_KLIC_FORWARD:
         case S_KLIC_FUNCTION:
         case S_KLIC_IF:
         case S_KLIC_INTEGER:
         case S_KLIC_READLN:
         case S_KLIC_REAL:
-        case S_KLIC_SORT:
         case S_KLIC_STRING:
         case S_KLIC_THEN:
         case S_KLIC_TRUE:
