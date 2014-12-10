@@ -789,7 +789,7 @@ void extractRule(tSem_context* s_con)
         else if (actToken.stav == S_DOUBLE)
         {
             myPop(&S);
-            myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
+            myPushMul(&S, 2, S_DOUBLE, LL_NSPLIST);
 
             void *spracADDR = spracuj(actToken.stav, actToken.data);
             void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
@@ -946,7 +946,7 @@ void extractRule(tSem_context* s_con)
             else if (actToken.stav == S_DOUBLE)
             {
                 myPop(&S);
-                myPushMul(&S, 2, S_KLIC_REAL, LL_NSPLIST);
+                myPushMul(&S, 2, S_DOUBLE, LL_NSPLIST);
 
                 void *spracADDR = spracuj(actToken.stav, actToken.data);
                 void *spracID = spracuj(S_IDENTIFIKATOR, actToken.data);
