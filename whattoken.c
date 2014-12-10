@@ -39,9 +39,6 @@ void whattoken(tStav stav)
          case S_KLIC_FALSE:
         	fprintf(stderr, "< keyword: FLASE >");
         	break;
-         case S_KLIC_FIND:
-        	fprintf(stderr, "< keyword: FIND >");
-        	break;
          case S_KLIC_FORWARD:
         	fprintf(stderr, "< keyword: FORWARD >");
         	break;
@@ -59,9 +56,6 @@ void whattoken(tStav stav)
         	break;
          case S_KLIC_REAL:
         	fprintf(stderr, "< keyword: REAL >");
-        	break;
-         case S_KLIC_SORT:
-        	fprintf(stderr, "< keyword: SORT >");
         	break;
          case S_KLIC_STRING:
         	fprintf(stderr, "< keyword: STRING >");
