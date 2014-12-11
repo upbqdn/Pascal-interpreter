@@ -63,13 +63,14 @@ extern list *MASTERTAB; // globalna tabulka
  void *hash_adress(list *, char *);
  void *copyhash(list *);
  void hash_destroy(list *);
- void sort(char *, int, int);
- int find(char *, char *);
  void vector(char *, int *);
  int hash_is_sign(list *, char *);
  unsigned hash_return_type(list *, char *);
  void hash_set_sign(list *, char *, int);
- char *copy(char *string, int i, int n);
  void set_arg_num(list *, char *, int);
  int get_arg_num(list *, char *);
  int arg_numSearch(list *, unsigned int);
+
+ void sort(char *, int, int);
+ int find(char *, char *);
+//char *copy(char *string, int i, int n);

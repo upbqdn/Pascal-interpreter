@@ -16,6 +16,7 @@
 #include "interpreter.h"
 #include "garbage.h"
 #include "strangen.h"
+#include "buildin.h"
 
 
 
@@ -1499,14 +1500,88 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_JMPF_KEY:
         {
-            //ok
-            //printf("INTER_SKOC podla kluca Z GLOB TAB!\n");
-            //skoc podla KLUCA z GLOB TAB == tam kde zacina urcita funkcia
-            list_element prvok;
-            prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
+            // vstavane funkcie
+            
+            // ---- Vstavana funkcia --- LENGTH--------------
+            if ( strcmp( Instr->ADDR_PRVA, "length" )  == 0 )
+            {
+            	list *TOPFRAME;
+            	TOPFRAME = myaTop(&FRAME);
 
-            InstrGoto(&INSTR_PASKA, (prvok)->start  );
-            //continue;
+            	list_element prvok;
+            	list_element navrat;
+
+            	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
+
+                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+
+
+                *(*(int **) (navrat)->ref)   = lenght(  (*(void **) (prvok)->ref)   );
+
+            }
+            else if ( strcmp( Instr->ADDR_PRVA, "copy" )  == 0 )
+            {
+            	// ---- Vstavana funkcia --- COPY--------------
+            	/* code */
+            }
+            else if ( strcmp( Instr->ADDR_PRVA, "find" )  == 0 )
+            {
+            	// ---- Vstavana funkcia --- FIND--------------
+            	/* code */
+            }
+            else if ( strcmp( Instr->ADDR_PRVA, "sort" )  == 0 )
+            {
+            	// ---- Vstavana funkcia --- SORT--------------
+            	list *TOPFRAME;
+            	TOPFRAME = myaTop(&FRAME);
+
+            	list_element prvok;
+            	list_element navrat;
+
+            	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
+
+                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+
+
+                //teraz prekopirujeme string do navratovej vecicky
+
+                void* pomAddr1; // ODKIAL
+
+                pomAddr1 = (*(void **) (prvok)->ref)  ;  // IDENTIFIKATOR (CEZ TABULKU SYMBOLOV)
+
+
+
+                // berieme zo zasobniku dalsiu ADRESU - KDE  to ulozit (adresacia cez TABULKU SYMBOLOV)
+                void* pomAddr2 = (*(void **) (navrat)->ref)    ; // KAM
+                int dlzka = strlen(((char**)pomAddr1));
+
+
+                void *pom = myrealloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
+                void **kk = (navrat)->ref ; // keby sa zmeni adresa 
+                *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
+
+                strcpy( ((char*) pom) , ((char*)pomAddr1)  );
+
+
+                // tu este dve cisla ... RAIPER ???? :D
+                sort(  (*(void **) (navrat)->ref) , 0 , 0 ); // toto ho zoSORTUJE
+            }
+            else
+            {
+            			// UZIVATELSKA FUNKCIA
+            
+                        //printf("INTER_SKOC podla kluca Z GLOB TAB!\n");
+                        //skoc podla KLUCA z GLOB TAB == tam kde zacina urcita funkcia
+                        list_element prvok;
+                        prvok = (list_element)(hash_adress(GLOBFRAME, Instr->ADDR_PRVA));
+            
+                        InstrGoto(&INSTR_PASKA, (prvok)->start  );
+                        //continue;
+            }
+
+
+
+
             break;
         }
 

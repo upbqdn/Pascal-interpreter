@@ -460,7 +460,8 @@ void vector(char *P, int *Fail)
 }
 
 /* najde v zadanem retezci podratezec zacinajici indexem i(pocitano od 0) o delce n znaku */
-char *copy(char *string, int i, int n)
+
+/*char *copy(char *string, int i, int n)
 {
 	char *pom;
 	int poc = 1;
@@ -476,6 +477,8 @@ char *copy(char *string, int i, int n)
 	pom[k] = '\0';
 	return pom;
 }
+*/
+
 
 /*
 list *GLOB;

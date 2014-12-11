@@ -26,7 +26,6 @@
 
 void copy(char *s, int i, int n, char *podretazec )
   {
-
   	 
     for (int j = 0; j < n; j++)
     {   
