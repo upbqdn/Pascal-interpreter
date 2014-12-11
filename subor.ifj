@@ -38,8 +38,10 @@ end;}
 begin
 
 
+while(true) do
+begin
+write(5)
+end
 
-b:=(5+5)*(1+1);
-write(b)
 
 end.
