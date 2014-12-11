@@ -1,47 +1,11 @@
-var
-a:integer;
-b:integer;
-c:integer;
 
-{function xx(a:integer):integer;
-begin
-
-a:=a+1;
-
-if(a = 5) then
+ var 
+  a : integer;
 
 begin
-  write(''#10'');
-  write('USPECH');
-  write(''#10'')
+  
+  a := 5;
 
-  end
-
-  else
-
-  begin
-    write(a);
-    a:=xx(a)
-  end;
-
-xx:=a
-
-end;}
-
-
-
-
-
-
-
-
-begin
-
-
-while(true) do
-begin
-write(5)
-end
-
+  write ( a )
 
 end.
