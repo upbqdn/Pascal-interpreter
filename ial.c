@@ -308,7 +308,7 @@ int arg_numSearch(list *localTable, unsigned int num)
  			localTable[i].Act = localTable[i].Act->ptr;
  		}
  	}
- 	return NAN;
+ 	return 0;
 }
 
 /*

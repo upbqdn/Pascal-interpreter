@@ -1300,8 +1300,8 @@ void sem_check (tSem_context* s_con)
         {
             //chyba ak argument bebol deklarovany alebo nesedi typ alebo pozicia
             if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == NOCONTAINS ||
-                    hash_return_type (get_local (s_con->act_fun), s_con->act_id) != s_con->act_type ||
-                    get_arg_num (get_local (s_con->act_fun), s_con->act_id) != ++arg_num )
+                 hash_return_type (get_local (s_con->act_fun), s_con->act_id) != s_con->act_type ||
+                 get_arg_num (get_local (s_con->act_fun), s_con->act_id) != ++arg_num )
             {
                 fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
                 exit(semanticka_chyba_pri_deklaraci);
@@ -1345,8 +1345,11 @@ void sem_check (tSem_context* s_con)
                 exit (semanticka_chyba_pri_deklaraci);
             }
         }
-        else //funkcia nebola deklarovana, uklada sa typ
-            hash_insert_it (get_local(s_con->act_fun), s_con->act_fun, s_con->act_type);
+        else { //funkcia nebola deklarovana, uklada sa typ
+          hash_insert_it (get_local(s_con->act_fun), s_con->act_fun, s_con->act_type);
+          //arg_num = 0 ===> navratova hodnota sa netyka argumentov
+          set_arg_num (get_local (s_con->act_fun), s_con->act_fun, 0);
+        }
 
         arg_num = 0; //reset pocitadla argumentov, suvisi s FUNC_ARG_DEC
         break;
@@ -1362,6 +1365,8 @@ void sem_check (tSem_context* s_con)
 
         //ulozenie premennej do LTS
         hash_insert_it (get_local (s_con->act_fun), s_con->act_id, s_con->act_type);
+        //arg_num = 0 ===> lokalna premenna sa netyka argumentov
+        set_arg_num (get_local (s_con->act_fun), s_con->act_id, 0);
         break;
 
 
@@ -1424,10 +1429,60 @@ void sem_check (tSem_context* s_con)
 }
 
 void fun_init() {
-   
-  hash_insert_i (GLOBFRAME, "length");     //vlozenie id funkcie
+  
+//funkcia length:
+  hash_insert_it (GLOBFRAME, "length", F_ID);  //nastavenie id funkcie jeho typu
   hash_insert_func (GLOBFRAME, "length");  //vytvorenie LTS funkcie
-  hash_insert_it (GLOBFRAME, "length", F_ID);  //id funkcie je typu F_ID
-          
+  set_arg_num (GLOBFRAME, "length", 1); //pocet parametrov funkcie
+  hash_insert_it (get_local("length"), "length", S_KLIC_INTEGER); //navratova hodnota
+  set_arg_num (get_local ("length"), "length", 0); //navr. hodn. sa netyka argumentov
 
+  //argumenty funkcie:
+  hash_insert_it (get_local("length"), "s", S_KLIC_STRING); //vytvorenie parametra
+  set_arg_num (get_local ("length"), "s", 1);  //1. parameter
+
+
+//funkcia copy:
+  hash_insert_it (GLOBFRAME, "copy", F_ID);  //nastavenie id funkcie jeho typu
+  hash_insert_func (GLOBFRAME, "copy");  //vytvorenie LTS funkcie
+  set_arg_num (GLOBFRAME, "copy", 3); //pocet parametrov funkcie
+  hash_insert_it (get_local("copy"), "copy", S_KLIC_STRING); //navratova hodnota
+  set_arg_num (get_local ("copy"), "copy", 0); //navr. hodn. sa netyka argumentov
+
+  //argumenty funkcie:
+  hash_insert_it (get_local("copy"), "s", S_KLIC_STRING); //vytvorenie parametra
+  set_arg_num (get_local ("copy"), "s", 1);  //1. parameter
+  
+  hash_insert_it (get_local("copy"), "s", S_KLIC_INTEGER); //vytvorenie parametra
+  set_arg_num (get_local ("copy"), "i", 2);  //2. parameter
+
+  hash_insert_it (get_local("copy"), "s", S_KLIC_INTEGER); //vytvorenie parametra
+  set_arg_num (get_local ("copy"), "n", 3);  //3. parameter
+  
+    
+//funkcia find:
+  hash_insert_it (GLOBFRAME, "find", F_ID);  //nastavenie id funkcie jeho typu
+  hash_insert_func (GLOBFRAME, "find");  //vytvorenie LTS funkcie
+  set_arg_num (GLOBFRAME, "find", 2); //pocet parametrov funkcie
+  hash_insert_it (get_local("find"), "find", S_KLIC_INTEGER); //navratova hodnota
+  set_arg_num (get_local ("find"), "find", 0); //navr. hodn. sa netyka argumentov
+
+  //argumenty funkcie:
+  hash_insert_it (get_local("find"), "s", S_KLIC_STRING); //vytvorenie parametra
+  set_arg_num (get_local ("find"), "s", 1);  //1. parameter
+  
+  hash_insert_it (get_local("find"), "search", S_KLIC_STRING); //vytvorenie parametra
+  set_arg_num (get_local ("find"), "i", 2);  //2. parameter
+
+ 
+//funkcia sort:
+  hash_insert_it (GLOBFRAME, "sort", F_ID);  //nastavenie id funkcie jeho typu
+  hash_insert_func (GLOBFRAME, "sort");  //vytvorenie LTS funkcie
+  set_arg_num (GLOBFRAME, "sort", 1); //pocet parametrov funkcie
+  hash_insert_it (get_local("sort"), "sort", S_KLIC_STRING); //navratova hodnota
+  set_arg_num (get_local ("sort"), "sort", 0); //navr. hodn. sa netyka argumentov
+
+  //argumenty funkcie:
+  hash_insert_it (get_local("sort"), "s", S_KLIC_STRING); //vytvorenie parametra
+  set_arg_num (get_local ("sort"), "s", 1);  //1. parameter 
 }
