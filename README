@@ -1,0 +1,17 @@
+ # Autori testov: Michal Gabonay, Denis Gerguri, Martin Kocour, Vladislav Zavada, Dusan Drevicky
+ 
+ # usage: python test_script.py
+ # Je nutne mat nainstalovany interpret pythonu (ja som to spustal na python 2.7.6)
+ # Skopirujte binarku vasho prekladaca do zlozky so skriptom a premenujte ju na 'ifj14', bez apostrofov
+ # (pripadne upravte nazov spustanej binarky priamo v skripte).
+ # Upozornenie: Testy nepracuju s diffom, takze vystupy nikde nekontrolujeme. To si budete musiet otestovat sami.
+ # Len sa porovnavaju ocakavane navratove kody pri danych zdrojovych suboroch v jazyku ifj14 s navratovym kodom
+ # interpretu. Nazvy chyb su myslim pomerne vystizne, pripadne sa pozrite do skriptu, o ake cislo presne ide.
+
+ # Ak pri readln v samotnom interprete nevypisujete, aky typ sa na vstupe ocakava, tak pri testoch 301+ nebudete  
+ # vediet, co zadat, tak aby bol vstup spravny. V takom pripade sa pozrite priamo do testovacich zdrojovych suborov. 
+
+ # Testy su napisane pre zakladnu verziu interpretu bez rozsireni, takze ak nejake implementujete vysledky nemusia
+ # odrazat realitu. 
+ 
+ # Prajem prijemne debugovanie :)

@@ -1,0 +1,34 @@
+{ Spravny }
+var
+   a : integer;
+   b : integer;
+   c : boolean;
+
+function x() : boolean;
+begin
+   x := true
+end;
+
+function z() : integer;
+begin
+   z := 3 
+end;
+
+function w(i : integer; c : real) : real;
+begin
+   w := 5.0
+end;
+
+begin
+   a := 0000;
+   b := 0001;
+   c := true;
+	write(a);
+	write(b);
+	write(a, b, c);
+	begin
+		write(a);
+		write(b)
+	end
+end.
+
