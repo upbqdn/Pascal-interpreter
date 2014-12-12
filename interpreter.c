@@ -1510,13 +1510,53 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             	list_element prvok;
             	list_element navrat;
+                
 
             	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
 
                 prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
 
+                ((navrat)->ref ) = mymalloc(sizeof(int));
+                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
 
-                *(*(int **) (navrat)->ref)   = lenght(  (*(void **) (prvok)->ref)   );
+                myaPush(&aS, &(navrat)->ref);
+//--------------------------------------------------------------------------------------------
+
+//PARAM STACK == TO CO CHCEME SKOPIROVAT tu su DATA
+
+                    //( *(char **) (myaTop(&aS))) =  ( *(char **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
+
+                    //to co kopirujeme
+                    void* pomAddr1; 
+                    pomAddr1 = (*(void **) (myaTop(&paramSTACK)));
+                    int dlzka = strlen(((char**)pomAddr1));
+
+                    //printf("SZZZZZZ>>%s<<<dlzka je >%d<\n",  pomAddr1 , dlzka);
+
+
+                    // KAM kopirujeme
+                    void* pomAddr2 = (*(void **)(myaTop(&aS)));
+
+                    
+
+
+                    void *pom = myrealloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
+                    void **kk = (myaTop(&aS));
+                    *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
+
+                    strcpy( ((char*) pom) , ((char*)pomAddr1)  );
+
+
+            myaPop(&paramSTACK); // odstranime z pomocneho
+            //myaPop(&aS); // odstranime z klasik
+
+
+//-----------------------------------------------------------------------------------------------
+
+
+                (*(int **)  (navrat)->ref)   =  lenght(  pom   );
+
+
 
             }
             else if ( strcmp( Instr->ADDR_PRVA, "copy" )  == 0 )
