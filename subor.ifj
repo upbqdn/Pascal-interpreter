@@ -2,6 +2,7 @@ var
 a:integer;
 b:integer;
 c:string;
+d:boolean;
 
 function makewar (a:integer) : integer; forward;
 
@@ -15,6 +16,7 @@ function foobar (foo: integer; bar: string) : integer;
     foo := foo + 1;
     foo := makewar (foo);
     foobar := foo + 1
+
 
   end;
 
@@ -31,8 +33,10 @@ begin
   a := 5;
   c := 'hey';
 
-  b := foobar (6, false);
+  b := foobar (6, c);
   
-  write (a,c,b)
-  
+  write (a,c,b);
+
+  readln (a)
+
 end.

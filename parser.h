@@ -31,6 +31,7 @@ typedef enum {
   
   RET_VAL_CHECK,    //kontrola priradenia id := funkcia ()
   ID_ARG_CHECK,     //kontrola id argumentu pri volani funkcie 
+  ID_READ_CHECK,     //kontrola premennej id zadaenj do readln ()
   DV_ARG_CHECK,     //kontrola argumentu zadaneho priamou hodnotou pri volani funkcie
   ARG_NUM_CHECK     //kontrola spravneho poctu zadanych argumentov pri volani funkcie
 } tContext;
@@ -51,7 +52,9 @@ typedef enum {   //priznaky pre ulozenie aktualneho tokenu ako id
   for_id,
   rem_pid,
   for_pid,
-  for_all
+  for_all,
+  readln,
+  noreadln
 } tId_sign;
 
 bool parse();

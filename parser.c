@@ -166,7 +166,6 @@ void extractRule(tSem_context* s_con)
             myPush(&S, S_KLIC_BOOLEAN);
 
             NaplnInstr(I_ALLOC_BOO, NULL, NULL, NULL);
-
             s_con->act_type = actToken.stav;
             break;
         }
@@ -530,6 +529,9 @@ void extractRule(tSem_context* s_con)
             myPop(&S);
             myPushMul(&S, 4, S_KLIC_READLN, S_LEVA_ZAVORKA, S_IDENTIFIKATOR, S_PRAVA_ZAVORKA);
             priznak=read;
+
+
+            Id_sign = readln;  //priznak zapamatania id pre readln
 
             break;
         }
@@ -1258,11 +1260,21 @@ bool parse()
 
 
                     }
-
+                    
+                    //zapamata sa id 
                     if (Id_sign == rem_pid)
                     {
                         Id_sign = for_pid;
                         s_con.act_id = actToken.data;
+                    }
+
+                    //overi sa deklaracia id premennej zadanej pre readln
+                    if (Id_sign == readln)
+                    {
+                        Id_sign = noreadln;
+                        s_con.act_id = actToken.data;
+                        s_con.context = ID_READ_CHECK;
+                        sem_check (&s_con);
                     }
                 }
 
@@ -1540,7 +1552,7 @@ void sem_check (tSem_context* s_con)
             //globalna premenna nebola deklarovana
             if (hash_search (GLOBFRAME, s_con->act_id) != CONTAINS)
             {
-                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->act_id);
                 exit (semanticka_chyba_pri_deklaraci);
             }
 
@@ -1578,6 +1590,7 @@ void sem_check (tSem_context* s_con)
 
     break;
 
+
     case ARG_NUM_CHECK: //kontrola spravneho poctu zadanych argumentov pri volani funkcie
       //nedostatocny pocet argumentov
       if ( s_con->write_sgn != WRITE && 
@@ -1592,6 +1605,61 @@ void sem_check (tSem_context* s_con)
 
       arg_num = 0; //reset pocitadla argumentov
     
+    break;
+
+
+    case ID_READ_CHECK:
+
+        //lokalny rozsah premennych
+        if (s_con->scope == LOCAL)
+        {
+            //premenna nie je deklarovana lokalne
+            if ( hash_search (get_local (s_con->act_fun), s_con->act_id) != CONTAINS )
+            {
+                //premenna nie je deklarovana ani globalne - chyba
+                if ( hash_search (GLOBFRAME, s_con->act_id) != CONTAINS )
+                {
+                    fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                    exit (semanticka_chyba_pri_deklaraci);
+                }
+                //premenna je deklarovana globalne
+                else
+                {
+                    //overnie typu premennej na typ boolean
+                    if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN) {
+                    fprintf (stderr, "argument '%s' prikazu readln () nesmie byt typu boolean\n", s_con->act_id);
+                    exit (semanticka_chyba_typove_kompatibility);
+                    }
+                }
+            }
+            //premenna je deklarovana lokalne
+            else
+            {
+                 //overnie typu premennej na typ boolean
+                 if (hash_return_type (get_local (s_con->act_fun), s_con->act_id) == S_KLIC_BOOLEAN)
+                 {
+                    fprintf (stderr, "argument '%s' prikazu readln () nesmie byt typu boolean\n", s_con->act_id);
+                    exit (semanticka_chyba_typove_kompatibility);
+                 }
+            }
+        }
+
+        //globalny rozsah premennych
+        if (s_con->scope == GLOBAL)
+        {
+            //globalna premenna nebola deklarovana
+            if (hash_search (GLOBFRAME, s_con->act_id) != CONTAINS)
+            {
+                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                exit (semanticka_chyba_pri_deklaraci);
+            }
+            //overnie typu premennej na typ boolean
+            if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN) {
+              fprintf (stderr, "argument '%s' prikazu readln () nesmie byt typu boolean\n", s_con->act_id);
+              exit (semanticka_chyba_typove_kompatibility);
+            }
+        }
+
     break;
     }
 }
