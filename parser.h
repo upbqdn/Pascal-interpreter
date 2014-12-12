@@ -33,6 +33,7 @@ typedef enum {
   ID_ARG_CHECK,     //kontrola id argumentu pri volani funkcie 
   ID_READ_CHECK,     //kontrola premennej id zadaenj do readln ()
   DV_ARG_CHECK,     //kontrola argumentu zadaneho priamou hodnotou pri volani funkcie
+  ID_DEC_CHECK,     //kontrola, ci bola premenna deklarovana
   ARG_NUM_CHECK     //kontrola spravneho poctu zadanych argumentov pri volani funkcie
 } tContext;
 
@@ -43,6 +44,7 @@ typedef struct {   //struktura nesie aktualny semanticky kontext a jeho atributy
   char *act_id;      //aktualne id premennej
   char *act_fun;     //aktualne id funkcie
   char *l_id;        //id lavej strany priradenia
+  tStav l_type;      //typ lavej strany priradenia
   char *c_fun;       //id volanej funkcie
   int write_sgn;     //priznak pre prikaz write ==> obmedzenie typovej kontroly pri volani funkcie
 } tSem_context;

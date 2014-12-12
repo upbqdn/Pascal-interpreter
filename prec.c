@@ -12,6 +12,7 @@
 #include "header.h"
 #include "scanner.h"
 #include "stack.h"
+#include "parser.h"
 #include "prec.h"
 #include "instrlist.h"
 #include "garbage.h"
@@ -72,7 +73,7 @@ switch (a)
 	 	
 }
 }
-int isVyraz()
+int isVyraz(tSem_context* s_con)
 {
 	//printf("Spoustim precedencni analyzu \n");
 	int chyba = 0;
@@ -104,6 +105,11 @@ do
 
 		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>",actToken.data); if (vypis) whattoken(actToken.stav);
 		NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
+
+
+    s_con->context = ID_DEC_CHECK;   //kontrola deklaracie
+    s_con->act_id = actToken.data;
+    sem_check (s_con);
 	}
 	
 	

@@ -1,5 +1,5 @@
 var
-a:integer;
+a:string;
 b:integer;
 c:string;
 d:boolean;
@@ -10,9 +10,14 @@ function foobar (foo: integer; bar: string) : integer;
 
   var 
     d:boolean;
+    a:integer;
 
   begin
 
+    a := 1;
+    a := a + 1;
+    write (a);
+    
     foo := foo + 1;
     foo := makewar (foo);
     foobar := foo + 1;
@@ -31,11 +36,11 @@ function makewar (a:integer) :integer;
 
 begin 
 
-  a := 5;
+  a := 'a';
   c := 'hey';
 
   b := foobar (6, c);
-  
+
   write (a,c,b)
 
 

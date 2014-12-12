@@ -11,5 +11,5 @@
 stack S;
 
 int magicFunction(int a);
-int isVyraz();
+int isVyraz(tSem_context* s_con);
 
