@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var
 a:integer;
 b:integer;
@@ -32,6 +33,17 @@ begin
   c := 'hey';
 
   b := foobar (a, c);
+=======
+
+ var 
+  a : integer;
+
+begin
+  
+  a := 5;
+
+  write ( a )
+>>>>>>> e41749de2878a6cb09f7caa39bcdc6a0e0ea169e
 
   write (a,c,b)
   
