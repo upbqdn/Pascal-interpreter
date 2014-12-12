@@ -30,7 +30,8 @@ typedef enum {
   FUNC_TYPE_DEC,    //kontext deklaracie navratoveho typu funkcie
   
   RET_VAL_CHECK,    //kontrola priradenia id := funkcia ()
-  ID_ARG_CHECK,     //kontrola id parametra pri volani funkcie 
+  ID_ARG_CHECK,     //kontrola id argumentu pri volani funkcie 
+  DV_ARG_CHECK,     //kontrola argumentu zadaneho priamou hodnotou pri volani funkcie
   ARG_NUM_CHECK     //kontrola spravneho poctu zadanych argumentov pri volani funkcie
 } tContext;
 

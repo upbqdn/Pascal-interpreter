@@ -31,7 +31,7 @@ begin
   a := 5;
   c := 'hey';
 
-  b := foobar (a, c);
+  b := foobar (6, false);
   
   write (a,c,b)
   

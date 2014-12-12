@@ -790,6 +790,10 @@ void extractRule(tSem_context* s_con)
                 NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
             }
 
+
+            s_con->act_type = S_INTEGER;   //kontrola hodnoty typu integer
+            s_con->context = DV_ARG_CHECK;
+            sem_check (s_con);
         }
         else if (actToken.stav == S_DOUBLE)
         {
@@ -809,6 +813,10 @@ void extractRule(tSem_context* s_con)
                 NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
             }
 
+        
+            s_con->act_type = S_DOUBLE;   //kontrola hodnoty typu double
+            s_con->context = DV_ARG_CHECK;
+            sem_check (s_con);
         }
         else if (actToken.stav == S_RETEZEC)
         {
@@ -827,6 +835,10 @@ void extractRule(tSem_context* s_con)
                 NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
             }
 
+
+            s_con->act_type = S_RETEZEC;   //kontrola hodnoty typu string
+            s_con->context = DV_ARG_CHECK;
+            sem_check (s_con);
         }
         else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
         {
@@ -834,6 +846,10 @@ void extractRule(tSem_context* s_con)
             myPop(&S);
             myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
 
+
+            s_con->act_type = S_KLIC_BOOLEAN;   //kontrola hodnoty typu boolean
+            s_con->context = DV_ARG_CHECK;
+            sem_check (s_con);
         }
         else if (actToken.stav == S_KLIC_FALSE)
         {
@@ -841,6 +857,10 @@ void extractRule(tSem_context* s_con)
             myPop(&S);
             myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
 
+
+            s_con->act_type = S_KLIC_BOOLEAN;   //kontrola hodnoty typu boolean
+            s_con->context = DV_ARG_CHECK;
+            sem_check (s_con);
         }
         else if(actToken.stav == S_PRAVA_ZAVORKA)
         {
@@ -933,7 +953,6 @@ printf ("volam ARG_NUM_CHECK\n");
                 s_con->act_id = actToken.data;   //ulozenie id argumentu
                 s_con->context = ID_ARG_CHECK;  //kontext kontroly id parametra pri volani funkcie 
                 sem_check (s_con);
-
             }
             else if (actToken.stav == S_INTEGER)
             {
@@ -956,6 +975,10 @@ printf ("volam ARG_NUM_CHECK\n");
                     NaplnInstr( I_WRITE_INT, NULL, NULL, NULL );
                 }
 
+
+                s_con->act_type = S_INTEGER;   //kontrola hodnoty typu integer
+                s_con->context = DV_ARG_CHECK;
+                sem_check (s_con);
             }
             else if (actToken.stav == S_DOUBLE)
             {
@@ -975,6 +998,10 @@ printf ("volam ARG_NUM_CHECK\n");
                     NaplnInstr( I_WRITE_DOU, NULL, NULL, NULL );
                 }
 
+
+                s_con->act_type = S_DOUBLE;   //kontrola hodnoty typu double
+                s_con->context = DV_ARG_CHECK;
+                sem_check (s_con);
             }
             else if (actToken.stav == S_RETEZEC)
             {
@@ -993,6 +1020,10 @@ printf ("volam ARG_NUM_CHECK\n");
                     NaplnInstr( I_WRITE_STR, NULL , NULL, NULL );
                 }
 
+
+                s_con->act_type = S_RETEZEC;  //kontrola hodnoty typu string
+                s_con->context = DV_ARG_CHECK;
+                sem_check (s_con);
             }
             else if (actToken.stav == S_KLIC_TRUE) //////////////////////////////////////////// CO ROBIT ????? BOL/TRU
             {
@@ -1000,13 +1031,21 @@ printf ("volam ARG_NUM_CHECK\n");
                 myPop(&S);
                 myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
 
+
+                s_con->act_type = S_KLIC_BOOLEAN;   //kontrola hodnoty typu boolean
+                s_con->context = DV_ARG_CHECK;
+                sem_check (s_con);
             }
             else if (actToken.stav == S_KLIC_FALSE)
             {
 
                 myPop(&S);
                 myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
-
+      
+                
+                s_con->act_type = S_KLIC_BOOLEAN;   //kontrola hodnoty typu boolean
+                s_con->context = DV_ARG_CHECK;
+                sem_check (s_con);
             }
 
             else
@@ -1275,6 +1314,8 @@ list* get_local (char* id)    //vrati referenciu na lokalnu tabulku podla zadane
 
 void sem_check (tSem_context* s_con)
 {
+    unsigned arg_type;  //typ parametra, ktory sa ziska podla pozicie
+
     switch (s_con->context)
     {
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
@@ -1448,8 +1489,6 @@ void sem_check (tSem_context* s_con)
         
         arg_num++;  //zvysenie pocitadla pozicie parametrov
        
-        unsigned arg_type;  //typ parametra, ktory sa ziska podla pozicie
-
         //ziskanie typu parametra podla jeho pozicie pri definicii ak nejde o write
         if (s_con->write_sgn != WRITE)
            arg_type = arg_numSearch (get_local (s_con->c_fun), arg_num);
@@ -1485,7 +1524,7 @@ void sem_check (tSem_context* s_con)
             }
             else    //premenna je deklarovana lokalne
             {
-                //overenie typov premennej a navratovej hodnoty funkcie
+                //overenie typov premennej a argumentu funkcie na spravnej pozicii
                 if ( hash_return_type (get_local (s_con->act_fun), s_con->act_id) != arg_type &&
                      s_con->write_sgn != WRITE)
                 {
@@ -1513,6 +1552,30 @@ void sem_check (tSem_context* s_con)
                 exit (semanticka_chyba_typove_kompatibility);
             }
         }
+    break;
+
+    case DV_ARG_CHECK:
+      
+        arg_num++;  //zvysenie pocitadla pozicie parametrov
+       
+        if (s_con->write_sgn == WRITE)  //v pripade write sa argumenty neoveruju
+          break;
+
+        //ziskanie typu parametra podla jeho pozicie 
+        arg_type = arg_numSearch (get_local (s_con->c_fun), arg_num);
+        
+        //ak sa typ parametra v LTS nenajde a ak nemame write
+        if ( ! arg_type ) {
+          fprintf (stderr, "prekroceny pocet argumentov pri volani funkcie '%s'\n", s_con->c_fun);
+          exit (semanticka_chyba_typove_kompatibility);
+        }
+
+        //overi sa typ hodnoty s typom argumentu na spravnej pozicii
+        if (s_con->act_type != arg_type) {
+          fprintf (stderr, "zadany zly typ hodnoty pre argument na pozicii %d vo funkcii '%s'\n", arg_num, s_con->c_fun);
+          exit (semanticka_chyba_typove_kompatibility);
+        }
+
     break;
 
     case ARG_NUM_CHECK: //kontrola spravneho poctu zadanych argumentov pri volani funkcie
