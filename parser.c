@@ -250,7 +250,6 @@ void extractRule(tSem_context* s_con)
     {
         // s_con->c_fun // instrukcie pre Spustenie funkcie
 
-
         if (actToken.stav == S_KLIC_FORWARD)
         {
             //--gener-----------ESTE NEVIEME -------------------------------
@@ -544,6 +543,9 @@ void extractRule(tSem_context* s_con)
             */
             priznak=write;
 
+            
+            s_con->write_sgn = WRITE;  //obmedzenie typovej kontroly pri argumentoch
+            
             break;
         }
 
@@ -762,7 +764,10 @@ void extractRule(tSem_context* s_con)
             {
                 NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
             }
-
+            
+            s_con->act_id = actToken.data;   //ulozenie id argumentu
+            s_con->context = ID_ARG_CHECK;   //kontext kontroly id parametra pri volani funkcie 
+            sem_check (s_con);
         }
         else if (actToken.stav == S_INTEGER)
         {
@@ -887,6 +892,11 @@ void extractRule(tSem_context* s_con)
 
             myPop(&S); // ->eps prechod ked namam ziadany parameter
             priznak = nic;
+
+
+printf ("volam ARG_NUM_CHECK\n");
+            s_con->context = ARG_NUM_CHECK;  ////kontrola spravneho poctu zadanych argumentov
+            sem_check (s_con);
         }
         else
         {
@@ -919,6 +929,10 @@ void extractRule(tSem_context* s_con)
                 {
                     NaplnInstr( I_WRITE_IDE, NULL, NULL, NULL );
                 }
+
+                s_con->act_id = actToken.data;   //ulozenie id argumentu
+                s_con->context = ID_ARG_CHECK;  //kontext kontroly id parametra pri volani funkcie 
+                sem_check (s_con);
 
             }
             else if (actToken.stav == S_INTEGER)
@@ -1057,6 +1071,10 @@ void extractRule(tSem_context* s_con)
 
             myPop(&S); // ->eps prechod:: ked pride prave jeden parameter
             priznak = nic;
+
+            
+            s_con->context = ARG_NUM_CHECK;  ////kontrola spravneho poctu zadanych argumentov
+            sem_check (s_con);
         }
 
 
@@ -1377,7 +1395,6 @@ void sem_check (tSem_context* s_con)
             //premenna nie je deklarovana lokalne
             if ( hash_search (get_local (s_con->act_fun), s_con->l_id) != CONTAINS )
             {
-
                 //premenna nie je deklarovana ani globalne - chyba
                 if ( hash_search (GLOBFRAME, s_con->l_id) != CONTAINS )
                 {
@@ -1425,6 +1442,94 @@ void sem_check (tSem_context* s_con)
             }
         }
         break;
+
+
+    case ID_ARG_CHECK:            //kontrola id parametra pri volani funkcie
+        
+        arg_num++;  //zvysenie pocitadla pozicie parametrov
+       
+        unsigned arg_type;  //typ parametra, ktory sa ziska podla pozicie
+
+        //ziskanie typu parametra podla jeho pozicie pri definicii ak nejde o write
+        if (s_con->write_sgn != WRITE)
+           arg_type = arg_numSearch (get_local (s_con->c_fun), arg_num);
+        
+        //ak sa typ parametra v LTS nenajde a ak nemame write
+        if ( ! arg_type && s_con->write_sgn != WRITE ) {
+          fprintf (stderr, "prekroceny pocet argumentov pri volani funkcie '%s'\n", s_con->c_fun);
+          exit (semanticka_chyba_typove_kompatibility);
+        }
+          
+        //lokalny rozsah premennych
+        if (s_con->scope == LOCAL)
+        {
+            //premenna nie je deklarovana lokalne
+            if ( hash_search (get_local (s_con->act_fun), s_con->act_id) != CONTAINS )
+            {
+                //premenna nie je deklarovana ani globalne - chyba
+                if ( hash_search (GLOBFRAME, s_con->act_id) != CONTAINS )
+                {
+                    fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                    exit (semanticka_chyba_pri_deklaraci);
+                }
+                else   //premenna je deklarovana globalne
+                {
+                    //overenie typov premennej a argumentu funkcie na spravnej pozicii
+                    if ( hash_return_type (GLOBFRAME, s_con->act_id) != arg_type &&
+                         s_con->write_sgn != WRITE)
+                    {
+                        fprintf (stderr, "typova nekompatibilita pri volani funkcie \'%s\' v argumente \'%s\'\n", s_con->c_fun, s_con->act_id);
+                        exit (semanticka_chyba_typove_kompatibility);
+                    }
+                }
+            }
+            else    //premenna je deklarovana lokalne
+            {
+                //overenie typov premennej a navratovej hodnoty funkcie
+                if ( hash_return_type (get_local (s_con->act_fun), s_con->act_id) != arg_type &&
+                     s_con->write_sgn != WRITE)
+                {
+                    fprintf (stderr, "typova nekompatibilita pri volani funkcie \'%s\' v argumente \'%s\'\n", s_con->c_fun, s_con->act_id);
+                    exit (semanticka_chyba_typove_kompatibility);
+                }
+            }
+        }
+
+        //globalny rozsah premennych
+        if (s_con->scope == GLOBAL)
+        {
+            //globalna premenna nebola deklarovana
+            if (hash_search (GLOBFRAME, s_con->act_id) != CONTAINS)
+            {
+                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+                exit (semanticka_chyba_pri_deklaraci);
+            }
+
+            //premenna bola deklarovana, overenie typu premennej a argumentu na spravnej pozicii
+            if ( hash_return_type (GLOBFRAME, s_con->act_id) != arg_type &&
+                 s_con->write_sgn != WRITE)
+            {
+                fprintf (stderr, "typova nekompatibilita pri volani funkcie \'%s\' v argumente \'%s\'\n", s_con->c_fun, s_con->act_id);
+                exit (semanticka_chyba_typove_kompatibility);
+            }
+        }
+    break;
+
+    case ARG_NUM_CHECK: //kontrola spravneho poctu zadanych argumentov pri volani funkcie
+      //nedostatocny pocet argumentov
+      if ( s_con->write_sgn != WRITE && 
+           get_arg_num (GLOBFRAME, s_con->c_fun) != arg_num ) {
+        fprintf (stderr, "nedostatocny pocet argumentov pri volani funkcie '%s'\n", s_con->c_fun);
+        exit (semanticka_chyba_typove_kompatibility);
+      }
+
+      if ( s_con->write_sgn == WRITE ) {
+        s_con->write_sgn = NOWRITE;     //reset priznaku pre write
+      }
+
+      arg_num = 0; //reset pocitadla argumentov
+    
+    break;
     }
 }
 
@@ -1434,11 +1539,11 @@ void fun_init() {
   hash_insert_it (GLOBFRAME, "length", F_ID);  //nastavenie id funkcie jeho typu
   hash_insert_func (GLOBFRAME, "length");  //vytvorenie LTS funkcie
   set_arg_num (GLOBFRAME, "length", 1); //pocet parametrov funkcie
-  hash_insert_it (get_local("length"), "length", S_KLIC_INTEGER); //navratova hodnota
+  hash_insert_it (get_local("length"), "length", S_INTEGER); //navratova hodnota
   set_arg_num (get_local ("length"), "length", 0); //navr. hodn. sa netyka argumentov
 
   //argumenty funkcie:
-  hash_insert_it (get_local("length"), "s", S_KLIC_STRING); //vytvorenie parametra
+  hash_insert_it (get_local("length"), "s", S_RETEZEC); //vytvorenie parametra
   set_arg_num (get_local ("length"), "s", 1);  //1. parameter
 
 
@@ -1446,17 +1551,17 @@ void fun_init() {
   hash_insert_it (GLOBFRAME, "copy", F_ID);  //nastavenie id funkcie jeho typu
   hash_insert_func (GLOBFRAME, "copy");  //vytvorenie LTS funkcie
   set_arg_num (GLOBFRAME, "copy", 3); //pocet parametrov funkcie
-  hash_insert_it (get_local("copy"), "copy", S_KLIC_STRING); //navratova hodnota
+  hash_insert_it (get_local("copy"), "copy", S_RETEZEC); //navratova hodnota
   set_arg_num (get_local ("copy"), "copy", 0); //navr. hodn. sa netyka argumentov
 
   //argumenty funkcie:
-  hash_insert_it (get_local("copy"), "s", S_KLIC_STRING); //vytvorenie parametra
+  hash_insert_it (get_local("copy"), "s", S_RETEZEC); //vytvorenie parametra
   set_arg_num (get_local ("copy"), "s", 1);  //1. parameter
   
-  hash_insert_it (get_local("copy"), "s", S_KLIC_INTEGER); //vytvorenie parametra
+  hash_insert_it (get_local("copy"), "s", S_INTEGER); //vytvorenie parametra
   set_arg_num (get_local ("copy"), "i", 2);  //2. parameter
 
-  hash_insert_it (get_local("copy"), "s", S_KLIC_INTEGER); //vytvorenie parametra
+  hash_insert_it (get_local("copy"), "s", S_INTEGER); //vytvorenie parametra
   set_arg_num (get_local ("copy"), "n", 3);  //3. parameter
   
     
@@ -1464,14 +1569,14 @@ void fun_init() {
   hash_insert_it (GLOBFRAME, "find", F_ID);  //nastavenie id funkcie jeho typu
   hash_insert_func (GLOBFRAME, "find");  //vytvorenie LTS funkcie
   set_arg_num (GLOBFRAME, "find", 2); //pocet parametrov funkcie
-  hash_insert_it (get_local("find"), "find", S_KLIC_INTEGER); //navratova hodnota
+  hash_insert_it (get_local("find"), "find", S_INTEGER); //navratova hodnota
   set_arg_num (get_local ("find"), "find", 0); //navr. hodn. sa netyka argumentov
 
   //argumenty funkcie:
-  hash_insert_it (get_local("find"), "s", S_KLIC_STRING); //vytvorenie parametra
+  hash_insert_it (get_local("find"), "s", S_RETEZEC); //vytvorenie parametra
   set_arg_num (get_local ("find"), "s", 1);  //1. parameter
   
-  hash_insert_it (get_local("find"), "search", S_KLIC_STRING); //vytvorenie parametra
+  hash_insert_it (get_local("find"), "search", S_RETEZEC); //vytvorenie parametra
   set_arg_num (get_local ("find"), "i", 2);  //2. parameter
 
  
@@ -1479,10 +1584,10 @@ void fun_init() {
   hash_insert_it (GLOBFRAME, "sort", F_ID);  //nastavenie id funkcie jeho typu
   hash_insert_func (GLOBFRAME, "sort");  //vytvorenie LTS funkcie
   set_arg_num (GLOBFRAME, "sort", 1); //pocet parametrov funkcie
-  hash_insert_it (get_local("sort"), "sort", S_KLIC_STRING); //navratova hodnota
+  hash_insert_it (get_local("sort"), "sort", S_RETEZEC); //navratova hodnota
   set_arg_num (get_local ("sort"), "sort", 0); //navr. hodn. sa netyka argumentov
 
   //argumenty funkcie:
-  hash_insert_it (get_local("sort"), "s", S_KLIC_STRING); //vytvorenie parametra
+  hash_insert_it (get_local("sort"), "s", S_RETEZEC); //vytvorenie parametra
   set_arg_num (get_local ("sort"), "s", 1);  //1. parameter 
 }

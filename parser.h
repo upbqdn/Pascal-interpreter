@@ -14,6 +14,8 @@
 stack S; //zasobnik
 tToken actToken; // aktualny token
 
+#define WRITE (1)
+#define NOWRITE (2)
 
 typedef enum {
   GLOBAL,
@@ -24,10 +26,12 @@ typedef enum {
   G_VAR_DEC,        //kontext deklaracii glob. premennych
   L_VAR_DEC,        //kontext deklaracie lok. premennych
   FUNCTION_DEC,     //kontext deklaracii funkci
-  FUNC_ARG_DEC,      //kontext deklaracii argumentov funkcie
-  FUNC_TYPE_DEC,     //kontext deklaracie navratoveho typu funkcie
+  FUNC_ARG_DEC,     //kontext deklaracii argumentov funkcie
+  FUNC_TYPE_DEC,    //kontext deklaracie navratoveho typu funkcie
   
-  RET_VAL_CHECK          //kontext typovej kontroly navratovej hodnoty funkcie
+  RET_VAL_CHECK,    //kontrola priradenia id := funkcia ()
+  ID_ARG_CHECK,     //kontrola id parametra pri volani funkcie 
+  ARG_NUM_CHECK     //kontrola spravneho poctu zadanych argumentov pri volani funkcie
 } tContext;
 
 typedef struct {   //struktura nesie aktualny semanticky kontext a jeho atributy
@@ -38,6 +42,7 @@ typedef struct {   //struktura nesie aktualny semanticky kontext a jeho atributy
   char *act_fun;     //aktualne id funkcie
   char *l_id;        //id lavej strany priradenia
   char *c_fun;       //id volanej funkcie
+  int write_sgn;     //priznak pre prikaz write ==> obmedzenie typovej kontroly pri volani funkcie
 } tSem_context;
    
 typedef enum {   //priznaky pre ulozenie aktualneho tokenu ako id

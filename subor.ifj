@@ -1,47 +1,38 @@
 var
 a:integer;
 b:integer;
-c:integer;
+c:string;
 
-{function xx(a:integer):integer;
-begin
+function makewar (a:integer) : integer; forward;
 
-a:=a+1;
+function foobar (foo: integer; bar: string) : integer;
 
-if(a = 5) then
-
-begin
-  write(''#10'');
-  write('USPECH');
-  write(''#10'')
-
-  end
-
-  else
+  var 
+    d:boolean;
 
   begin
-    write(a);
-    a:=xx(a)
+
+    foo := foo + 1;
+    foo := makewar (foo);
+    foobar := foo + 1
+
   end;
 
-xx:=a
+function makewar (a:integer) :integer;
 
-end;}
+  begin
 
+    makewar := a + 1
 
+  end;
 
+begin 
 
+  a := 5;
+  c := 'hey';
 
+  b := foobar (a, c);
 
-
-
-begin
-
-
-while(true) do
-begin
-write(5)
-end
-
-
+  write (a,c,b)
+  
 end.
