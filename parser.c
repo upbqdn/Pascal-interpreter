@@ -916,7 +916,6 @@ void extractRule(tSem_context* s_con)
             priznak = nic;
 
 
-printf ("volam ARG_NUM_CHECK\n");
             s_con->context = ARG_NUM_CHECK;  ////kontrola spravneho poctu zadanych argumentov
             sem_check (s_con);
         }
@@ -1526,10 +1525,11 @@ void sem_check (tSem_context* s_con)
                 else   //premenna je deklarovana globalne
                 {
                     //overenie typov premennej a argumentu funkcie na spravnej pozicii
-                    if ( hash_return_type (GLOBFRAME, s_con->act_id) != arg_type &&
-                         s_con->write_sgn != WRITE)
+                    if ( (hash_return_type (GLOBFRAME, s_con->act_id) != arg_type &&
+                         s_con->write_sgn != WRITE) ||
+                         hash_return_type (GLOBFRAME, s_con->act_id) == F_ID)
                     {
-                        fprintf (stderr, "typova nekompatibilita pri volani funkcie \'%s\' v argumente \'%s\'\n", s_con->c_fun, s_con->act_id);
+                        fprintf (stderr, "typova nekompatibilita v argumente \'%s\'\n", s_con->act_id);
                         exit (semanticka_chyba_typove_kompatibility);
                     }
                 }
@@ -1557,16 +1557,17 @@ void sem_check (tSem_context* s_con)
             }
 
             //premenna bola deklarovana, overenie typu premennej a argumentu na spravnej pozicii
-            if ( hash_return_type (GLOBFRAME, s_con->act_id) != arg_type &&
-                 s_con->write_sgn != WRITE)
+            if ( (hash_return_type (GLOBFRAME, s_con->act_id) != arg_type &&
+                 s_con->write_sgn != WRITE) ||
+                 hash_return_type (GLOBFRAME, s_con->act_id) == F_ID )
             {
-                fprintf (stderr, "typova nekompatibilita pri volani funkcie \'%s\' v argumente \'%s\'\n", s_con->c_fun, s_con->act_id);
+                fprintf (stderr, "typova nekompatibilita v argumente \'%s\'\n", s_con->act_id);
                 exit (semanticka_chyba_typove_kompatibility);
             }
         }
     break;
 
-    case DV_ARG_CHECK:
+    case DV_ARG_CHECK:    //kontrola argumentu zadaneho priamou hodnotou
       
         arg_num++;  //zvysenie pocitadla pozicie parametrov
        
@@ -1608,7 +1609,7 @@ void sem_check (tSem_context* s_con)
     break;
 
 
-    case ID_READ_CHECK:
+    case ID_READ_CHECK:   // kontrola premennej id zadanej do readln()
 
         //lokalny rozsah premennych
         if (s_con->scope == LOCAL)
@@ -1626,8 +1627,9 @@ void sem_check (tSem_context* s_con)
                 else
                 {
                     //overnie typu premennej na typ boolean
-                    if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN) {
-                    fprintf (stderr, "argument '%s' prikazu readln () nesmie byt typu boolean\n", s_con->act_id);
+                    if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN ||
+                        hash_return_type (GLOBFRAME, s_con->act_id) == F_ID) {
+                    fprintf (stderr, "argument '%s' prikazu readln () je nespravneho typu\n", s_con->act_id);
                     exit (semanticka_chyba_typove_kompatibility);
                     }
                 }
@@ -1654,8 +1656,9 @@ void sem_check (tSem_context* s_con)
                 exit (semanticka_chyba_pri_deklaraci);
             }
             //overnie typu premennej na typ boolean
-            if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN) {
-              fprintf (stderr, "argument '%s' prikazu readln () nesmie byt typu boolean\n", s_con->act_id);
+            if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN ||
+                hash_return_type (GLOBFRAME, s_con->act_id) == F_ID) {
+              fprintf (stderr, "argument '%s' prikazu readln () je nespravneho typu\n", s_con->act_id);
               exit (semanticka_chyba_typove_kompatibility);
             }
         }
