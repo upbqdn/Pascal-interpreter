@@ -1748,10 +1748,10 @@ void fun_init() {
   hash_insert_it (get_local("copy"), "s", S_RETEZEC); //vytvorenie parametra
   set_arg_num (get_local ("copy"), "s", 1);  //1. parameter
   
-  hash_insert_it (get_local("copy"), "s", S_INTEGER); //vytvorenie parametra
+  hash_insert_it (get_local("copy"), "i", S_INTEGER); //vytvorenie parametra
   set_arg_num (get_local ("copy"), "i", 2);  //2. parameter
 
-  hash_insert_it (get_local("copy"), "s", S_INTEGER); //vytvorenie parametra
+  hash_insert_it (get_local("copy"), "n", S_INTEGER); //vytvorenie parametra
   set_arg_num (get_local ("copy"), "n", 3);  //3. parameter
   
     
@@ -1767,7 +1767,7 @@ void fun_init() {
   set_arg_num (get_local ("find"), "s", 1);  //1. parameter
   
   hash_insert_it (get_local("find"), "search", S_RETEZEC); //vytvorenie parametra
-  set_arg_num (get_local ("find"), "i", 2);  //2. parameter
+  set_arg_num (get_local ("find"), "search", 2);  //2. parameter
 
  
 //funkcia sort:
