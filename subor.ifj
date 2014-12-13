@@ -1,5 +1,5 @@
 var
-a:integer;
+a:string;
 bb:string;
 b:real;
 
@@ -9,6 +9,11 @@ begin
 
 
   a := 1;
+bb:='ahojj';
+
+{find ok, sort ok, length ok, copy ok }
+a:=copy(bb, 2, 0);
+  
 
   b := 5.2;
 
