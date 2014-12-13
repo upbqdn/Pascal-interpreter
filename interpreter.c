@@ -1547,12 +1547,93 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             else if ( strcmp( Instr->ADDR_PRVA, "copy" )  == 0 )
             {
             	// ---- Vstavana funkcia --- COPY--------------
-            	/* code */
+            	list *TOPFRAME;
+            	TOPFRAME = myaTop(&FRAME);
+
+            	list_element prvok;
+            	list_element navrat;
+                
+
+            	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
+
+                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+
+                ((navrat)->ref ) = mymalloc(sizeof(int));
+                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
+
+                myaPush(&aS, &(navrat)->ref);
+//--------------------------------------------------------------------------------------------
+
+                    //to co kopirujeme
+                    void* pomAddr1; 
+                    pomAddr1 = (*(void **) (myaTop(&paramSTACK))); // 1 param uz priamo DATA
+                    int dlzka = strlen(((char**)pomAddr1));
+
+                    myaPop(&paramSTACK); // odstranime z pomocneho teraz tam mame 2 param
+
+                    
+                    int pom2Zac =  *( *(int **) (myaTop(&paramSTACK)))  ; // 2 param  ZACIATOK PODRETAZCA
+                    printf(">>>2param<<%d>>\n", pom2Zac);
+
+                    myaPop(&paramSTACK); // odstranime z pomocneho teraz tam mame 3 param
+
+ 
+                    int pom3Dlzka = *( *(int **) (myaTop(&paramSTACK)))  ; // 3 param DLZKA PODRETAZCA 
+                    printf(">>>3param<<%d>>\n", pom3Dlzka);
+
+                    myaPop(&paramSTACK); // odstranime z pomocneho
+                    //ok parametre prebrane
+
+                    
+                    // toto podretazec
+                    void *pomAddr2;
+                    //void* pomAddr2 = (*(void **)(myaTop(&aS)));  // tam je navrat->ref
+
+                    pomAddr2 = mymalloc((sizeof(char)) * (pom3Dlzka));    //..malok
+
+//-----------------------------------------------------------------------------------------------
+                    copy(pomAddr1, pom2Zac, pom3Dlzka, pomAddr2);  // void funkcia
+
+                    // ok hotovo
+
             }
             else if ( strcmp( Instr->ADDR_PRVA, "find" )  == 0 )
             {
             	// ---- Vstavana funkcia --- FIND--------------
-            	/* code */
+            	list *TOPFRAME;
+            	TOPFRAME = myaTop(&FRAME);
+
+            	list_element prvok;
+            	list_element navrat;
+                
+
+            	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
+
+                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+
+                ((navrat)->ref ) = mymalloc(sizeof(int));
+                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
+
+                myaPush(&aS, &(navrat)->ref);
+//-----------------------------------------------------------------------------------------------
+ 
+
+                void* pomAddr1; 
+                pomAddr1 = (*(void **) (myaTop(&paramSTACK))); // 1 param uz priamo DATA
+
+                myaPop(&paramSTACK); // odstranime z pomocneho teraz tam mame 2 param
+
+
+                void* pomAddr2; 
+                pomAddr2 = (*(void **) (myaTop(&paramSTACK))); // 2 param uz priamo DATA
+
+                myaPop(&paramSTACK); // odstranime z pomocneho
+
+
+            	(*(int **)  (navrat)->ref)  =  find(pomAddr1, pomAddr2);  //find(char *T, char *P);
+
+
+
             }
             else if ( strcmp( Instr->ADDR_PRVA, "sort" )  == 0 )
             {

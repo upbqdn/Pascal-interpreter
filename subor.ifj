@@ -1,11 +1,14 @@
 var
-a:string;
+a:integer;
+bb:string;
 
 
 begin
 
+bb:='ahoj';
 
-a:=sort('ahoxj');
+
+a:=find(bb, bb);
   
 
   write (a)
