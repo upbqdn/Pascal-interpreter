@@ -12,4 +12,4 @@ stack S;
 
 int magicFunction(int a);
 int isVyraz(tSem_context* s_con);
-
+void type_check (stack *, int);

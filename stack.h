@@ -1,4 +1,4 @@
-/*
+  /*
  *Hlavickovy subor pre stack.c
  *Autor: Filip Gulan xgulan00@stud.fit.vutbr.cz
  */

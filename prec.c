@@ -10,11 +10,11 @@
 
 /* hlavickove soubory */
 #include "header.h"
+#include "instrlist.h"
 #include "scanner.h"
 #include "stack.h"
 #include "parser.h"
 #include "prec.h"
-#include "instrlist.h"
 #include "garbage.h"
 #include "whattoken.h"
 
@@ -75,6 +75,10 @@ switch (a)
 }
 int isVyraz(tSem_context* s_con)
 {
+  stack St;             //zasobnik typov
+  stack_init (&St);     //inicializacia zasobnika
+
+
 	//printf("Spoustim precedencni analyzu \n");
 	int chyba = 0;
 	//actToken = get_token(); /* pri implementaci do parseru, bude treba odstranit tento radek, protoze precedencni analyza prevezme token od parseru */
@@ -97,6 +101,12 @@ do
 
 		if (vypis) printf("GREEP generuji instrukci vloz na zasobnik I_PREC_ID : %s >>", actToken.data); if (vypis) whattoken(actToken.stav);
 		NaplnInstr( I_PREC, spracID, spracADDR, TIPSTAV );
+
+
+    if (actToken.stav == S_KLIC_TRUE || actToken.stav == S_KLIC_FALSE)  //uklada sa typ boolean
+      myPush (&St, S_KLIC_BOOLEAN);
+    else
+      myPush (&St, actToken.stav);  //ukladaju sa ostatne typy
 	}
 
 	if (actToken.stav == S_IDENTIFIKATOR)
@@ -107,9 +117,11 @@ do
 		NaplnInstr( I_IDENT, NULL, spracADDR, NULL );
 
 
-    s_con->context = ID_DEC_CHECK;   //kontrola deklaracie
+    s_con->context = ID_DEC_CHECK;   //kontrola deklaracie a zistenie typu id
     s_con->act_id = actToken.data;
     sem_check (s_con);
+
+    myPush (&St, s_con->act_type);  //ulozi sa typ aktualneho id
 	}
 	
 	
@@ -197,51 +209,71 @@ do
 					{ 
 						if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i * \n");
 						NaplnInstr( I_KRAT, NULL, NULL, NULL );
+
+            type_check (&St, I_KRAT);
 					}
 					else if (myTop(&S) == 1) /* / */ 
 					{
 						 if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i / \n");
 						 NaplnInstr( I_DELENO, NULL, NULL, NULL );
+
+             type_check (&St, I_DELENO);
 					}
 					else if (myTop(&S) == 2) /* + */
 					{
 						 if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i + \n");
 						 NaplnInstr( I_PLUS, NULL, NULL, NULL );
+
+             type_check (&St, I_PLUS);
 					}
 					else if (myTop(&S) == 3) /* - */
 					{
 						 if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i - \n");
 						 NaplnInstr( I_MINUS, NULL, NULL, NULL );
+
+             type_check (&St, I_MINUS);
 					}
 					else if (myTop(&S) == 4) /* < */
 					{
 						if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i < \n");
 						NaplnInstr( I_MENSI, NULL, NULL, NULL );
+
+            type_check (&St, I_MENSI);
 					}
 					else if (myTop(&S) == 5) /* > */
 					{
 						if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i > \n");
 						NaplnInstr( I_VETSI, NULL, NULL, NULL );
+
+            type_check (&St, I_VETSI);
 					}
 					else if (myTop(&S) == 6) /* <= */
 					{
 						if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i <= \n");
 						NaplnInstr( I_MENSIROVNO, NULL, NULL, NULL );
+
+            type_check (&St, I_MENSIROVNO);
 					}
 					else if (myTop(&S) == 7) /* >= */
 					{
 						if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i >= \n");
 						NaplnInstr( I_VETSIROVNO, NULL, NULL, NULL );
+
+            type_check (&St, I_VETSIROVNO);
 					}
 					else if (myTop(&S) == 8) /* = */
 					{
 						if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i = \n");
 						NaplnInstr( I_ROVNO, NULL, NULL, NULL );
+
+            type_check (&St, I_ROVNO);
 					}
 					else if (myTop(&S) == 9) /* <> */
 					{
 						if (vypis) printf("GREEP ********** g e n e r u j i  i n st r u k c i <> \n");
 						NaplnInstr( I_NEROVNO, NULL, NULL, NULL );
+
+            type_check (&St, I_NEROVNO);
 					}
 					if (vypis) printf(" popuji %d \n", myTop(&S)); 
 					myPop(&S);
@@ -304,5 +336,84 @@ if (vypis) printf("Odstranuji umele vytvorenou zarazku a vracim zasobnik do puvo
 //myPop(&S);
 myPop(&S);
 if (vypis) showStack(&S);
+
+
+s_con->act_type = myTop (&St);    //precedencna analyza vracia typ vysledku
+destroyStack (&St);            //rusi sa zasobnik
+
 return chyba;	
+}
+
+
+
+void type_check (stack *St, int t_op) {
+
+  tStav op1, op2;  
+
+  op1 = myTop (St);    //ziskanie operandov zo zasobnika
+  myPop (St);
+
+  op2 = myTop (St);
+  myPop (St);
+
+
+  switch (t_op) {
+   
+    case I_KRAT:
+    case I_DELENO:
+    case I_MINUS:
+        
+      if (op1 == S_INTEGER && op2 == S_INTEGER)
+        myPush (St, S_INTEGER);
+      else if ( (op1 == S_INTEGER || op1 == S_DOUBLE) && (op2 == S_INTEGER || op2 == S_DOUBLE) )
+        myPush (St, S_DOUBLE);
+      else {
+        fprintf (stderr, "typova nekompatibilita pri operaci vo vyraze na riadku '%d'\n", 
+                 actToken.radek+1);
+        trashDestroy (semanticka_chyba_typove_kompatibility);
+      }
+
+    break;
+
+
+    case I_PLUS:
+
+      if (op1 == S_RETEZEC && op2 == S_RETEZEC)
+        myPush (St, S_RETEZEC);
+      else if (op1 == S_INTEGER && op2 == S_INTEGER)
+        myPush (St, S_INTEGER);
+      else if ( (op1 == S_INTEGER || op1 == S_DOUBLE) && (op2 == S_INTEGER || op2 == S_DOUBLE) )
+        myPush (St, S_DOUBLE);
+      else {
+        fprintf (stderr, "typova nekompatibilita pri operaci vo vyraze na riadku '%d'\n", 
+                 actToken.radek+1);
+        trashDestroy (semanticka_chyba_typove_kompatibility);
+      }
+
+    break;
+
+
+    case I_MENSI:
+    case I_VETSI:
+    case I_MENSIROVNO:
+    case I_VETSIROVNO:
+    case I_ROVNO:
+    case I_NEROVNO:
+
+      if ( (op1 == S_INTEGER && op2 == S_INTEGER) || 
+           (op1 == S_DOUBLE && op2 == S_DOUBLE) ||
+           (op1 == S_RETEZEC && op2 == S_RETEZEC) || 
+           (op1 == S_KLIC_BOOLEAN && op2 == S_KLIC_BOOLEAN) )
+        {
+          myPush (St, S_KLIC_BOOLEAN);
+        }
+      else 
+        {
+          fprintf (stderr, "typova nekompatibilita pri operaci vo vyraze na riadku '%d'\n", 
+                   actToken.radek+1);
+          trashDestroy (semanticka_chyba_typove_kompatibility);
+        }
+
+    break;
+  }
 }

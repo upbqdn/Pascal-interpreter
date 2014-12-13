@@ -1,17 +1,19 @@
 var
 a:integer;
 bb:string;
-
+b:real;
 
 begin
 
-bb:='ahoj';
+  bb:='ahoj';
 
 
-a:=find(bb, bb);
-  
+  a := 1;
+
+  b := 5.2;
+
+  a := a + a;
 
   write (a)
-
 
 end.
