@@ -1598,9 +1598,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 //ok uz mame vsetko potrebne v navratovom ... teraz to priamo v tom zosortujeme..
 //-----------------------------------------------------------------------------------------------
-            	//printf("<<%s>>\n", ((void **) (navrat)->ref ) );
-                // tu este dve cisla ... RAIPER ???? :D
-                sort(  ((void **) (navrat)->ref) , 0, dlzka + 1 ); // toto ho zoSORTUJE
+                sort(  ((void **) (navrat)->ref) , 0, dlzka-1  ); // toto ho zoSORTUJE
             }
             else
             {

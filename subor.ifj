@@ -1,47 +1,14 @@
 var
 a:string;
-b:integer;
-c:string;
-d:boolean;
 
-function makewar (a:integer) : integer; forward;
 
-function foobar (foo: integer; bar: string) : integer;
+begin
 
-  var 
-    d:boolean;
-    a:integer;
 
-  begin
+a:=sort('ahoxj');
+  
 
-    a := 1;
-    a := a + 1;
-    write (a);
-    
-    foo := foo + 1;
-    foo := makewar (foo);
-    foobar := foo + 1;
-    
-    write (foobar)
-
-  end;
-
-function makewar (a:integer) :integer;
-
-  begin
-
-    makewar := a + 1
-
-  end;
-
-begin 
-
-  a := 'a';
-  c := 'hey';
-
-  b := foobar (6, c);
-
-  write (a,c,b)
+  write (a)
 
 
 end.
