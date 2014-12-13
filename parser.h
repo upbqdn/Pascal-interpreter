@@ -31,10 +31,12 @@ typedef enum {
   
   RET_VAL_CHECK,    //kontrola priradenia id := funkcia ()
   ID_ARG_CHECK,     //kontrola id argumentu pri volani funkcie 
-  ID_READ_CHECK,     //kontrola premennej id zadaenj do readln ()
+  ID_READ_CHECK,    //kontrola premennej id zadaenj do readln ()
   DV_ARG_CHECK,     //kontrola argumentu zadaneho priamou hodnotou pri volani funkcie
   ID_DEC_CHECK,     //kontrola, ci bola premenna deklarovana
-  ARG_NUM_CHECK     //kontrola spravneho poctu zadanych argumentov pri volani funkcie
+  ARG_NUM_CHECK,    //kontrola spravneho poctu zadanych argumentov pri volani funkcie
+  EXP_RET_CHECK,    //kontrola typov LHS a RHS pri vyrazoch
+  BOOL_CHECK        //kontrola, ci je vyraz typu bool
 } tContext;
 
 typedef struct {   //struktura nesie aktualny semanticky kontext a jeho atributy

@@ -368,7 +368,8 @@ void type_check (stack *St, int t_op) {
       else if ( (op1 == S_INTEGER || op1 == S_DOUBLE) && (op2 == S_INTEGER || op2 == S_DOUBLE) )
         myPush (St, S_DOUBLE);
       else {
-        fprintf (stderr, "typova nekompatibilita pri operaci vo vyraze na riadku '%d'\n", 
+        fprintf (stderr, "typova nekompatibilita pri aritmetickej operacii vo vyraze na riadku"
+                 "'%d'\n", 
                  actToken.radek+1);
         trashDestroy (semanticka_chyba_typove_kompatibility);
       }
@@ -385,7 +386,7 @@ void type_check (stack *St, int t_op) {
       else if ( (op1 == S_INTEGER || op1 == S_DOUBLE) && (op2 == S_INTEGER || op2 == S_DOUBLE) )
         myPush (St, S_DOUBLE);
       else {
-        fprintf (stderr, "typova nekompatibilita pri operaci vo vyraze na riadku '%d'\n", 
+        fprintf (stderr, "typova nekompatibilita pri operaci '+' vo vyraze na riadku '%d'\n", 
                  actToken.radek+1);
         trashDestroy (semanticka_chyba_typove_kompatibility);
       }
@@ -409,7 +410,7 @@ void type_check (stack *St, int t_op) {
         }
       else 
         {
-          fprintf (stderr, "typova nekompatibilita pri operaci vo vyraze na riadku '%d'\n", 
+          fprintf (stderr,"typova nekompatibilita pri relacnej operacii vo vyraze na riadku '%d'\n", 
                    actToken.radek+1);
           trashDestroy (semanticka_chyba_typove_kompatibility);
         }
