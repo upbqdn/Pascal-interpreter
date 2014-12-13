@@ -1531,20 +1531,6 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                     pomAddr1 = (*(void **) (myaTop(&paramSTACK)));
                     int dlzka = strlen(((char**)pomAddr1));
 
-                    //printf("SZZZZZZ>>%s<<<dlzka je >%d<\n",  pomAddr1 , dlzka);
-
-
-                    // KAM kopirujeme
-                    void* pomAddr2 = (*(void **)(myaTop(&aS)));
-
-                    
-
-
-                    void *pom = myrealloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
-                    void **kk = (myaTop(&aS));
-                    *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
-
-                    strcpy( ((char*) pom) , ((char*)pomAddr1)  );
 
 
             myaPop(&paramSTACK); // odstranime z pomocneho
@@ -1553,8 +1539,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
 //-----------------------------------------------------------------------------------------------
 
-
-                (*(int **)  (navrat)->ref)   =  lenght(  pom   );
+                (*(int **)  (navrat)->ref)   =  lenght(  pomAddr1   );  // pom je char
 
 
 
@@ -1577,34 +1562,45 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             	list_element prvok;
             	list_element navrat;
+                
 
             	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
 
                 prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
 
+                ((navrat)->ref ) = mymalloc(sizeof(int));
+                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
 
-                //teraz prekopirujeme string do navratovej vecicky
+                myaPush(&aS, &(navrat)->ref);
+//--------------------------------------------------------------------------------------------
 
-                void* pomAddr1; // ODKIAL
+//PARAM STACK == TO CO CHCEME SKOPIROVAT tu su DATA
 
-                pomAddr1 = (*(void **) (prvok)->ref)  ;  // IDENTIFIKATOR (CEZ TABULKU SYMBOLOV)
-
-
-
-                // berieme zo zasobniku dalsiu ADRESU - KDE  to ulozit (adresacia cez TABULKU SYMBOLOV)
-                void* pomAddr2 = (*(void **) (navrat)->ref)    ; // KAM
-                int dlzka = strlen(((char**)pomAddr1));
-
-
-                void *pom = myrealloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
-                void **kk = (navrat)->ref ; // keby sa zmeni adresa 
-                *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
-
-                strcpy( ((char*) pom) , ((char*)pomAddr1)  );
+                    //to co kopirujeme
+                    void* pomAddr1; 
+                    pomAddr1 = (*(void **) (myaTop(&paramSTACK)));
+                    int dlzka = strlen(((char**)pomAddr1));
 
 
+                    // KAM kopirujeme
+                    void* pomAddr2 = (*(void **)(myaTop(&aS)));  // tam je navrat->ref
+
+
+                    void *pom = myrealloc( pomAddr2 ,( ((sizeof(char))*dlzka)+2 ) );     //..realok
+                    void **kk = (myaTop(&aS));
+                    *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
+
+                    strcpy( ((char*) pom) , ((char*)pomAddr1)  );
+
+
+            myaPop(&paramSTACK); // odstranime z pomocneho
+            //myaPop(&aS); // odstranime z klasik
+
+//ok uz mame vsetko potrebne v navratovom ... teraz to priamo v tom zosortujeme..
+//-----------------------------------------------------------------------------------------------
+            	//printf("<<%s>>\n", ((void **) (navrat)->ref ) );
                 // tu este dve cisla ... RAIPER ???? :D
-                sort(  (*(void **) (navrat)->ref) , 0 , 0 ); // toto ho zoSORTUJE
+                sort(  ((void **) (navrat)->ref) , 0, dlzka + 1 ); // toto ho zoSORTUJE
             }
             else
             {
