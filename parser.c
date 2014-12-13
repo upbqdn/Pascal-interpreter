@@ -268,7 +268,8 @@ void extractRule(tSem_context* s_con)
             }
             else
             {
-                fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
+                fprintf (stderr, "chyba pri deklaracii funkcie \'%s\' na riadku '%d'\n",
+                         s_con->act_fun, actToken.radek+1);
                 trashDestroy (semanticka_chyba_pri_deklaraci);
             }
 
@@ -1353,7 +1354,8 @@ void sem_check (tSem_context* s_con)
     case G_VAR_DEC:              //kontext deklaracii glob. premennych
         if ( hash_search (GLOBFRAME, s_con->act_id) == CONTAINS )   //error if var exists
         {
-            fprintf (stderr, "semanticka chyba pri deklaraci globalnej premennej \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id);
+            fprintf (stderr, "chyba pri deklaraci globalnej premennej \'%s\' na riadku '%d'\n",
+                     s_con->act_id, actToken.radek+1);
             trashDestroy (semanticka_chyba_pri_deklaraci);
         }
 
@@ -1381,7 +1383,8 @@ void sem_check (tSem_context* s_con)
         }
 
         //nastala chyba pri definicii alebo deklaracii funkcie
-        fprintf (stderr, "semanticka chyba pri deklaraci funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
+        fprintf (stderr, "chyba pri deklaraci funkcie \'%s\' na riadku '%d'\n",
+                 s_con->act_fun, actToken.radek+1);
         trashDestroy (semanticka_chyba_pri_deklaraci);
 
 
@@ -1394,7 +1397,8 @@ void sem_check (tSem_context* s_con)
                  hash_return_type (get_local (s_con->act_fun), s_con->act_id) != s_con->act_type ||
                  get_arg_num (get_local (s_con->act_fun), s_con->act_id) != ++arg_num )
             {
-                fprintf (stderr, "semanticka chyba argumentu \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
+                fprintf (stderr, "chyba argumentu \'%s\' funkcie \'%s\' na riadku '%d'\n",
+                         s_con->act_id, s_con->act_fun, actToken.radek+1);
                 trashDestroy(semanticka_chyba_pri_deklaraci);
             }
         }
@@ -1405,7 +1409,8 @@ void sem_check (tSem_context* s_con)
             //chyba ak parameter uz existuje
             if (hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS)
             {
-                fprintf (stderr, "semanticka chyba pri deklaraci argumentu \'%s\' funkcie \'%s\', volam trashDestroy(3), dealokuje OS\n", s_con->act_id, s_con->act_fun);
+                fprintf (stderr, "chyba pri deklaraci argumentu \'%s\' funkcie \'%s\'"
+                         " na riadku '%d'\n", s_con->act_id, s_con->act_fun, actToken.radek+1);
                 trashDestroy (semanticka_chyba_pri_deklaraci);
             }
 
@@ -1425,14 +1430,16 @@ void sem_check (tSem_context* s_con)
             //ak sa typ pri deklaracii nezhoduje s typom pri definicii
             if (hash_return_type (get_local (s_con->act_fun), s_con->act_fun) != s_con->act_type)
             {
-                fprintf (stderr, "semanticka chyba pri defenici typu navratovej hodnoty funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_fun);
+                fprintf (stderr, "chyba pri defenici typu navratovej hodnoty funkcie \'%s\'"
+                         " na riadku '%d'\n", s_con->act_fun, actToken.radek+1);
                 trashDestroy(semanticka_chyba_pri_deklaraci);
             }
 
             //funkcia bola deklarovana a pri definicii bol zadany nespravny pocet argumentov
             if (get_arg_num (GLOBFRAME, s_con->act_fun) != arg_num)
             {
-                fprintf (stderr, "nespravny pocet argumentov pri defenici funkcie '%s'\n", s_con->act_fun);
+                fprintf (stderr, "nespravny pocet argumentov pri defenici funkcie '%s'"
+                         " na riadku '%d'\n", s_con->act_fun, actToken.radek+1);
                 trashDestroy (semanticka_chyba_pri_deklaraci);
             }
         }
@@ -1450,7 +1457,8 @@ void sem_check (tSem_context* s_con)
         //chyba, ak premenna alebo argument alebo navratova hodnota funkcie existuje
         if ( hash_search (get_local (s_con->act_fun), s_con->act_id) == CONTAINS)
         {
-            fprintf (stderr, "semanticka chyba pri deklaraci lokalnej premennej \'%s\' funkcie \'%s\', volam exit(3), dealokuje OS\n", s_con->act_id, s_con->act_fun );
+            fprintf (stderr, "chyba pri deklaraci lokalnej premennej \'%s\' funkcie \'%s\'"
+                     " na riadku '%d'\n", s_con->act_id, s_con->act_fun, actToken.radek+1);
             trashDestroy (semanticka_chyba_pri_deklaraci);
         }
 
@@ -1471,7 +1479,8 @@ void sem_check (tSem_context* s_con)
                 //premenna nie je deklarovana ani globalne - chyba
                 if ( hash_search (GLOBFRAME, s_con->l_id) != CONTAINS )
                 {
-                    fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+                    fprintf (stderr, "premenna \'%s\' na riadku '%d' nebola deklarovana\n",
+                             s_con->l_id, actToken.radek+1);
                     trashDestroy (semanticka_chyba_pri_deklaraci);
                 }
                 else   //premenna je deklarovana globalne
@@ -1480,7 +1489,9 @@ void sem_check (tSem_context* s_con)
                     if ( hash_return_type (GLOBFRAME, s_con->l_id) !=
                             hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
                     {
-                        fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
+                        fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\'"
+                                 " a premennou\'%s\' na riadku '%d'\n",
+                                 s_con->c_fun, s_con->l_id, actToken.radek+1);
                         trashDestroy (semanticka_chyba_typove_kompatibility);
                     }
                 }
@@ -1491,7 +1502,9 @@ void sem_check (tSem_context* s_con)
                 if ( hash_return_type (get_local (s_con->act_fun), s_con->l_id) !=
                         hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
                 {
-                    fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n", s_con->c_fun, s_con->l_id);
+                    fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\'"
+                             " a premennou \'%s\'\n na riadku '%d'",
+                             s_con->c_fun, s_con->l_id, actToken.radek+1);
                     trashDestroy (semanticka_chyba_typove_kompatibility);
                 }
             }
@@ -1503,14 +1516,17 @@ void sem_check (tSem_context* s_con)
             //globalna premenna nebola deklarovana
             if (hash_search (GLOBFRAME, s_con->l_id) != CONTAINS)
             {
-                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->l_id);
+                fprintf (stderr, "globalna premenna \'%s\' na riadku '%d' nebola deklarovana\n",
+                         s_con->l_id, actToken.radek+1);
                 trashDestroy (semanticka_chyba_pri_deklaraci);
             }
             //premenna bola deklarovana, overenie typu premennej a navratovej hodnoty funkcie
             if ( hash_return_type (GLOBFRAME, s_con->l_id) !=
                     hash_return_type (get_local (s_con->c_fun), s_con->c_fun) )
             {
-                fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'\n"    , s_con->c_fun, s_con->l_id);
+                fprintf (stderr, "typova nekompatibilita medzi funkciou \'%s\' a premennou \'%s\'"
+                         " na riadku '%d'\n",
+                         s_con->c_fun, s_con->l_id, actToken.radek+1);
                 trashDestroy (semanticka_chyba_typove_kompatibility);
             }
         }
@@ -1527,7 +1543,9 @@ void sem_check (tSem_context* s_con)
         
         //ak sa typ parametra v LTS nenajde a ak nemame write
         if ( ! arg_type && s_con->write_sgn != WRITE ) {
-          fprintf (stderr, "prekroceny pocet argumentov pri volani funkcie '%s'\n", s_con->c_fun);
+          fprintf (stderr, "prekroceny pocet argumentov pri volani funkcie '%s'"
+                   " na riadku '%d'\n",
+                   s_con->c_fun, actToken.radek+1);
           trashDestroy (semanticka_chyba_typove_kompatibility);
         }
           
@@ -1540,7 +1558,8 @@ void sem_check (tSem_context* s_con)
                 //premenna nie je deklarovana ani globalne - chyba
                 if ( hash_search (GLOBFRAME, s_con->act_id) != CONTAINS )
                 {
-                    fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                    fprintf (stderr, "premenna \'%s\' na riadku '%d' nebola deklarovana\n",
+                             s_con->act_id, actToken.radek+1);
                     trashDestroy (semanticka_chyba_pri_deklaraci);
                 }
                 else   //premenna je deklarovana globalne
@@ -1550,7 +1569,9 @@ void sem_check (tSem_context* s_con)
                          s_con->write_sgn != WRITE) ||
                          hash_return_type (GLOBFRAME, s_con->act_id) == F_ID)
                     {
-                        fprintf (stderr, "typova nekompatibilita v argumente \'%s\'\n", s_con->act_id);
+                        fprintf (stderr, "typova nekompatibilita v argumente \'%s\'"
+                                 " na riadku '%d'\n",
+                                 s_con->act_id, actToken.radek+1);
                         trashDestroy (semanticka_chyba_typove_kompatibility);
                     }
                 }
@@ -1561,7 +1582,9 @@ void sem_check (tSem_context* s_con)
                 if ( hash_return_type (get_local (s_con->act_fun), s_con->act_id) != arg_type &&
                      s_con->write_sgn != WRITE)
                 {
-                    fprintf (stderr, "typova nekompatibilita pri volani funkcie \'%s\' v argumente \'%s\'\n", s_con->c_fun, s_con->act_id);
+                    fprintf (stderr, "typova nekompatibilita pri volani funkcie \'%s\'"
+                             " v argumente \'%s\' na riadku '%d'\n",
+                             s_con->c_fun, s_con->act_id, actToken.radek+1);
                     trashDestroy (semanticka_chyba_typove_kompatibility);
                 }
             }
@@ -1573,7 +1596,8 @@ void sem_check (tSem_context* s_con)
             //globalna premenna nebola deklarovana
             if (hash_search (GLOBFRAME, s_con->act_id) != CONTAINS)
             {
-                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                fprintf (stderr, "globalna premenna \'%s\' na riadku '%d' nebola deklarovana\n", 
+                         s_con->act_id, actToken.radek+1);
                 trashDestroy (semanticka_chyba_pri_deklaraci);
             }
 
@@ -1582,7 +1606,8 @@ void sem_check (tSem_context* s_con)
                  s_con->write_sgn != WRITE) ||
                  hash_return_type (GLOBFRAME, s_con->act_id) == F_ID )
             {
-                fprintf (stderr, "typova nekompatibilita v argumente \'%s\'\n", s_con->act_id);
+                fprintf (stderr, "typova nekompatibilita v argumente \'%s\' na riadku '%d'\n",
+                         s_con->act_id, actToken.radek+1);
                 trashDestroy (semanticka_chyba_typove_kompatibility);
             }
         }
@@ -1600,13 +1625,16 @@ void sem_check (tSem_context* s_con)
         
         //ak sa typ parametra v LTS nenajde a ak nemame write
         if ( ! arg_type ) {
-          fprintf (stderr, "prekroceny pocet argumentov pri volani funkcie '%s'\n", s_con->c_fun);
+          fprintf (stderr, "prekroceny pocet argumentov pri volani funkcie '%s' na riadku '%d'\n",
+                   s_con->c_fun, actToken.radek+1);
           trashDestroy (semanticka_chyba_typove_kompatibility);
         }
 
         //overi sa typ hodnoty s typom argumentu na spravnej pozicii
         if (s_con->act_type != arg_type) {
-          fprintf (stderr, "zadany zly typ hodnoty pre argument na pozicii %d vo funkcii '%s'\n", arg_num, s_con->c_fun);
+          fprintf (stderr, "zadany zly typ hodnoty pre argument na pozicii %d"
+                   " vo funkcii '%s' na riadku '%d'\n",
+                   arg_num, s_con->c_fun, actToken.radek+1);
           trashDestroy (semanticka_chyba_typove_kompatibility);
         }
 
@@ -1618,7 +1646,8 @@ void sem_check (tSem_context* s_con)
       //nedostatocny pocet argumentov
       if ( s_con->write_sgn != WRITE && 
            get_arg_num (GLOBFRAME, s_con->c_fun) != arg_num ) {
-        fprintf (stderr, "nedostatocny pocet argumentov pri volani funkcie '%s'\n", s_con->c_fun);
+        fprintf (stderr, "nedostatocny pocet argumentov pri volani funkcie '%s' na riadku '%d'\n",
+                 s_con->c_fun, actToken.radek+1);
         trashDestroy (semanticka_chyba_typove_kompatibility);
       }
 
@@ -1642,7 +1671,8 @@ void sem_check (tSem_context* s_con)
                 //premenna nie je deklarovana ani globalne - chyba
                 if ( hash_search (GLOBFRAME, s_con->act_id) != CONTAINS )
                 {
-                    fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                    fprintf (stderr, "premenna \'%s\' na riadku '%d' nebola deklarovana\n",
+                             s_con->act_id, actToken.radek+1);
                     trashDestroy (semanticka_chyba_pri_deklaraci);
                 }
                 //premenna je deklarovana globalne
@@ -1652,7 +1682,9 @@ void sem_check (tSem_context* s_con)
                     if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN ||
                         hash_return_type (GLOBFRAME, s_con->act_id) == F_ID)
                     {
-                      fprintf (stderr, "argument '%s' prikazu readln () je nespravneho typu\n", s_con->act_id);
+                      fprintf (stderr, "argument '%s' prikazu readln () na riadku '%d'"
+                               " je nespravneho typu\n",
+                               s_con->act_id, actToken.radek+1);
                       trashDestroy (semanticka_chyba_typove_kompatibility);
                     }
                 }
@@ -1661,9 +1693,11 @@ void sem_check (tSem_context* s_con)
             else
             {
                  //overnie typu premennej na typ boolean
-                 if (hash_return_type (get_local (s_con->act_fun), s_con->act_id) == S_KLIC_BOOLEAN)
+                 if (hash_return_type (get_local(s_con->act_fun), s_con->act_id) == S_KLIC_BOOLEAN)
                  {
-                    fprintf (stderr, "argument '%s' prikazu readln () nesmie byt typu boolean\n", s_con->act_id);
+                    fprintf (stderr, "argument '%s' prikazu readln () na riadku '%d'"
+                             " nesmie byt typu boolean\n",
+                             s_con->act_id, actToken.radek+1);
                     trashDestroy (semanticka_chyba_typove_kompatibility);
                  }
             }
@@ -1675,14 +1709,17 @@ void sem_check (tSem_context* s_con)
             //globalna premenna nebola deklarovana
             if (hash_search (GLOBFRAME, s_con->act_id) != CONTAINS)
             {
-                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                fprintf (stderr, "globalna premenna \'%s\' na riadku '%d' nebola deklarovana\n",
+                         s_con->act_id, actToken.radek+1);
                 trashDestroy (semanticka_chyba_pri_deklaraci);
             }
             //overnie typu premennej na typ boolean
             if (hash_return_type (GLOBFRAME, s_con->act_id) == S_KLIC_BOOLEAN ||
                 hash_return_type (GLOBFRAME, s_con->act_id) == F_ID) 
             {
-              fprintf (stderr, "argument '%s' prikazu readln () je nespravneho typu\n", s_con->act_id);
+              fprintf (stderr, "argument '%s' prikazu readln () na riadku '%d'"
+                       " je nespravneho typu\n",
+                       s_con->act_id, actToken.radek+1);
               trashDestroy (semanticka_chyba_typove_kompatibility);
             }
         }
@@ -1701,7 +1738,8 @@ void sem_check (tSem_context* s_con)
                 //premenna nie je deklarovana ani globalne - chyba
                 if ( hash_search (GLOBFRAME, s_con->act_id) != CONTAINS )
                 {
-                    fprintf (stderr, "premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                    fprintf (stderr, "premenna \'%s\' na riadku '%d' nebola deklarovana\n",
+                             s_con->act_id, actToken.radek+1);
                     trashDestroy (semanticka_chyba_pri_deklaraci);
                 }
                 //premenna je deklarovana globalne
@@ -1725,7 +1763,8 @@ void sem_check (tSem_context* s_con)
             //globalna premenna nebola deklarovana
             if (hash_search (GLOBFRAME, s_con->act_id) != CONTAINS)
             {
-                fprintf (stderr, "globalna premenna \'%s\' nebola deklarovana\n", s_con->act_id);
+                fprintf (stderr, "globalna premenna \'%s\' na riadku '%d' nebola deklarovana\n",
+                         s_con->act_id, actToken.radek+1);
                 trashDestroy (semanticka_chyba_pri_deklaraci);
             }
             //ulozenie typu
