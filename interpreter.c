@@ -1514,11 +1514,12 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
 
-                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
-
+                // toto netreba
+                //prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+                //((prvok)->ref )  = mymalloc(sizeof(char)+1);
+                
                 ((navrat)->ref ) = mymalloc(sizeof(int));
-                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
-
+                
                 myaPush(&aS, &(navrat)->ref);
 //--------------------------------------------------------------------------------------------
 
@@ -1556,12 +1557,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
 
-                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+                //toto netreba asi .. racej to tu neham este
+                //prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+                //((prvok)->ref )  = mymalloc(sizeof(char)+1);
 
-                ((navrat)->ref ) = mymalloc(sizeof(int));
-                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
-
-                myaPush(&aS, &(navrat)->ref);
+                //podretazec
+                    ((navrat)->ref ) = mymalloc((sizeof(char)) + 2);
+                    myaPush(&aS, &(navrat)->ref);
 //--------------------------------------------------------------------------------------------
 
                     //to co kopirujeme
@@ -1573,26 +1575,24 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                     
                     int pom2Zac =  *( *(int **) (myaTop(&paramSTACK)))  ; // 2 param  ZACIATOK PODRETAZCA
-                    printf(">>>2param<<%d>>\n", pom2Zac);
+                    //printf(">>>2param<<%d>>\n", pom2Zac);
 
                     myaPop(&paramSTACK); // odstranime z pomocneho teraz tam mame 3 param
 
  
                     int pom3Dlzka = *( *(int **) (myaTop(&paramSTACK)))  ; // 3 param DLZKA PODRETAZCA 
-                    printf(">>>3param<<%d>>\n", pom3Dlzka);
+                    //printf(">>>3param<<%d>>\n", pom3Dlzka);
 
                     myaPop(&paramSTACK); // odstranime z pomocneho
                     //ok parametre prebrane
 
+                    //podretazec
+                    void *pom = myrealloc( ((navrat)->ref ) ,( ((sizeof(char))*pom3Dlzka)+2 ) );     //..realok
+                    void **kk = &((navrat)->ref );
+                    *kk = pom; // ked sa nahodu zmeni adresa po alokacii tak ulozime...
                     
-                    // toto podretazec
-                    void *pomAddr2;
-                    //void* pomAddr2 = (*(void **)(myaTop(&aS)));  // tam je navrat->ref
-
-                    pomAddr2 = mymalloc((sizeof(char)) * (pom3Dlzka));    //..malok
-
 //-----------------------------------------------------------------------------------------------
-                    copy(pomAddr1, pom2Zac, pom3Dlzka, pomAddr2);  // void funkcia
+                    copy(pomAddr1, pom2Zac, pom3Dlzka, (navrat)->ref  );  // void funkcia
 
                     // ok hotovo
 
@@ -1609,10 +1609,12 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
 
-                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+                //toto netreba asi .. racej to tu neham este
+                //prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+                //((prvok)->ref )  = mymalloc(sizeof(char)+1);
 
                 ((navrat)->ref ) = mymalloc(sizeof(int));
-                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
+                
 
                 myaPush(&aS, &(navrat)->ref);
 //-----------------------------------------------------------------------------------------------
@@ -1646,11 +1648,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 
 
             	navrat = (list_element)(hash_adress(TOPFRAME, Instr->ADDR_PRVA )); // navratova hodnota
-
-                prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+                 
+                //toto netreba asi .. racej to tu neham este
+                //prvok = (list_element)(hash_adress(TOPFRAME, "s")); // prvy parameter funkcie (tu musi prist STRING)
+                //((prvok)->ref )  = mymalloc(sizeof(char)+1);
 
                 ((navrat)->ref ) = mymalloc(sizeof(int));
-                ((prvok)->ref )  = mymalloc(sizeof(char)+1);
+                
 
                 myaPush(&aS, &(navrat)->ref);
 //--------------------------------------------------------------------------------------------

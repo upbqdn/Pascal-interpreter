@@ -1,14 +1,14 @@
 var
-a:integer;
+a:string;
 bb:string;
 
 
 begin
 
-bb:='ahoj';
+bb:='ahojj';
 
-
-a:=find(bb, bb);
+{find ok, sort ok, length ok, copy ok }
+a:=copy(bb, 2, 0);
   
 
   write (a)
