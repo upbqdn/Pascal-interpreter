@@ -102,6 +102,7 @@ typedef enum
     S_DOUBLE_POMOCDES3,   
     S_DOUBLE_POMOCDES4,   // 60
 
+    //LL-grammar
     LL_INIT,    // 61
     LL_VLIST,   //62
     LL_VDEC,    //63
@@ -120,16 +121,18 @@ typedef enum
     LL_NSPLIST, //76
     LL_E,
 
-    LL_NPLIST_NID,//77
-    LL_IF_END,  //
-    LL_BSTAT_END,
-    LL_BSTAT_THEN,
-    LL_BSTAT_WHILE,
-    LL_BSTAT_WHILE_END,
-    LL_FUNCEND, //
+    //pomocne stavy pre generovanie instrukcii
+    LL_NPLIST_NID,      //77
+    LL_IF_END,          //78
+    LL_BSTAT_END,       //79
+    LL_BSTAT_ELSE_VETVA,//80
+    LL_BSTAT_WHILE,     //81
+    LL_BSTAT_WHILE_END, //82
+
+    LL_FUNCEND, //83
 
 
-    F_ID, // 79
+    F_ID, // 
     S_BOOLEAN, /* */
     S_DOLAR, /* pomocny stav pro precedencni analyzu */
 
