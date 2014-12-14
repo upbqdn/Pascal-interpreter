@@ -1,33 +1,34 @@
+{ Spravny }
 var
-a:integer;
-bb:string;
-b:real;
+   a : integer;
+      b : integer;
+         c : boolean;
 
-begin
+         function x() : boolean;
+         begin
+            x := true
+            end;
 
-  bb:='ahoj';
+            function z() : integer;
+            begin
+               z := 3 
+               end;
 
+               function w(i : integer; c : real) : real;
+               begin
+                  w := 5.0
+                  end;
 
-  a := 1;
-bb:='ahojj';
+                  begin
+                     a := 0000;
+                        b := 0001;
+                           c := true;
+                            write(a);
+                              write(b);
+                                write(a, b, c);
+                                  begin
+                                      write(a);
+                                          write(b)
+                                            end
+                                            end.
 
-{find ok, sort ok, length ok, copy ok }
-bb:=copy(bb, 2, 0);
-
-if a = a then
-  begin
-    write ('foo')
-  end
-else
-  begin
-
-  end;
-
-
-  b := 5.2;
-
-  a := a + a;
-
-  write (a)
-
-end.
