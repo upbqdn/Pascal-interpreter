@@ -349,6 +349,7 @@ if (vypis) showStack(&S);
 
 s_con->act_type = myTop (&St);    //precedencna analyza vracia typ vysledku
 destroyStack (&St);            //rusi sa zasobnik
+destroyStack(&S); /* rusim zasobnik precedencni analyzy */
 
 return chyba;	
 }
