@@ -175,7 +175,6 @@ void extractRule(tSem_context* s_con)
         {
             //syntakt chiba
             fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som neaky datovy typ.\n", actToken.radek+1);
-            fprintf(stderr, "\n");
             trashDestroy(2);
             break;
         }
@@ -311,7 +310,7 @@ void extractRule(tSem_context* s_con)
         else
         {
             //syntakt chiba
-            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som predtym ", actToken.radek+1);
             whattoken(S_STREDNIK);
             fprintf(stderr, "\n");
             trashDestroy(2);
