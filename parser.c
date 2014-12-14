@@ -431,7 +431,7 @@ void extractRule(tSem_context* s_con)
 
     case  LL_STLIST:
     {
-        if ((actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
+        if ( (actToken.stav == S_KLIC_BEGIN) || (actToken.stav == S_IDENTIFIKATOR) || (actToken.stav == S_KLIC_WHILE) || (actToken.stav == S_KLIC_IF) || (actToken.stav == S_KLIC_READLN) || (actToken.stav == S_KLIC_WRITE))
         {
             myPop(&S);
             myPushMul(&S, 2, LL_STAT, LL_NSTLIST);
@@ -466,6 +466,15 @@ void extractRule(tSem_context* s_con)
     {
         switch(actToken.stav)
         {
+
+        case S_KLIC_BEGIN:
+        {
+            // begin begin begin end end end
+            myPop(&S);
+            myPush(&S, LL_BSTAT); //sem bstat klasik
+
+            break;
+        }
 
 
         case S_IDENTIFIKATOR:
@@ -514,7 +523,7 @@ void extractRule(tSem_context* s_con)
         case S_KLIC_IF:
         {
             myPop(&S);
-            myPushMul(&S, 6, S_KLIC_IF, LL_E, S_KLIC_THEN, LL_BSTAT_THEN, LL_IF_END, LL_BSTAT);
+            myPushMul(&S, 6, S_KLIC_IF, LL_E, S_KLIC_THEN, LL_BSTAT, LL_IF_END, LL_BSTAT_ELSE_VETVA);
 
             // koli instrukciam
             void *ifaddr1 = mymalloc(sizeof(struct tPrvokListu)) ;
@@ -578,7 +587,73 @@ void extractRule(tSem_context* s_con)
         break;
     }
 
-    case LL_IF_END:
+
+//----------------------------------BSTAT----dole------------------------------
+
+    // BSTAT klasik - begin begin begin end end end
+    case  LL_BSTAT:
+    {
+        myPop(&S);
+        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END );
+
+        break;
+    }
+
+
+
+
+//----toto je WHILE----dole---------------------------------
+
+    case LL_BSTAT_WHILE:
+    {
+        myPop(&S);
+        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, LL_BSTAT_WHILE_END );
+
+        // podmienka vyhodnotena
+
+        break;
+    }
+
+
+    case LL_BSTAT_WHILE_END:
+    {
+        if (actToken.stav == S_KLIC_END)
+        {
+            myPop(&S);
+            myPush(&S, S_KLIC_END );
+
+            NaplnInstr(I_JMP, myaSecTop(&IFJMP), NULL, NULL);
+
+            NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
+
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
+
+            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
+
+            myaPop(&IFJMP);
+            myaPop(&IFJMP);
+
+
+
+        }
+        else
+        {
+            //syntakt chyba
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
+            whattoken(S_KLIC_END);
+            fprintf(stderr, "\n");
+            trashDestroy(2);
+        }
+        break;
+    }
+//----toto je WHILE----hore---------------------------------
+
+
+
+//----toto je IF-------dole---------------------------------
+
+case LL_IF_END:
     {
         if (actToken.stav == S_KLIC_ELSE)
         {
@@ -615,7 +690,59 @@ void extractRule(tSem_context* s_con)
         break;
     }
 
-    //--------------------------RHS-----------------------------------------------------------------//
+
+//----toto je ELSE VETVA   IF-u ----dole---------------------------------
+    case  LL_BSTAT_ELSE_VETVA:
+    {
+        myPop(&S);
+        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, LL_BSTAT_END );
+
+        break;
+    }
+
+    case LL_BSTAT_END:
+    {
+        if (actToken.stav == S_KLIC_END)
+        {
+            myPop(&S);
+            myPush(&S, S_KLIC_END );
+            // PRE IF kocien
+
+            // tu nam konci vetva ELSE.. sem sme mohli skocit po vyhodnoteni vyrazu >> FALSE
+            NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
+
+
+            void* pomad;
+            pomad = InstrDajPoz(&INSTR_PASKA);
+
+            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
+
+            myaPop(&IFJMP);
+
+
+        }
+        else
+        {
+            //syntakt chyba
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
+            whattoken(S_KLIC_END);
+            fprintf(stderr, "\n");
+            trashDestroy(2);
+        }
+        break;
+    }
+
+//----toto je ELSE VETVA   IF-u -----hore--------------------------------
+
+
+//----------------------------------BSTAT----hore------------------------------
+
+    
+
+
+
+
+//--------------------------RHS-----------------------------------------------------------------//
 
     case  LL_RHS:
     {
@@ -685,103 +812,7 @@ void extractRule(tSem_context* s_con)
     }
 
 
-//----------------------------------BSTAT----------------------------------
 
-    case LL_BSTAT_WHILE:
-    {
-        myPop(&S);
-        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, LL_BSTAT_WHILE_END );
-
-        // podmienka vyhodnotena
-
-        break;
-    }
-
-
-    case LL_BSTAT_WHILE_END:
-    {
-        if (actToken.stav == S_KLIC_END)
-        {
-            myPop(&S);
-            myPush(&S, S_KLIC_END );
-
-            NaplnInstr(I_JMP, myaSecTop(&IFJMP), NULL, NULL);
-
-            NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
-
-            void* pomad;
-            pomad = InstrDajPoz(&INSTR_PASKA);
-
-            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
-
-            myaPop(&IFJMP);
-            myaPop(&IFJMP);
-
-
-
-        }
-        else
-        {
-            //syntakt chyba
-            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
-            whattoken(S_KLIC_END);
-            fprintf(stderr, "\n");
-            trashDestroy(2);
-        }
-        break;
-    }
-
-
-
-
-
-    case  LL_BSTAT_THEN:
-    {
-        myPop(&S);
-        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, S_KLIC_END );
-
-        break;
-    }
-
-    case  LL_BSTAT:
-    {
-        myPop(&S);
-        myPushMul(&S, 3, S_KLIC_BEGIN, LL_STLIST, LL_BSTAT_END );
-
-        break;
-    }
-
-    case LL_BSTAT_END:
-    {
-        if (actToken.stav == S_KLIC_END)
-        {
-            myPop(&S);
-            myPush(&S, S_KLIC_END );
-            // PRE IF kocien
-
-            // tu nam konci vetva ELSE.. sem sme mohli skocit po vyhodnoteni vyrazu >> FALSE
-            NaplnInstr(I_NICNEROBA, NULL, NULL, NULL); // pomocna instrukcia
-
-
-            void* pomad;
-            pomad = InstrDajPoz(&INSTR_PASKA);
-
-            *(void**) (myaTop(&IFJMP)) = pomad; // HVIEZDICKI
-
-            myaPop(&IFJMP);
-
-
-        }
-        else
-        {
-            //syntakt chyba
-            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
-            whattoken(S_KLIC_END);
-            fprintf(stderr, "\n");
-            trashDestroy(2);
-        }
-        break;
-    }
 
 
 //----------------------------------SPLIST--------------------------------
