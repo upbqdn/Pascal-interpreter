@@ -914,6 +914,18 @@ case LL_IF_END:
             myPop(&S);
             myPushMul(&S, 2, S_KLIC_TRUE, LL_NSPLIST);
 
+            void *spracADDR = spracuj(actToken.stav, actToken.data);
+
+            tStav *TIPSTAV = mymalloc(sizeof(tStav));
+            *TIPSTAV = actToken.stav;
+
+            NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
+
+            if(priznak == write)
+            {
+                NaplnInstr( I_WRITE_BOO, NULL , NULL, NULL );
+            }
+
 
             s_con->act_type = S_KLIC_BOOLEAN;   //kontrola hodnoty typu boolean
             s_con->context = DV_ARG_CHECK;
@@ -924,6 +936,18 @@ case LL_IF_END:
 
             myPop(&S);
             myPushMul(&S, 2, S_KLIC_FALSE, LL_NSPLIST);
+
+            void *spracADDR = spracuj(actToken.stav, actToken.data);
+
+            tStav *TIPSTAV = mymalloc(sizeof(tStav));
+            *TIPSTAV = actToken.stav;
+
+            NaplnInstr( I_PREC, spracADDR, spracADDR, TIPSTAV );
+            
+            if(priznak == write)
+            {
+                NaplnInstr( I_WRITE_BOO, NULL , NULL, NULL );
+            }
 
 
             s_con->act_type = S_KLIC_BOOLEAN;   //kontrola hodnoty typu boolean

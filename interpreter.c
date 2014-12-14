@@ -401,7 +401,15 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             case S_KLIC_TRUE:
             case S_BOOLEAN:
             {
-                printf("%d", *( *(bool **) (myaTop(&aS)))  );
+            	if ( *( *(bool **) (myaTop(&aS))) )
+            	{
+            		printf("TRUE");
+            	}
+            	else
+            	{
+            		printf("FALSE");
+            	}
+                //printf("%d", *( *(bool **) (myaTop(&aS)))  );
                 myPop(&aS);
                 break;
             }
@@ -444,7 +452,15 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_WRITE_BOO:
         {
-            printf("%d", *( *(bool **) (myaTop(&aS)))  );
+        	if ( *( *(bool **) (myaTop(&aS))) )
+            {
+            	printf("TRUE");
+            }
+            else
+            {
+            	printf("FALSE");
+            }
+            //printf("%d", *( *(bool **) (myaTop(&aS)))  );
             myPop(&aS);
 
             break;
