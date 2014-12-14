@@ -369,32 +369,32 @@ void sort(char *Array, int left, int right)
 	char temp; //pomocna premenna na prehodenie hodnot
 	int i = left;
 	int j = right;
-	int median = Array[(i + j) / 2]; //pseudo median
+	int median = Array[(i + j) / 2]; //pseudo median bezna metoda 
 	do{
-		while(Array[i] < median)
+		while(Array[i] < median) //hladanie prveho zlava
 		{
 			i++;
 		}
-		while(Array[j] > median)
+		while(Array[j] > median) //preveho zprava
 		{
 			j--;
 		}
 		if(i <= j)
 		{
-			temp = Array[i];
+			temp = Array[i]; //vymena bez funkcie jednoduchsie
 			Array[i] = Array[j];
 			Array[j] = temp; 
 			i++;
 			j--;
 		}
-	} while(i <= j);
+	} while(i <= j); //partition koniec podmienka inak ako pascal neni until
 	if(left < j)
 	{
-		sort(Array, left, j);
+		sort(Array, left, j); //dolava
 	}
 	if(i < right)
 	{
-		sort(Array, i, right);
+		sort(Array, i, right); //doprava
 	}
 }
 
@@ -411,7 +411,7 @@ int find(char *T, char *P)
 	int *Fail = malloc(strlen(P) * sizeof(int)); //alokovanie miesta pre pomocny vektor
 	int TL = strlen(T); //dlka retazca T
 	int PL = strlen(P); //dlzka retazca P
-	vector(P, Fail);
+	kmpgraf(P, Fail, PL); //vytvorime pomocny vektor
 	int TInd = ORIGIN; //Knutt Morris Pratt
 	int PInd = ORIGIN;
 	while((TInd < TL) && (PInd < PL))
@@ -442,11 +442,10 @@ int find(char *T, char *P)
  *Funkcia na generovanie pomocneho vektoru
  *Parametre: 1 - retazec, 2 - pomocny vektor alokovany vo funckii fail 
  */
-void vector(char *P, int *Fail)
+void kmpgraf(char *P, int *Fail, int PL)
 {
 	int k;
 	int r;
-	int PL = strlen(P);
 	Fail[ORIGIN] = -1; //zaciatok inicializacie
 	for(k = 1; k < PL; k++)
 	{
