@@ -63,7 +63,7 @@ extern list *MASTERTAB; // globalna tabulka
  void *hash_adress(list *, char *);
  void *copyhash(list *);
  void hash_destroy(list *);
- void vector(char *, int *);
+ void kmpgraf(char *, int *, int);
  int hash_is_sign(list *, char *);
  unsigned hash_return_type(list *, char *);
  void hash_set_sign(list *, char *, int);
