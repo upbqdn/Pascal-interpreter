@@ -77,7 +77,6 @@ int isVyraz(tSem_context* s_con)
 {
   stack St;             //zasobnik typov
   stack_init (&St);     //inicializacia zasobnika
-  stack_init (&S); /* inicializace zasobniku pro precedencni analyzu */
 
 
 	//printf("Spoustim precedencni analyzu \n");
@@ -349,7 +348,6 @@ if (vypis) showStack(&S);
 
 s_con->act_type = myTop (&St);    //precedencna analyza vracia typ vysledku
 destroyStack (&St);            //rusi sa zasobnik
-destroyStack(&S); /* rusim zasobnik precedencni analyzy */
 
 return chyba;	
 }
