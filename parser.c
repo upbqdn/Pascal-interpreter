@@ -1194,7 +1194,39 @@ case LL_IF_END:
 
     case LL_E:
     {
-        myPop(&S);        
+        myPop(&S); 
+
+        //-----------------------------------------------------  
+        switch (actToken.stav)
+		{
+			case S_KRAT: 					{ break; }
+			case S_DELENO:					{ break; }
+			case S_PLUS: 					{ break; }
+			case S_MINUS:					{ break; }
+			case S_MENSI: 					{ break; }
+			case S_VETSI:					{ break; }
+			case S_MENSI_NEBO_ROVNO: 		{ break; }
+			case S_VETSI_NEBO_ROVNO:		{ break; }
+			case S_ROVNO: 					{ break; }
+			case S_NEROVNO:					{ break; }
+			case S_LEVA_ZAVORKA: 			{ break; }
+			case S_PRAVA_ZAVORKA:			{ break; }
+			case S_IDENTIFIKATOR: 			{ break; }
+			case S_DOLAR:					{ break; }
+			case S_INTEGER:					{ break; }
+			case S_DOUBLE: 					{ break; }
+			case S_RETEZEC:					{ break; }
+			case S_KLIC_TRUE:				{ break; }
+			case S_KLIC_FALSE:				{ break; }
+			default: 						
+			{
+				fprintf(stderr, "2: Syntakticka chyba. Ocakaval som PODMIENKU!\n" );
+				trashDestroy(2);
+				break; 
+			} 
+			 	
+		}
+		//-----------------------------------------------------     
 
 
         if ((isVyraz(s_con)) == 0)   // ak podmienka plati vytvorime instrukciu
