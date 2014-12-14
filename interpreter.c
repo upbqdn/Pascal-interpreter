@@ -244,14 +244,26 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
             case S_INTEGER:
             {
-                scanf("%d", (prvok)->ref );
+                int LOL = scanf("%d", (prvok)->ref );
+
+                if (LOL == 0)
+                {
+                	fprintf(stderr, "6: Behova chyba pri nacitani ciselnej hodnoty zo vstupu!\n" );
+                	trashDestroy(6);
+                }
 
                 break;
             }
 
             case S_DOUBLE:
             {
-                scanf("%f", (prvok)->ref );
+                int LOL = scanf("%g", (prvok)->ref );
+
+                if (LOL == 0)
+                {
+                	fprintf(stderr, "6: Behova chyba pri nacitani ciselnej hodnoty zo vstupu!\n" );
+                	trashDestroy(6);
+                }
 
                 break;
             }
