@@ -140,6 +140,16 @@ do
 		case '=': 
 	   if (vypis) showStack(&S);
 	   if (vypis) printf(" pouzivam pravidlo = \n");
+			if ((myTop(&S) == 10) && (magicFunction(actToken.stav) == 11)) /* ve vyrazu je () */
+			{chyba = 1; 
+			if (vypis) printf("vyraz je spatne, uklizim zasobnik!! \n ");
+				while (myTop(&S) != 13)
+				{
+					myPop(&S); /* nechavam jen zarazku */
+				}
+				if (vypis) showStack(&S); 
+				goto adios;
+			}
 			myPush(&S, b);
 			if (vypis) printf("vkladam na zasobnik : %d \n", b);
 			if (vypis) showStack(&S);
