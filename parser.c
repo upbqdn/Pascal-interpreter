@@ -173,7 +173,10 @@ void extractRule(tSem_context* s_con)
 
         default:
         {
-            // doplnime casom ... CHYBISKA exit(2)  CAKAL SOM TYPE...
+            //syntakt chiba
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som neaky datovy typ.\n", actToken.radek+1);
+            fprintf(stderr, "\n");
+            trashDestroy(2);
             break;
         }
         }
@@ -308,7 +311,7 @@ void extractRule(tSem_context* s_con)
         else
         {
             //syntakt chiba
-            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som ");
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
             whattoken(S_STREDNIK);
             fprintf(stderr, "\n");
             trashDestroy(2);
@@ -368,7 +371,10 @@ void extractRule(tSem_context* s_con)
         }
         else
         {
-            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som IDENTIFIKATOR\n");
+            //syntakt chyba
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
+            whattoken(S_IDENTIFIKATOR);
+            fprintf(stderr, "\n");
             trashDestroy(2);
         }
 
@@ -552,11 +558,21 @@ void extractRule(tSem_context* s_con)
             break;
         }
 
-        default:   // co tu ? chyba alebo nie ?
+        default:
         {
-            whattoken(actToken.stav);
-            fprintf(stderr, "2: Syntakticka chyba. Za poslednym prikazom nesmie byt strednik !\n");
-            trashDestroy(2);
+            if (actToken.stav == S_STREDNIK)
+            {
+                //syntakt chyba
+                fprintf(stderr, "2: Syntakticka chyba na riadku '%d'.  Za poslednym prikazom nesmie byt strednik ! \n", actToken.radek+1);
+                trashDestroy(2);
+            }
+            else
+            {
+               //syntakt chyba
+                fprintf(stderr, "2: Syntakticka chyba na riadku '%d'.\n", actToken.radek+1);
+                trashDestroy(2); 
+            }
+            
             break;
         }
         }
@@ -590,7 +606,10 @@ void extractRule(tSem_context* s_con)
         }
         else
         {
-            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som ELSE\n");
+            //syntakt chyba
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
+            whattoken(S_KLIC_ELSE);
+            fprintf(stderr, "\n");
             trashDestroy(2);
         }
 
@@ -660,7 +679,7 @@ void extractRule(tSem_context* s_con)
 
         else
         {
-            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som FUNKCIU / VYRAZ\n" );
+            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som < FUNKCIU / VYRAZ >\n" );
             trashDestroy(2);
         }
         break;
@@ -701,12 +720,13 @@ void extractRule(tSem_context* s_con)
 
 
 
-
-
         }
         else
         {
-            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som END\n" );
+            //syntakt chyba
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
+            whattoken(S_KLIC_END);
+            fprintf(stderr, "\n");
             trashDestroy(2);
         }
         break;
@@ -755,7 +775,10 @@ void extractRule(tSem_context* s_con)
         }
         else
         {
-            fprintf(stderr, "2: Syntakticka chyba. Ocakaval som END\n" );
+            //syntakt chyba
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
+            whattoken(S_KLIC_END);
+            fprintf(stderr, "\n");
             trashDestroy(2);
         }
         break;
@@ -1191,7 +1214,7 @@ bool parse()
         if (myTop(&S) == EOF && actToken.stav != S_END_OF_FILE)
         {
             //CHYBA!!!! na zasobniku bol uz iba EOF ale my sme este nedocitali subor
-            fprintf(stderr, "CHyBA vyprazdneny zasobnik a este sme neni na konci suboru\n");
+            fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Uz som neocakaval nic, ale nieco prislo. ", actToken.radek+1);
             trashDestroy(2); // syntakticka chyba
         }
 
@@ -1308,11 +1331,12 @@ bool parse()
             }
             else
             {
-                fprintf(stderr, "2: Syntakticka chyba..... Ocakaval som  ");
+                //syntakt chyba
+                fprintf(stderr, "2: Syntakticka chyba na riadku '%d'. Ocakaval som ", actToken.radek+1);
                 whattoken(myTop(&S));
-                fprintf(stderr, "riadok : %d , stlpec %d .", actToken.radek+1, actToken.sloupec);
-                fprintf(stderr, "\n" );
-                trashDestroy(2); // syntakticka chyba
+                fprintf(stderr, "\n");
+                trashDestroy(2);
+
                 ERRO = false;
                 // printf("mas to zle ja som cakal  >> ");
                 // whattoken(myTop(&S));
@@ -1327,7 +1351,12 @@ bool parse()
 
         if (myTop(&S) != EOF && actToken.stav == S_END_OF_FILE)
         {
-            trashDestroy(2); // syntakticka chyba
+            //syntakt chyba
+            fprintf(stderr, "2: Syntakticka chyba. Koniec suboru, malo nasledovat  ");
+            whattoken(myTop(&S));
+            fprintf(stderr, "\n");
+            trashDestroy(2);
+
             ERRO = false;
             //printf("ChyBA na zasobniku nieco zostalo a my sme na konci suboru\n");
         }
