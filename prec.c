@@ -77,6 +77,7 @@ int isVyraz(tSem_context* s_con)
 {
   stack St;             //zasobnik typov
   stack_init (&St);     //inicializacia zasobnika
+  stack_init (&S); /* inicializace zasobniku pro precedencni analyzu */
 
 
 	//printf("Spoustim precedencni analyzu \n");
@@ -87,8 +88,6 @@ int isVyraz(tSem_context* s_con)
 	int b = 0;
 do
 {
-	//printf("[%d][%d] = %c", 2 , 13, precedent_table[2][13] );
-	//printf("\n###############\n>>>%s<<<\n###############\n", token.data);
 	// POZNAMKA: "E" = 42, "<" = 111, "$" = 13
 	if ( (actToken.stav == S_INTEGER) || (actToken.stav == S_DOUBLE) || (actToken.stav == S_RETEZEC) || (actToken.stav == S_KLIC_TRUE) || (actToken.stav == S_KLIC_FALSE))/* + int , double ... */
 	{
