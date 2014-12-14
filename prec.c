@@ -360,7 +360,6 @@ void type_check (stack *St, int t_op) {
   switch (t_op) {
    
     case I_KRAT:
-    case I_DELENO:
     case I_MINUS:
         
       if (op1 == S_INTEGER && op2 == S_INTEGER)
@@ -370,6 +369,19 @@ void type_check (stack *St, int t_op) {
       else {
         fprintf (stderr, "typova nekompatibilita pri aritmetickej operacii vo vyraze na riadku"
                  "'%d'\n", 
+                 actToken.radek+1);
+        trashDestroy (semanticka_chyba_typove_kompatibility);
+      }
+
+    break;
+
+
+    case I_DELENO:
+
+      if ( (op1 == S_INTEGER || op1 == S_DOUBLE) && (op2 == S_INTEGER || op2 == S_DOUBLE) )
+        myPush (St, S_DOUBLE);
+      else {
+        fprintf (stderr, "typova nekompatibilita pri operacii '/' vo vyraze na riadku '%d'\n", 
                  actToken.radek+1);
         trashDestroy (semanticka_chyba_typove_kompatibility);
       }
