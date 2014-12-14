@@ -1194,11 +1194,17 @@ case LL_IF_END:
 
     case LL_E:
     {
-        myPop(&S);
+        myPop(&S);        
+
 
         if ((isVyraz(s_con)) == 0)   // ak podmienka plati vytvorime instrukciu
         {
             NaplnInstr(I_PODM_JMP, myaTop(&IFJMP), NULL, NULL);
+        }
+        else
+        {
+            fprintf(stderr, "2: Syntakticka chyba. Neplatny vyraz / podmienka.\n");
+            trashDestroy(2);
         }
 
         break;
