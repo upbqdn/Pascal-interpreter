@@ -19,6 +19,10 @@
 #include "buildin.h"
 
 
+#define INIC 31111
+
+
+
 
 
 tListInstrukcii INSTR_PASKA; // INSTRUKCNA PASKA
@@ -33,6 +37,54 @@ astack aS; // pomocny zasobnik adries pre interpreter
 
 astack JMPSTACK; // zasobnik skokov // POZOR TOTO MUSI BYT FRONTA
 astack paramSTACK; // parametre funkcii
+
+
+void inic(void* aad, tStav stav)
+{
+	switch(stav)
+	{
+	case S_INTEGER:
+	{
+		if (   *( *(int **) aad ) == INIC)
+	    {
+	        // neinicializovana premenna
+	        fprintf(stderr, "7: Neinicializovane!\n" );
+	        trashDestroy(7);
+	    }
+	    break;
+	}
+
+	case S_DOUBLE:
+	{
+		if (   *( *(float **)  aad) == INIC)
+	    {
+	        // neinicializovana premenna
+	        fprintf(stderr, "7: Neinicializovane!\n" );
+	        trashDestroy(7);
+	    }
+	    break;
+	}
+
+	case S_RETEZEC:
+	{
+		if (  (strcmp(  (*(void **) aad) , "f!%4")) == 0    )
+        {
+            // neinicializovana premenna
+            fprintf(stderr, "7: Neinicializovane!\n" );
+            trashDestroy(7);
+        }
+        break;
+	}
+
+	default:
+	{
+		break;
+	}
+
+	}
+
+
+}
 
 void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 {
@@ -133,6 +185,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
 
                 int pomoc1 = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS), S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
 
                 *( *(int **) (myaTop(&aS))) = pomoc1 ;
@@ -140,10 +193,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             }
             else if (TIP == S_DOUBLE)
             {
-                float pomoc1 = (*(float*)(myaTop(&aS)));
+                float pomoc1 = *(*(float**)(myaTop(&aS)));
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
 
-                (*(float*)(myaTop(&aS))) = pomoc1 ;
+                *(*(float**)(myaTop(&aS))) = pomoc1 ;
                 myaPop(&aS);
             }
             else if (TIP == S_RETEZEC)
@@ -151,9 +205,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 void* pomAddr1; // to co vytiahneme zo zasobnika ako NAJVRCHNEJSIE
 
                 pomAddr1 = (*(void **)(myaTop(&aS)));  // IDENTIFIKATOR (CEZ TABULKU SYMBOLOV)
-
-
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS); // mozme zahodit z zasobniku
+
 
                 // berieme zo zasobniku dalsiu ADRESU - KDE  to ulozit (adresacia cez TABULKU SYMBOLOV)
                 void* pomAddr2 = (*(void **)(myaTop(&aS)));
@@ -189,6 +243,8 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         {
             (*(void **)(myaTop(&aS))) = mymalloc(sizeof(int));
 
+            *( *(int **) (myaTop(&aS))) =  INIC;
+
             myaPop(&aS);
 
             break;
@@ -198,6 +254,8 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
         case I_ALLOC_DOU:
         {
             (*(void **)(myaTop(&aS))) = mymalloc(sizeof(float));
+
+            *( *(float **) (myaTop(&aS))) = INIC ;
 
             myaPop(&aS);
 
@@ -217,7 +275,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
         case I_ALLOC_STR:
         {
-            (*(void **)(myaTop(&aS))) = mymalloc(sizeof(char));
+            (*(void **)(myaTop(&aS))) = mymalloc(sizeof(char)*4);
+
+            char* ppp = ( *(char **) (myaTop(&aS))) ;
+            ppp[0] = 'f';
+            ppp[1] = '!';
+            ppp[2] = '%';
+            ppp[3] = '4';
 
             myaPop(&aS);
 
@@ -308,6 +372,8 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
             case S_INTEGER:
             {
+            	inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
+
                 printf("%d", *( *(int **) (myaTop(&aS))) );
                 myPop(&aS);
                 break;
@@ -315,6 +381,8 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             case S_DOUBLE:
             {
+            	inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
+
                 printf("%g", *( *(float **) (myaTop(&aS)))  );
                 myPop(&aS);
                 break;
@@ -322,6 +390,8 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
             case S_RETEZEC:
             {
+            	inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
+
                 printf("%s", ( *(char **) (myaTop(&aS))) );
                 myPop(&aS);
                 break;
@@ -388,8 +458,12 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
                 int a = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
+
                 int b = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_integer = mymalloc(sizeof(int));
@@ -415,8 +489,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             else if (TIP == S_DOUBLE)
             {
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_double = mymalloc(sizeof(float));
@@ -443,8 +520,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 void* c_string = mymalloc(sizeof(char));
 
                 pomAddr1 = (*(void **)(myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 pomAddr2 = (*(void **)(myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
                 //int dlzka = (  (strlen((*(char**)pomAddr1))) +  (strlen((*(char**)pomAddr2)))    );
 
@@ -487,8 +567,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
                 int a = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int b = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_integer = mymalloc(sizeof(int));
@@ -512,8 +595,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             else if (TIP == S_DOUBLE)
             {
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_double = mymalloc(sizeof(float));
@@ -546,8 +632,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
                 int a = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int b = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_integer = mymalloc(sizeof(int));
@@ -572,8 +661,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             else if (TIP == S_DOUBLE)
             {
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_double = mymalloc(sizeof(float));
@@ -605,15 +697,18 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER)  // adresa vs cislo toto treba opravit
             {
                 int a = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
+                myaPop(&aS);
+
                 if (a == 0)
                 {
                     //DELENIE NULOV
                     fprintf(stderr, "8: Behova chyba. Snazis sa delit NULOU ! \n");
                     trashDestroy(behova_chyba_deleni_nulou); // chyba 8
                 }
-
-                myaPop(&aS);
+                
                 int b = *( *(int **) (myaTop(&aS)))  ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_integer = mymalloc(sizeof(int));
@@ -639,7 +734,9 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             else if (TIP == S_DOUBLE)
             {
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a == 0.0)
                 {
                     //DELENIE NULOV
@@ -648,6 +745,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                 }
 
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
 
                 int c_double = mymalloc(sizeof(float));
@@ -687,8 +785,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER) /*int = int*/
             {
                 int a = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int b = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
                 if (a == b)
                 {
@@ -719,8 +820,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_DOUBLE) /* real = real */
             {
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
                 if (a == b)
                 {
@@ -749,8 +853,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_RETEZEC) /* string = string */
             {
                 char* pomAddr1 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
 
                 if (strcmp (pomAddr1, pomAddr2))
@@ -825,8 +932,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER) /*int <> int*/
             {
                 int a = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int b = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
                 if (a != b)
                 {
@@ -856,9 +966,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_DOUBLE) /* real <> real */
             {
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a != b)
                 {
                     *(bool*)c_bool = true;
@@ -887,9 +1001,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_RETEZEC) /* string <> string */
             {
                 char* pomAddr1 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 if ((strcmp (pomAddr1, pomAddr2)))
                 {
                     *(bool*)c_bool = true;
@@ -964,8 +1082,11 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER) /*int > int*/
             {
                 int b = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int a = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
                 if (a > b)
                 {
@@ -995,9 +1116,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_DOUBLE) /* real > real */
             {
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a > b)
                 {
                     *(bool*)c_bool = true;
@@ -1026,9 +1151,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_RETEZEC) /* string > string */
             {
                 char* pomAddr1 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 if ((strcmp (pomAddr2, pomAddr1)) > 0)
                 {
                     *(bool*)c_bool = true;
@@ -1102,9 +1231,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER) /*int < int*/
             {
                 int b = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int a = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a < b)
                 {
                     *(bool*)c_bool = true;
@@ -1133,9 +1266,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_DOUBLE) /* real < real */
             {
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a < b)
                 {
                     *(bool*)c_bool = true;
@@ -1164,9 +1301,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_RETEZEC) /* string < string */
             {
                 char* pomAddr1 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 if ((strcmp (pomAddr2, pomAddr1)) < 0)
                 {
                     *(bool*)c_bool = true;
@@ -1240,9 +1381,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER) /*int >= int*/
             {
                 int b = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int a = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a >= b)
                 {
                     *(bool*)c_bool = true;
@@ -1271,9 +1416,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_DOUBLE) /* real >= real */
             {
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a >= b)
                 {
                     *(bool*)c_bool = true;
@@ -1302,9 +1451,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_RETEZEC) /* string >= string */
             {
                 char* pomAddr1 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 if ((strcmp (pomAddr2, pomAddr1)) >= 0)
                 {
                     *(bool*)c_bool = true;
@@ -1377,9 +1530,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_INTEGER) /*int <= int*/
             {
                 int b = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 int a = *( *(int **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_INTEGER); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a <= b)
                 {
                     *(bool*)c_bool = true;
@@ -1408,9 +1565,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_DOUBLE) /* real <= real */
             {
                 float b = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 float a = *( *(float **) (myaTop(&aS))) ;
+                inic(myaTop(&aS) , S_DOUBLE); // overenie inicializacie
                 myaPop(&aS);
+
                 if (a <= b)
                 {
                     *(bool*)c_bool = true;
@@ -1439,9 +1600,13 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             if (TIP == S_RETEZEC) /* string <= string */
             {
                 char* pomAddr1 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 char* pomAddr2 = ( *(char **) (myaTop(&aS)));
+                inic(myaTop(&aS) , S_RETEZEC); // overenie inicializacie
                 myaPop(&aS);
+
                 if ((strcmp (pomAddr2, pomAddr1)) <= 0)
                 {
                     *(bool*)c_bool = true;
@@ -1770,6 +1935,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
             {
                 case S_INTEGER:
                 {
+                	inic(myaTop(&paramSTACK) , S_INTEGER); // overenie inicializacie
                     *( *(int **) (myaTop(&aS))) =  *( *(int **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
 
                     break;
@@ -1777,6 +1943,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
 
                 case S_DOUBLE:
                 {
+                	inic(myaTop(&paramSTACK) , S_DOUBLE); // overenie inicializacie
                     *( *(float **) (myaTop(&aS))) =  *( *(float **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
 
                     break;
@@ -1798,6 +1965,7 @@ void inter()    //AKCIA, KDE,int *PRVA,int *DRUHA//
                     //( *(char **) (myaTop(&aS))) =  ( *(char **) (myaTop(&paramSTACK)))  ; // priradime do prvok->ref
 
                     //to co kopirujeme
+                    inic(myaTop(&paramSTACK) , S_RETEZEC); // overenie inicializacie
                     void* pomAddr1; 
                     pomAddr1 = (*(void **) (myaTop(&paramSTACK)));
                     int dlzka = strlen(((char**)pomAddr1));

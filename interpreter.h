@@ -9,4 +9,5 @@
 */
 extern void* zarazka;
 
+void inic(void* aad, tStav stav);
 void inter();
