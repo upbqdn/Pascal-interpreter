@@ -1,6 +1,11 @@
 IFJ2014
 =======
 
+Usage:
+
+1. `make`
+2. `./main factorial.p`
+
 Autori
 ------
 1. @Author: Marek Bielik      xbieli05@stud.fit.vutbr.cz  
